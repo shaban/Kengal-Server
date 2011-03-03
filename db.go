@@ -62,7 +62,8 @@ func prepareMysql() os.Error {
 	if err != nil {
 		return err
 	}
-	stmt.Rubrics, err = db.Prepare("SELECT * FROM rubrics WHERE ID IN (SELECT Distinct Rubric As ID FROM articles WHERE Blog=?)")
+	stmt.Rubrics, err = db.Prepare("SELECT * FROM rubrics WHERE ID IN "+
+	"(SELECT Distinct Rubric As ID FROM articles WHERE Blog=?)")
 	if err != nil {
 		return err
 	}
