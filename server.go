@@ -90,6 +90,7 @@ func ArticleController(w http.ResponseWriter, r *http.Request) {
 	View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", View.MyArticle.Description)
 	View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", View.MyArticle.Keywords)
 	
+	View.Admin=true
 	View.Index = nil
 	View.Articles=nil
 	View.Imprint = false

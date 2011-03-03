@@ -82,6 +82,7 @@ type Page struct {
 	Domain     *Blog
 	Template   *Theme
 	Imprint	bool
+	Admin bool
 }
 
 var View = new(Page)
