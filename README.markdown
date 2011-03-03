@@ -104,7 +104,7 @@ j127dnH8+HEaGhqIRtuIRMKcO1fPlCm3MGHCBJYs+R3FxX1pb28nHM4iJyeH8vJyJk36AVOmTPXb
 wB6083Bod5XrLnXTbz5z3ZG3S12vOwH+JZt0L+3yVcFYLEZ9fT1nzpymoaGBixcv0traSllZGadO
 nULXQxQV9aWoqJjBgwczfPhwf06vIeIlol0Lv91pruP3ZQfpOM6/LZznYOAyZPIW9zJ1L8D/O+R9
 65UCu/PemQL24OF9fUnxePyqwmVO4t2hzPRWPdi+7z1t27li5z0hvM+8SwWZDuxqwNijTHPtuEKC
-67r8X8/yi2aJ4/NOAAAAAElFTkSuQmCC" style="width: 55px;height: 55px;float: left;padding-right: 10px;"><h1>Kengal</h1>
+67r8X8/yi2aJ4/NOAAAAAElFTkSuQmCC" style="width: 55px;height: 55px;float: left;padding-right: 10px;" /><h1>Kengal</h1>
 <h2>Distributed Blog System.</h2>
 <h3>Features</h3>
 <ul>
