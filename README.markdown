@@ -1,4 +1,3 @@
-<html style="font-family: Arial;">
 <h1>Kengal</h1>
 <h2>Distributed Blog System.</h2>
 <h3>Features</h3>
@@ -17,4 +16,3 @@ make this tool interesting for someone who needs customized templating for small
 	-p="password": set Mysql Password for selected User here
 	-u="root": set Mysql User here, default is root
 	-db="mysql": set Database that MySql is supposed to connect to here</pre>
-</html>
