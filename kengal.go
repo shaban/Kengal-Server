@@ -16,7 +16,7 @@ type Server struct {
 
 type Blog struct {
 	ID          int
-	Name        string
+	Title       string
 	Url         string
 	Template    int
 	Keywords    string
@@ -43,7 +43,7 @@ type Article struct {
 	Teaser      string
 	Blog        int
 	Rubric      int
-	ShortUrl    string
+	Url         string
 }
 type Theme struct {
 	ID        int
@@ -73,6 +73,7 @@ type Page struct {
 	HeadScript string
 	HeadLink   string
 	HeadStyle  string
+	Index      []*Article
 	Rubrics    []*Rubric
 	Latest     []*Article
 	Articles   []*Article
@@ -80,15 +81,15 @@ type Page struct {
 	MyRubric   *Rubric
 	Domain     *Blog
 	Template   *Theme
+	Imprint	bool
 }
 
 var View = new(Page)
-
 func (a *Article) DateTime() string {
 	return a.Date.String()
 }
 func (a *Article) Path() string {
-	return fmt.Sprintf("/artikel/%v/%s", a.ID, a.ShortUrl)
+	return fmt.Sprintf("/artikel/%v/%s", a.ID, a.Url)
 }
 func (a *Article) RubricPath() string {
 	for _, v := range View.Rubrics {

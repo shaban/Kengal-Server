@@ -91,7 +91,7 @@ func (p *Page) loadBlogData(host string) os.Error {
 	if err != nil {
 		return err
 	}
-	err = stmt.Blog.BindFetch(&p.Domain.ID, &p.Domain.Name, &p.Domain.Url, &p.Domain.Template, &p.Domain.Keywords, &p.Domain.Description, &p.Domain.Slogan)
+	err = stmt.Blog.BindFetch(&p.Domain.ID, &p.Domain.Title, &p.Domain.Url, &p.Domain.Template, &p.Domain.Keywords, &p.Domain.Description, &p.Domain.Slogan)
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (p *Page) loadBlogData(host string) os.Error {
 	if err != nil {
 		return err
 	}
-	err = stmt.Template.BindFetch(&p.Template.ID, &p.Template.Index, &p.Template.Rubric, &p.Template.Article, &p.Template.Imprint, &p.Template.Style)
+	err = stmt.Template.BindFetch(&p.Template.ID, &p.Template.Index, &p.Template.Style)
 	if err != nil {
 		return err
 	}
@@ -160,7 +160,7 @@ func (p *Page) loadBlogData(host string) os.Error {
 	for k, _ := range p.Latest {
 		p.Latest[k] = new(Article)
 
-		err = stmt.Latest.BindFetch(&p.Latest[k].ID, &p.Latest[k].Title, &p.Latest[k].Rubric, &p.Latest[k].Text, &p.Latest[k].Teaser, &p.Latest[k].Blog, &p.Latest[k].Keywords, &p.Latest[k].Description, &p.Latest[k].Date, &p.Latest[k].ShortUrl)
+		err = stmt.Latest.BindFetch(&p.Latest[k].ID, &p.Latest[k].Title, &p.Latest[k].Rubric, &p.Latest[k].Text, &p.Latest[k].Teaser, &p.Latest[k].Blog, &p.Latest[k].Keywords, &p.Latest[k].Description, &p.Latest[k].Date, &p.Latest[k].Url)
 		if err != nil {
 			return err
 		}
@@ -178,7 +178,7 @@ func (p *Page) loadArticlesInRubric(id string) os.Error {
 	p.Articles = make([]*Article, stmt.Articles.RowCount())
 	for k, _ := range p.Articles {
 		p.Articles[k] = new(Article)
-		err = stmt.Articles.BindFetch(&p.Articles[k].ID, &p.Articles[k].Title, &p.Articles[k].Rubric, &p.Articles[k].Text, &p.Articles[k].Teaser, &p.Articles[k].Blog, &p.Articles[k].Keywords, &p.Articles[k].Description, &p.Articles[k].Date, &p.Articles[k].ShortUrl)
+		err = stmt.Articles.BindFetch(&p.Articles[k].ID, &p.Articles[k].Title, &p.Articles[k].Rubric, &p.Articles[k].Text, &p.Articles[k].Teaser, &p.Articles[k].Blog, &p.Articles[k].Keywords, &p.Articles[k].Description, &p.Articles[k].Date, &p.Articles[k].Url)
 		if err != nil {
 			return err
 		}
@@ -194,7 +194,7 @@ func (p *Page) loadMyArticle(id string) os.Error {
 		return err
 	}
 	p.MyArticle = new(Article)
-	err = stmt.MyArticle.BindFetch(&p.MyArticle.ID, &p.MyArticle.Title, &p.MyArticle.Rubric, &p.MyArticle.Text, &p.MyArticle.Teaser, &p.MyArticle.Blog, &p.MyArticle.Keywords, &p.MyArticle.Description, &p.MyArticle.Date, &p.MyArticle.ShortUrl)
+	err = stmt.MyArticle.BindFetch(&p.MyArticle.ID, &p.MyArticle.Title, &p.MyArticle.Rubric, &p.MyArticle.Text, &p.MyArticle.Teaser, &p.MyArticle.Blog, &p.MyArticle.Keywords, &p.MyArticle.Description, &p.MyArticle.Date, &p.MyArticle.Url)
 	if err != nil {
 		return err
 	}

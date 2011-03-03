@@ -13,12 +13,12 @@ import (
 	"path"
 )
 
-func Dispatch(layout string, w http.ResponseWriter) {
+func Dispatch(w http.ResponseWriter) {
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 	var Templ = template.New(nil)
 
-	err := Templ.Parse(layout)
+	err := Templ.Parse(View.Template.Index)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -44,8 +44,12 @@ func Controller(w http.ResponseWriter, r *http.Request) {
 
 	View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", View.Domain.Description)
 	View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", View.Domain.Keywords)
+	View.Index = View.Latest
+	View.Imprint=false
+	View.MyArticle=nil
+	View.Articles=nil
 
-	Dispatch(View.Template.Index, w)
+	Dispatch(w)
 }
 func RubricController(w http.ResponseWriter, r *http.Request) {
 	err := View.loadBlogData(r.Host)
@@ -66,7 +70,12 @@ func RubricController(w http.ResponseWriter, r *http.Request) {
 	}
 	View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", View.MyRubric.Description)
 	View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", View.MyRubric.Keywords)
-	Dispatch(View.Template.Rubric, w)
+	
+	View.Index = nil
+	View.Imprint = false
+	View.MyArticle=nil
+	
+	Dispatch(w)
 }
 func ArticleController(w http.ResponseWriter, r *http.Request) {
 	err := View.loadBlogData(r.Host)
@@ -75,17 +84,25 @@ func ArticleController(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//View.Error = "<h1>404</h1><p>Datei nicht gefunden<br/><a href='/'>Zur Startseite</a></p>"
 		//fmt.Println(View.Error)
-		Dispatch("article", w)
+		Dispatch(w)
 		return
 	}
 	View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", View.MyArticle.Description)
 	View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", View.MyArticle.Keywords)
-
-	Dispatch(View.Template.Article, w)
+	
+	View.Index = nil
+	View.Articles=nil
+	View.Imprint = false
+	
+	Dispatch(w)
 }
 func ImprintController(w http.ResponseWriter, r *http.Request) {
 	View.loadBlogData(r.Host)
-	Dispatch(View.Template.Imprint, w)
+	View.Index = nil
+	View.Articles=nil
+	View.MyArticle=nil
+	View.Imprint = true
+	Dispatch(w)
 }
 func Images(w http.ResponseWriter, r *http.Request) {
 	imagePath := path.Base(r.URL.Path)
