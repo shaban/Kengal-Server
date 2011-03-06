@@ -13,7 +13,7 @@ const Error = `
 		width: 640px;
 		margin-top: 40px;
 		margin-left: auto;
-		margin-right: auto;background: #aaa;
+		margin-right: auto;background: #ccc;
 	}
 	a {
 		text-decoration: none;
@@ -21,7 +21,7 @@ const Error = `
 		color: #333;
 	}
 	a:hover{
-		text-decoration: underline;color: black;
+		text-decoration: underline;color: #666;
 	}
 	</style>
 	</head><body>
