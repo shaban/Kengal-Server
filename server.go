@@ -82,8 +82,17 @@ func ParseParameters(url, host string) os.Error {
 	}
 	return os.ENOTDIR
 }
+func CommandUnit(w http.ResponseWriter, r *http.Request) {
+	err := View.loadBlogData()
+	if err != nil {
+		fmt.Println(err.String())
+		os.Exit(1)
+	}
+}
 func Controller(w http.ResponseWriter, r *http.Request) {
 	ParseParameters(r.URL.Path, r.Host)
+	dir, file := path.Split("")
+	fmt.Printf("Dir:%s: File:%s:\n", dir, file)
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 

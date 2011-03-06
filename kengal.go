@@ -51,12 +51,42 @@ func (a Articles) Latest() []*Article {
 	}
 	return a[0:5]
 }
-func (a Articles) Index() []*Article {
+func (a Articles) Index() Articles {
 	if View.Index == 0 {
 		return nil
 	}
 	return a
 }
+
+func (a Articles) Next()string{
+	//pagemax := 3
+	visible :=  View.Index * PaginatorMax
+	exist := len(a)
+	//fmt.Println(exist)
+	//fmt.Println(visible)
+	if exist > visible{
+	return fmt.Sprintf("/index/%v",View.Index+1)
+	}
+	return ""
+}
+
+func (a Articles)Paginated()[]*Article{
+	l := len(a)
+	if l < PaginatorMax {
+		return a
+	}
+	if (View.Index-1) * PaginatorMax+PaginatorMax > l{
+		return a[(View.Index-1) * PaginatorMax:l]
+	}
+	return a[(View.Index-1) * PaginatorMax:(View.Index-1) * PaginatorMax+PaginatorMax]
+}
+func (a Articles)Prev()string{
+	if View.Index==1{
+	return ""
+	}
+	return fmt.Sprintf("/index/%v",View.Index-1)
+}
+
 func (a Articles) Current() *Article {
 	if View.Article == 0 {
 		return nil
@@ -147,7 +177,6 @@ type BlogError struct {
 	Code int
 	Msg  string
 }
-type Paginator struct{}
 
 type Page struct {
 	HeadMeta  string
@@ -183,6 +212,7 @@ type Application struct {
 
 var app = new(Application)
 var View = new(Page)
+var PaginatorMax = 5
 
 func (a *Article) DateTime() string {
 	return a.Date.String()
@@ -240,6 +270,8 @@ func main() {
 
 	http.HandleFunc("/", Controller)
 	//http.HandleFunc("/admin/", AdminController)
+	
+	http.HandleFunc("/command/", CommandUnit)
 
 	http.HandleFunc("/global/", GlobalController)
 	http.HandleFunc("/images/", Images)
