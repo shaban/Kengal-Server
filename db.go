@@ -17,17 +17,16 @@ var DB_CONN_FAILED = &BlogError{506, "Mysql Connection failed. I called but noon
 var DB_STMT_FAILED = &BlogError{507, "Mysql Statement failed. Better put Logging on and see what happened."}
 
 var db *mysql.Client
-var stmt = new(Stmt)
+var statement = new(Statement)
 
-type Stmt struct {
-	Blog      *mysql.Statement
-	Template  *mysql.Statement
+type Statement struct {
+	Blogs     *mysql.Statement
+	Themes    *mysql.Statement
 	Resources *mysql.Statement
-	Global    *mysql.Statement
 	Rubrics   *mysql.Statement
-	Latest    *mysql.Statement
 	Articles  *mysql.Statement
-	MyArticle *mysql.Statement
+	Servers   *mysql.Statement
+	Globals   *mysql.Statement
 }
 
 func InitMysql(sock, user, pw, dbname string) os.Error {
@@ -46,169 +45,251 @@ func InitMysql(sock, user, pw, dbname string) os.Error {
 }
 func prepareMysql() os.Error {
 	var err os.Error
-	stmt.Blog, err = db.Prepare("SELECT * FROM blogs WHERE Url=?")
+	statement.Servers, err = db.Prepare("SELECT * FROM servers")
 	if err != nil {
 		return err
 	}
-	stmt.Template, err = db.Prepare("SELECT * FROM templates WHERE ID=?")
+	statement.Blogs, err = db.Prepare("SELECT * FROM blogs WHERE Server=?")
 	if err != nil {
 		return err
 	}
-	stmt.Resources, err = db.Prepare("SELECT * FROM resources WHERE Template=?")
+	statement.Themes, err = db.Prepare("SELECT * FROM templates")
 	if err != nil {
 		return err
 	}
-	stmt.Global, err = db.Prepare("SELECT * FROM resources WHERE Template=?")
+	statement.Resources, err = db.Prepare("SELECT * FROM resources WHERE Template !=-1")
 	if err != nil {
 		return err
 	}
-	stmt.Rubrics, err = db.Prepare("SELECT * FROM rubrics WHERE ID IN "+
-	"(SELECT Distinct Rubric As ID FROM articles WHERE Blog=?)")
+	statement.Globals, err = db.Prepare("SELECT * FROM resources WHERE Template=-1")
 	if err != nil {
 		return err
 	}
-	stmt.Latest, err = db.Prepare("SELECT * FROM articles WHERE Blog=? ORDER BY Date DESC LIMIT 0,5")
+	statement.Rubrics, err = db.Prepare("SELECT * FROM rubrics WHERE Blog IN (SELECT ID FROM blogs WHERE Server=?)")
 	if err != nil {
 		return err
 	}
-	stmt.Articles, err = db.Prepare("SELECT * FROM articles WHERE Blog=? AND Rubric=? ORDER BY Date")
-	if err != nil {
-		return err
-	}
-	stmt.MyArticle, err = db.Prepare("SELECT * FROM articles where ID=?")
+	statement.Articles, err = db.Prepare("SELECT * FROM articles WHERE Blog IN (SELECT ID FROM blogs WHERE Server=?) ORDER BY Date DESC")
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *Page) loadBlogData(host string) os.Error {
-	// set some variables that arent database driven manually
+func (p *Page) loadBlogData() os.Error {
+	err := InitMysql(app.DataHost, app.User, app.Password, app.Database)
+	if err != nil {
+		return err
+	}
+	err = prepareMysql()
+	if err != nil {
+		return err
+	}
 	db.Lock()
-
-	// Load Data for the Blog which Url matches the Host as designated by Client Browser
-	p.Domain = new(Blog)
-	err := stmt.Blog.BindExec(host)
+	// Load Blogs
+	err = statement.Blogs.BindParams(app.Server)
 	if err != nil {
 		return err
 	}
-	err = stmt.Blog.BindFetch(&p.Domain.ID, &p.Domain.Title, &p.Domain.Url, &p.Domain.Template, &p.Domain.Keywords,
-	  &p.Domain.Description, &p.Domain.Slogan)
+	err = statement.Blogs.Execute()
 	if err != nil {
 		return err
 	}
-
-	// load Html Templates for this Blog
-	p.Template = new(Theme)
-	err = stmt.Template.BindExec(p.Domain.Template)
+	err = statement.Blogs.StoreResult()
 	if err != nil {
 		return err
 	}
-	err = stmt.Template.BindFetch(&p.Template.ID, &p.Template.Index, &p.Template.Style)
-	if err != nil {
-		return err
-	}
-	
-	// load JS,CSS,Images for this Template
-	err = stmt.Resources.BindExec(p.Domain.Template)
-	if err != nil {
-		return err
-	}
-	p.Template.Resources = make([]*Resource, stmt.Resources.RowCount())
-	for k, _ := range p.Template.Resources {
-		p.Template.Resources[k] = new(Resource)
-		err = stmt.Resources.BindFetch(&p.Template.Resources[k].Name, &p.Template.Resources[k].Template, 
-		&p.Template.Resources[k].Data)
+	p.Blogs = make([]*Blog, statement.Blogs.RowCount())
+	for k, _ := range p.Blogs {
+		p.Blogs[k] = new(Blog)
+		err = statement.Blogs.BindResult(&p.Blogs[k].ID, &p.Blogs[k].Title, &p.Blogs[k].Url,
+			&p.Blogs[k].Template, &p.Blogs[k].Keywords, &p.Blogs[k].Description, &p.Blogs[k].Slogan,
+			&p.Blogs[k].Server)
 		if err != nil {
 			return err
 		}
-	}
-
-	// loadGlobal JS,Images.Css etc. -1 stands for Resources 
-	// which are not connected to a specific Template
-	err = stmt.Global.BindExec(-1)
-	if err != nil {
-		return err
-	}
-	p.Template.Global = make([]*Resource, stmt.Global.RowCount())
-	for k, _ := range p.Template.Global {
-		p.Template.Global[k] = new(Resource)
-		err = stmt.Global.BindFetch(&p.Template.Global[k].Name, &p.Template.Global[k].Template, 
-		&p.Template.Global[k].Data)
+		eof, err := statement.Blogs.Fetch()
 		if err != nil {
 			return err
 		}
+		if eof {
+			return os.EOF
+		}
 	}
 
-	// Load all distinct Rubrics that occur in this Blog 
-	err = stmt.Rubrics.BindExec(p.Domain.ID)
+	// load Templates
+	err = statement.Themes.Execute()
 	if err != nil {
 		return err
 	}
-	p.Rubrics = make([]*Rubric, stmt.Rubrics.RowCount())
+	err = statement.Themes.StoreResult()
+	if err != nil {
+		return err
+	}
+	p.Themes = make([]*Theme, statement.Themes.RowCount())
+	for k, _ := range p.Themes {
+		p.Themes[k] = new(Theme)
+		err = statement.Themes.BindResult(&p.Themes[k].ID, &p.Themes[k].Index, &p.Themes[k].Style,
+			&p.Themes[k].Title, &p.Themes[k].FromUrl)
+		if err != nil {
+			return err
+		}
+		eof, err := statement.Themes.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
+	}
+	// load nonglobal resources
+	err = statement.Resources.Execute()
+	if err != nil {
+		return err
+	}
+	err = statement.Resources.StoreResult()
+	if err != nil {
+		return err
+	}
+	p.Resources = make([]*Resource, statement.Resources.RowCount())
+	for k, _ := range p.Resources {
+		p.Resources[k] = new(Resource)
+		err = statement.Resources.BindResult(&p.Resources[k].Name, &p.Resources[k].Template,
+			&p.Resources[k].Data)
+		if err != nil {
+			return err
+		}
+		eof, err := statement.Resources.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
+	}
+
+	// load global resources
+	err = statement.Globals.Execute()
+	if err != nil {
+		return err
+	}
+	err = statement.Globals.StoreResult()
+	if err != nil {
+		return err
+	}
+	p.Globals = make([]*Resource, statement.Globals.RowCount())
+	for k, _ := range p.Globals {
+		p.Globals[k] = new(Resource)
+		err = statement.Globals.BindResult(&p.Globals[k].Name, &p.Globals[k].Template,
+			&p.Globals[k].Data)
+		if err != nil {
+			return err
+		}
+		eof, err := statement.Globals.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
+	}
+
+	// load Servers
+	err = statement.Servers.Execute()
+	if err != nil {
+		return err
+	}
+	err = statement.Servers.StoreResult()
+	if err != nil {
+		return err
+	}
+	p.Servers = make([]*Server, statement.Servers.RowCount())
+	for k, _ := range p.Servers {
+		p.Servers[k] = new(Server)
+		err = statement.Servers.BindResult(&p.Servers[k].ID, &p.Servers[k].IP, &p.Servers[k].Vendor,
+			&p.Servers[k].Type, &p.Servers[k].Item)
+		if err != nil {
+			return err
+		}
+		eof, err := statement.Servers.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
+	}
+
+	// Load Rubrics 
+	err = statement.Rubrics.BindParams(app.Server)
+	if err != nil {
+		return err
+	}
+	err = statement.Rubrics.Execute()
+	if err != nil {
+		return err
+	}
+	err = statement.Rubrics.StoreResult()
+	if err != nil {
+		return err
+	}
+	p.Rubrics = make([]*Rubric, statement.Rubrics.RowCount())
 	for k, _ := range p.Rubrics {
 		p.Rubrics[k] = new(Rubric)
 
-		err = stmt.Rubrics.BindFetch(&p.Rubrics[k].ID, &p.Rubrics[k].Title, &p.Rubrics[k].ShortUrl, 
-		&p.Rubrics[k].Keywords, &p.Rubrics[k].Description)
+		err = statement.Rubrics.BindResult(&p.Rubrics[k].ID, &p.Rubrics[k].Title, &p.Rubrics[k].ShortUrl,
+			&p.Rubrics[k].Keywords, &p.Rubrics[k].Description, &p.Rubrics[k].Blog)
 		if err != nil {
 			return err
 		}
-	}
-
-	// Load Latest 5 Articles that occur in this Blog 
-	err = stmt.Latest.BindExec(p.Domain.ID)
-	if err != nil {
-		return err
-	}
-	p.Latest = make([]*Article, stmt.Latest.RowCount())
-	for k, _ := range p.Latest {
-		p.Latest[k] = new(Article)
-
-		err = stmt.Latest.BindFetch(&p.Latest[k].ID, &p.Latest[k].Title, &p.Latest[k].Rubric, &p.Latest[k].Text, 
-		&p.Latest[k].Teaser, &p.Latest[k].Blog, &p.Latest[k].Keywords, &p.Latest[k].Description, 
-		&p.Latest[k].Date, &p.Latest[k].Url)
+		eof, err := statement.Rubrics.Fetch()
 		if err != nil {
 			return err
 		}
+		if eof {
+			return os.EOF
+		}
 	}
-	db.Unlock()
-	return nil
-}
-func (p *Page) loadArticlesInRubric(id string) os.Error {
-	// Load all Articles that are in the rubric
-	db.Lock()
-	err := stmt.Articles.BindExec(p.Domain.ID, id)
+
+	// Load Articles 
+	err = statement.Articles.BindParams(app.Server)
 	if err != nil {
 		return err
 	}
-	p.Articles = make([]*Article, stmt.Articles.RowCount())
+	err = statement.Articles.Execute()
+	if err != nil {
+		return err
+	}
+	err = statement.Articles.StoreResult()
+	if err != nil {
+		return err
+	}
+	p.Articles = make([]*Article, statement.Articles.RowCount())
 	for k, _ := range p.Articles {
 		p.Articles[k] = new(Article)
-		err = stmt.Articles.BindFetch(&p.Articles[k].ID, &p.Articles[k].Title, &p.Articles[k].Rubric, 
-		&p.Articles[k].Text, &p.Articles[k].Teaser, &p.Articles[k].Blog, &p.Articles[k].Keywords, 
-		&p.Articles[k].Description, &p.Articles[k].Date, &p.Articles[k].Url)
+
+		err = statement.Articles.BindResult(&p.Articles[k].ID, &p.Articles[k].Title, &p.Articles[k].Rubric, &p.Articles[k].Text,
+			&p.Articles[k].Teaser, &p.Articles[k].Blog, &p.Articles[k].Keywords, &p.Articles[k].Description,
+			&p.Articles[k].Date, &p.Articles[k].Url)
 		if err != nil {
 			return err
 		}
+		eof, err := statement.Articles.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
 	}
 	db.Unlock()
-	return nil
-}
-func (p *Page) loadMyArticle(id string) os.Error {
-	db.Lock()
-	// Load the full selected Article
-	err := stmt.MyArticle.BindExec(id)
-	if err != nil {
-		return err
-	}
-	p.MyArticle = new(Article)
-	err = stmt.MyArticle.BindFetch(&p.MyArticle.ID, &p.MyArticle.Title, &p.MyArticle.Rubric, &p.MyArticle.Text, 
-	&p.MyArticle.Teaser, &p.MyArticle.Blog, &p.MyArticle.Keywords, &p.MyArticle.Description, &p.MyArticle.Date, 
-	&p.MyArticle.Url)
-	if err != nil {
-		return err
-	}
-	db.Unlock()
+
+	statement.Blogs.FreeResult()
+	statement.Articles.FreeResult()
+	statement.Resources.FreeResult()
+	statement.Globals.FreeResult()
+	statement.Rubrics.FreeResult()
+	statement.Themes.FreeResult()
+	statement.Servers.FreeResult()
 	return nil
 }
