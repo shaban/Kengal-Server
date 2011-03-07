@@ -43,14 +43,12 @@ func ParseParameters(url, host string) os.Error {
 	dir, file := path.Split(url)
 	if file == "" {
 		// is Index Startpage
-		//fmt.Println("Index 1")
 		View.Index = 1
 		return nil
 	}
 	i, err := strconv.Atoi(file)
 	if err == nil {
 		//is Index non Startpage
-		//fmt.Println("Index x")
 		View.Index = i
 		if ((i - 1) * PaginatorMax) > len(View.Articles.Index()) {
 			View.Index = 0
@@ -60,32 +58,27 @@ func ParseParameters(url, host string) os.Error {
 	}
 	if file == "impressum" {
 		// is Impressum
-		//fmt.Println("Impressum")
 		View.Imprint = true
 		return nil
 	}
 	nextdir := path.Clean(dir)
 	dir, file = path.Split(nextdir)
-	//fmt.Printf("Dir:%s: File:%s:\n", dir, file)
 	i, err = strconv.Atoi(file)
 	if err != nil {
 		return err
 	}
-	//fmt.Println(dir)
 	if dir == "/kategorie/" {
 		//is Rubricpage
-		//fmt.Println("kategorie")
 		View.Rubric = i
-		if View.Rubrics.Current() == nil {
+		if View.Rubrics.Index().Current() == nil {
 			View.Rubric = 0
 		}
 		return nil
 	}
 	if dir == "/artikel/" {
 		//is Rubricpage
-		//fmt.Println("artikel")
 		View.Article = i
-		if View.Articles.Current() == nil {
+		if View.Articles.Index().Current() == nil {
 			View.Article = 0
 		}
 		return nil
@@ -101,40 +94,33 @@ func CommandUnit(w http.ResponseWriter, r *http.Request) {
 }
 func Controller(w http.ResponseWriter, r *http.Request) {
 	ParseParameters(r.URL.Path, r.Host)
-	dir, file := path.Split("")
-	fmt.Printf("Dir:%s: File:%s:\n", dir, file)
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 
-	/*for k, v := range View.Blogs {
-		fmt.Printf("Key:%v: Value:%s:\n", k, v.Title)
-	}*/
 	if View.Index != 0 {
-		View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", View.Blogs.Current().Description)
-		View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", View.Blogs.Current().Keywords)
+		View.HeadMeta = fmt.Sprintf(`<meta name="description" content="%s" />`, View.Blogs.Current().Description)
+		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, View.Blogs.Current().Keywords)
 		Dispatch(w)
 		return
 	}
 	if View.Article != 0 {
-		View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", View.Articles.Current().Description)
-		View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", View.Articles.Current().Keywords)
+		View.HeadMeta = fmt.Sprintf(`<meta name="description\" content=\"%s\" />`, View.Articles.Current().Description)
+		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, View.Articles.Current().Keywords)
 		Dispatch(w)
 		return
 	}
 	if View.Rubric != 0 {
-		View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", View.Rubrics.Current().Description)
-		View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", View.Rubrics.Current().Keywords)
+		View.HeadMeta = fmt.Sprintf(`<meta name="description" content="%s" />`, View.Rubrics.Current().Description)
+		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, View.Rubrics.Current().Keywords)
 		Dispatch(w)
 		return
 	}
 	if View.Imprint {
-		View.HeadMeta = fmt.Sprintf("<meta name=\"description\" content=\"%s\" />\n", "Impressum")
-		View.HeadMeta += fmt.Sprintf("<meta name=\"keywords\" content=\"%s\" />", "Impressum")
+		View.HeadMeta = fmt.Sprintf(`<meta name="description" content="%s" />`, "Impressum")
+		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, "Impressum")
 		Dispatch(w)
 		return
 	}
-	//fmt.Printf("ART:%v:\n", View.Article)
-	//fmt.Printf("KAT:%v:\n", View.Rubric)
 
 	bufNozip := bytes.NewBufferString(Error)
 	gz, _ := gzip.NewWriter(w)
@@ -146,7 +132,7 @@ func Images(w http.ResponseWriter, r *http.Request) {
 	mimeType := mime.TypeByExtension(path.Ext(imagePath))
 
 	w.SetHeader("Content-Type", mimeType)
-	//w.SetHeader("Cache-Control", "public")
+	w.SetHeader("Cache-Control","max-age=31104000, public")
 	current := View.Themes.Current()
 	for _, v := range View.Resources {
 		if v.Template == current.ID {

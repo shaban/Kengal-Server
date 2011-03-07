@@ -27,7 +27,6 @@ func (s Servers) Current() *Server {
 func (b Blogs) Current() *Blog {
 	for k, v := range b {
 		if v.Url == View.Host {
-			//fmt.Println(v.Url)
 			return b[k]
 		}
 	}
@@ -52,39 +51,45 @@ func (a Articles) Latest() []*Article {
 	return a[0:5]
 }
 func (a Articles) Index() Articles {
-	if View.Index == 0 {
-		return nil
+	b := View.Blogs.Current()
+	s := make([]*Article, 0)
+	for k, v := range a {
+		if b.ID == v.Blog {
+
+			s = append(s, a[k])
+		}
 	}
-	return a
+	return s
 }
 
-func (a Articles) Next()string{
-	//pagemax := 3
-	visible :=  View.Index * PaginatorMax
-	exist := len(a)
-	//fmt.Println(exist)
-	//fmt.Println(visible)
-	if exist > visible{
-	return fmt.Sprintf("/index/%v",View.Index+1)
+func (a Articles) Next() string {
+	if View.Index == 0 {
+		return ""
+	}
+	if len(a) > View.Index*PaginatorMax {
+		return fmt.Sprintf("/index/%v", View.Index+1)
 	}
 	return ""
 }
 
-func (a Articles)Paginated()[]*Article{
+func (a Articles) Paginated() []*Article {
+	if View.Index == 0 {
+		return nil
+	}
 	l := len(a)
 	if l < PaginatorMax {
 		return a
 	}
-	if (View.Index-1) * PaginatorMax+PaginatorMax > l{
-		return a[(View.Index-1) * PaginatorMax:l]
+	if (View.Index-1)*PaginatorMax+PaginatorMax > l {
+		return a[(View.Index-1)*PaginatorMax : l]
 	}
-	return a[(View.Index-1) * PaginatorMax:(View.Index-1) * PaginatorMax+PaginatorMax]
+	return a[(View.Index-1)*PaginatorMax : (View.Index-1)*PaginatorMax+PaginatorMax]
 }
-func (a Articles)Prev()string{
-	if View.Index==1{
-	return ""
+func (a Articles) Prev() string {
+	if View.Index <= 1 {
+		return ""
 	}
-	return fmt.Sprintf("/index/%v",View.Index-1)
+	return fmt.Sprintf("/index/%v", View.Index-1)
 }
 
 func (a Articles) Current() *Article {
@@ -124,6 +129,16 @@ func (r Rubrics) Current() *Rubric {
 		}
 	}
 	return nil
+}
+func (r Rubrics) Index() Rubrics {
+	b := View.Blogs.Current()
+	s := make([]*Rubric, 0)
+	for k, v := range r {
+		if v.Blog == b.ID {
+			s = append(s, r[k])
+		}
+	}
+	return s
 }
 
 type Server struct {
@@ -270,7 +285,7 @@ func main() {
 
 	http.HandleFunc("/", Controller)
 	//http.HandleFunc("/admin/", AdminController)
-	
+
 	http.HandleFunc("/command/", CommandUnit)
 
 	http.HandleFunc("/global/", GlobalController)
