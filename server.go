@@ -52,6 +52,10 @@ func ParseParameters(url, host string) os.Error {
 		//is Index non Startpage
 		//fmt.Println("Index x")
 		View.Index = i
+		if ((i-1) * PaginatorMax) > len(View.Articles.Index()){
+			View.Index = 1
+			return nil
+		}
 		return nil
 	}
 	if file == "impressum" {
