@@ -52,8 +52,8 @@ func ParseParameters(url, host string) os.Error {
 		//is Index non Startpage
 		//fmt.Println("Index x")
 		View.Index = i
-		if ((i-1) * PaginatorMax) > len(View.Articles.Index()){
-			View.Index = 1
+		if ((i - 1) * PaginatorMax) > len(View.Articles.Index()) {
+			View.Index = 0
 			return nil
 		}
 		return nil
@@ -76,12 +76,18 @@ func ParseParameters(url, host string) os.Error {
 		//is Rubricpage
 		//fmt.Println("kategorie")
 		View.Rubric = i
+		if View.Rubrics.Current() == nil {
+			View.Rubric = 0
+		}
 		return nil
 	}
 	if dir == "/artikel/" {
 		//is Rubricpage
 		//fmt.Println("artikel")
 		View.Article = i
+		if View.Articles.Current() == nil {
+			View.Article = 0
+		}
 		return nil
 	}
 	return os.ENOTDIR
