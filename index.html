@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{Blogs.Current.Title}</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+{HeadMeta}
+<link href="/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="wrapper">
+  <div id="header">
+    <h2> <a href="/">{Blogs.Current.Title}</a></h2>
+    <h3>{Blogs.Current.Slogan}</h3>
+  </div>
+  <div id="menu">
+    <ul>
+      <li><a href="/" {.section Imprint}{.or}class="active"{.end}>Home</a></li>
+      <li><a href="/impressum" {.section Imprint}class="active"{.end}>Impressum</a></li>
+    </ul>
+  </div>
+  <div id="content">
+    <div id="sidebar">
+      <ul>
+        <li id="categories">
+          <h2>Kategorien</h2>
+          <ul>
+          	{.repeated section Rubrics.Index}
+          	<li><a href="{Path}">{Title}</a></li>
+            {.end}
+          </ul>
+        </li>
+        <!-- end #categories -->
+        <li id="blogroll">
+          <h2>Letzte Beiträge</h2>
+          <ul>
+            {.repeated section Articles.Index.Latest}
+          	<li><a href="{Path}">{Title}</a></li>
+            {.end}
+          </ul>
+        </li>
+        <!-- end #blogroll -->
+      </ul>
+    </div>
+    <!-- end #sidebar -->
+    <div id="blog">
+
+    	{.section Articles.Index.Paginated}
+        	{.repeated section @}
+				<div id="post-{ID}" class="post">
+				<h2 class="title"> <a href="{Path}">{Title}</a></h2>
+				<h3 class="date">{DateTime}</h3>
+				<div class="entry">{Teaser}</div>
+				<p class="meta">Posted in <a href="{RubricPath}">{RubricTitle}</a> | <a href="{Path}">Weiterlesen&raquo;</a></a></p>
+				</div>
+		    {.end}
+			{.section Articles.Index.Prev}
+				<a href ="{@}"><<</a>
+			{.end}
+			{.section Articles.Index.Next}
+				<a href ="{@}">>></a>
+			{.end}
+    	{.end}
+    	{.repeated section Articles.Index.Rubric}
+    	<div id="post-{ID}" class="post">
+	    	<h2 class="title"> <a href="{Path}">{Title}</a></h2>
+	    	<h3 class="date">{DateTime}</h3>
+	    	<div class="entry">{Teaser}</div>
+	        <p class="meta">Posted in <a href="{RubricPath}">{RubricTitle}</a> | <a href="{Path}">Weiterlesen&raquo;</a></p>
+        </div>
+    	{.end}
+    	{.section Articles.Index.Current}
+    	<div id="post-{ID}" class="post">
+	    	<h2 class="title"> <a title="{Title}" href="{Path}">{Title}</a></h2>
+	    	<h3 class="date">{DateTime}</h3>
+	    	<div class="entry">{Text}</div>
+	        <p class="meta">Posted in <a href="{RubricPath}">{RubricTitle}</a></p>
+        </div>
+    	{.end}
+    	{.section Imprint}
+    	<img src="/global/imprint.png" /></img>
+    	{.end}
+    </div>
+    <!-- end #blog -->
+    <div style="clear: both; height: 1px;"></div>
+  </div>
+  <!-- end #content -->
+  <!-- Please do not remove the "Design by" information. -->
+  <div id="footer">
+    <p>{Blogs.Current.Slogan} | Design by <a href="http://www.sumanasa.com/">Sumanasa.com</a>.</p>
+  </div>
+  <!-- end footer -->
+</div>
+<!-- end #wrapper -->
+</body>
+</html>
+

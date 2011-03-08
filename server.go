@@ -94,6 +94,11 @@ func CommandUnit(w http.ResponseWriter, r *http.Request) {
 }
 func Controller(w http.ResponseWriter, r *http.Request) {
 	ParseParameters(r.URL.Path, r.Host)
+	if r.FormValue("mode") == "admin"{
+		AdminController(w,r)
+		return
+	}
+	
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 

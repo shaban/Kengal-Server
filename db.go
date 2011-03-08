@@ -49,7 +49,7 @@ func prepareMysql() os.Error {
 	if err != nil {
 		return err
 	}
-	statement.Blogs, err = db.Prepare("SELECT * FROM blogs WHERE Server=?")
+	statement.Blogs, err = db.Prepare("SELECT * FROM blogs WHERE Server=? ORDER by Title")
 	if err != nil {
 		return err
 	}

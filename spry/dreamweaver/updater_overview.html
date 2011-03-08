@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Spry Updater for Dreamweaver CS3</title>
+<link href="../css/articles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h3>Spry Updater for Dreamweaver CS3</h3>
+<p>The Spry Team has build the Spry Updater for Dreamweaver CS3. This is an extension that updates the Spry files within Dreamweaver and it provides an interface for updating the Spry files in the sites.</p>
+<h4>Where it is</h4>
+<p>The Spry updater is located on the <a href="Spry161Updater1.0.0.mxp">here.</a></p>
+<h4>How to install</h4>
+<p>Double clicking the mxp file should open the Adobe Extension Manager and start installing.</p>
+<h4>What it does</h4>
+<p>The Spry updater does 2 things. </p>
+<p>First: it updates the Spry javascript and css files that are copied to the site when a user inserts a Spry feature to their page. These are kept in the Dreamweaver Configuration folder. Due to the way extensions work, these new files are added to the User Configuration folder and Dreamweaver picks it up from there.</p>
+<p>This means that when using a Spry feature <em>for the first time in the site, </em>Dreamweaver will copy over these new versions to the site folder. If the these files already exist in the site (Usually the SpryAssets folder), Dreamweaver will not update the files. </p>
+<p>Second: We provide a mechanism for updating your <em>existing</em> Spry files in the site folder. Installing the extension will give a new menu option in the Site Menu: Site &gt; Spry Updater...</p>
+<p>Clicking this option will open the Spry Updater dialog. This dialog allows you to copy over the new files to your site. We will detect your current site version and provide an interface where you can choose to update each feature. This will copy the js AND the css to your site. </p>
+<p>We automatically make a backup of the existing folder. This ensures that any customizations that may have been made to the files will not be lost. </p>
+<p>There is also a link in the dialog that allows you to check for the latest version.</p>
+<h4>How to use</h4>
+<ol>
+  <li>Install the extension.</li>
+  <li>While in your Spry site, go to Site &gt; Spry Updater...</li>
+  <li>Check the boxes of the features you want to update.</li>
+  <li>Click Update. The files will be copied over and a backup made.</li>
+  <li>Upload the new files.</li>
+</ol>
+<p>There is a detailed Spry Updater Help page here: <a href="http://labs.adobe.com/technologies/spry/articles/updater_help/">http://labs.adobe.com/technologies/spry/articles/updater_help/</a></p>
+<p>Note: This extension does not work in versions older than Dreamweaver CS3. This extension does not install any additional functionality to Dreamweaver. It updated the existing features.</p>
+<p>Note: This extension updates Code Hinting and Code Coloring in Dreamweaver CS 3 for Spry 1.6 features. (Code Hinting was not updated for Spry 1.6.1.)</p>
+</body>
+</html>

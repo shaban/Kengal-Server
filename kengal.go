@@ -24,6 +24,12 @@ func (s Servers) Current() *Server {
 	return nil
 }
 
+func (srv *Server) Active() bool {
+	if View.Server == 0 || srv.ID != View.Server{
+		return false
+	}
+	return true
+}
 func (b Blogs) Current() *Blog {
 	for k, v := range b {
 		if v.Url == View.Host {
@@ -292,9 +298,13 @@ func main() {
 	http.HandleFunc("/images/", Images)
 	http.HandleFunc("/style.css", Css)
 	http.HandleFunc("/favicon.ico", GlobalController)
-	//http.HandleFunc("/jsondata/", DataController)
+	http.HandleFunc("/jsondata/", DataController)
+	http.HandleFunc("/spry/", FileHelper)
 
-	//http.HandleFunc("/js/", FileHelper)
+	http.HandleFunc("/js/", FileHelper)
+	http.HandleFunc("/css/", FileHelper)
+	http.HandleFunc("/html/", FileHelper)
+	
 	//http.HandleFunc("/ckeditor/", FileHelper)
 	//http.HandleFunc("/templates/", FileHelper)
 
