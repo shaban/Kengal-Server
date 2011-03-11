@@ -1,0 +1,24 @@
+{.section Articles.Current}
+<fieldset>
+<a class="half" href="javascript:$('#detailArticle').toggle();">Artikel [anzeigen | verbergen]</a>
+<a class="half" href="http://{Blogs.Current.Url}/artikel/{ID}/{Url}" target="_blank">Artikel Inspizieren</a>
+<div id="detailArticle">
+<label class="half">Title</label><label class="half">Url</label>
+<input class="half" type="text" value="{Title}"/><input class="half" type="text" value="{Url}"/>
+<label class="half">Keywords</label><label class="half">Description</label>
+<input class="half" type="text" value="{Keywords}"/><input class="half" type="text" value="{Description}"/>
+<label>In Andere Rubrik verschieben</label>
+<select class="full" name="blogArticlesRubric" size="1">
+{.repeated section Rubrics.Index}
+<option {.section @}{.section Active}selected="selected"{.end}{.end} name="{ID}">{Title}</option>
+{.end}
+</select>
+<label class="full">Erstellungsdatum</label>
+<input class="full" disabled="disabled" type="text" value="{DateTime}"/>
+<br/><br/>
+<a class="half" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=articles&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}',true);">Änderungen an Artikel verwerfen</a>
+<a class="half" href="#">Änderungen an Artikel speichern</a>
+<hr/>
+<a class="full" href="javascript:loadDetail(4,'/?host={Blogs.Current.Url}&which=editor&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');">Text & Teaser bearbeiten</a>
+{.end}
+</div>

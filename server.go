@@ -99,6 +99,11 @@ func Controller(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
+	if r.FormValue("mode") == "snippet"{
+		SnippetController(w,r)
+		return
+	}
+	
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 

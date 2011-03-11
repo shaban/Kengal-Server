@@ -1,0 +1,28 @@
+{.section Rubrics.Current}
+<fieldset>
+<a class="half" href="javascript:$('#detailRubric').toggle();">Rubrik [anzeigen | verbergen]</a>
+<a class="half" href="http://{Blogs.Current.Url}/kategorie/{ID}/{Url}" target="_blank">Rubrik Inspizieren</a>
+<div id="detailRubric">
+	<label class="half">Title</label><label class="half">Url</label>
+	<input class="half" type="text" value="{Title}"/><input class="half" type="text" value="{Url}"/>
+	<label class="half">Keywords</label><label class="half">Description</label>
+	<input class="half" type="text" value="{Keywords}"/><input class="half" type="text" value="{Description}"/>
+	
+	<label class="full">In Anderen Blog verschieben</label>
+	<select class="full" name="blogArticlesRubric" size="1">
+	{.repeated section Blogs}
+		<option {.section @}{.section Active}selected="selected"{.end}{.end} name="{ID}">{Title}</option>
+	{.end}
+	</select>
+	<br/>
+	<br/>
+	<a class="half" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=rubrics&mode=snippet&server={Servers.Current.ID}&rubric={ID}',true);">Änderungen an Rubric verwerfen</a>
+	<a class="half" onclick="" href="#">Änderungen an Rubrik übernehmen</a>
+<hr/>
+<label class="full">Artikel</label>
+{.repeated section Articles.Rubric}
+<a class="fourth" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=articles&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" name="blogArticlesRubric" size="1">{Title}</a>
+{.end}
+</fieldset>
+</div>
+{.end}

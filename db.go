@@ -237,7 +237,7 @@ func (p *Page) loadBlogData() os.Error {
 	for k, _ := range p.Rubrics {
 		p.Rubrics[k] = new(Rubric)
 
-		err = statement.Rubrics.BindResult(&p.Rubrics[k].ID, &p.Rubrics[k].Title, &p.Rubrics[k].ShortUrl,
+		err = statement.Rubrics.BindResult(&p.Rubrics[k].ID, &p.Rubrics[k].Title, &p.Rubrics[k].Url,
 			&p.Rubrics[k].Keywords, &p.Rubrics[k].Description, &p.Rubrics[k].Blog)
 		if err != nil {
 			return err

@@ -1,0 +1,45 @@
+{.section Articles.Current}
+<fieldset>
+<a class="full" href="javascript:$('#detailEditor').toggle();">Editor [anzeigen | verbergen]</a>
+<div id="detailEditor">
+<label class="full">Teaser</label>
+<textarea id="editor1" name="editor1">{Teaser}</textarea>
+<label class="full">Text</label>
+<textarea id="editor2" name="editor2">{Text}</textarea>
+<br/>
+<a class="half" onclick="$('#detail4').load('/?host={Blogs.Current.Url}&which=editor&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" href="#">Änderungen an Artikeltexten verwerfen</a>
+<a class="half" href="#">Änderungen an Artikeltexten übernehmen</a>
+{.end}
+</fieldset>
+</div>
+<script>
+if(CKEDITOR.instances['editor1'])
+	delete CKEDITOR.instances['editor1'];
+CKEDITOR.replace( 'editor1',
+{.meta-left}
+toolbar :
+	[
+	    ['Source','-','Undo','Redo','-','Find','Replace','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+	    ['Link','Unlink'],
+	    ['Image','Table']
+	],
+	height : 130
+{.meta-right});	
+
+if(CKEDITOR.instances['editor2'])
+	delete CKEDITOR.instances['editor2'];
+CKEDITOR.replace( 'editor2',
+{.meta-left}
+toolbar :
+	[
+	    ['Source','-','Undo','Redo','-','Find','Replace','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+	    ['Link','Unlink'],
+	    ['Image','Table']
+	],
+	height : 270
+{.meta-right});
+</script>

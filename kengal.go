@@ -30,6 +30,28 @@ func (srv *Server) Active() bool {
 	}
 	return true
 }
+
+func (t *Theme) Active() bool {
+	if View.Blogs.Current().Template == t.ID{
+		return true
+	}
+	return false
+}
+
+func (b *Blog) Active() bool {
+	if b.ID == View.Blogs.Current().ID{
+		return true
+	}
+	return false
+}
+
+func (r *Rubric) Active() bool {
+	if r.ID == View.Rubrics.Current().ID{
+		return true
+	}
+	return false
+}
+
 func (b Blogs) Current() *Blog {
 	for k, v := range b {
 		if v.Url == View.Host {
@@ -169,7 +191,7 @@ type Blog struct {
 type Rubric struct {
 	ID          int
 	Title       string
-	ShortUrl    string
+	Url    string
 	Keywords    string
 	Description string
 	Blog        int
@@ -266,7 +288,7 @@ func (a *Article) RubricTitle() string {
 	return ""
 }
 func (r *Rubric) Path() string {
-	return fmt.Sprintf("/kategorie/%v/%s", r.ID, r.ShortUrl)
+	return fmt.Sprintf("/kategorie/%v/%s", r.ID, r.Url)
 }
 
 func main() {
@@ -288,7 +310,7 @@ func main() {
 		fmt.Println(err.String())
 		os.Exit(1)
 	}
-
+	//popdb()
 	http.HandleFunc("/", Controller)
 	//http.HandleFunc("/admin/", AdminController)
 
@@ -298,14 +320,14 @@ func main() {
 	http.HandleFunc("/images/", Images)
 	http.HandleFunc("/style.css", Css)
 	http.HandleFunc("/favicon.ico", GlobalController)
-	http.HandleFunc("/jsondata/", DataController)
-	http.HandleFunc("/spry/", FileHelper)
+	//http.HandleFunc("/snippet/", DataController)
+	//http.HandleFunc("/spry/", FileHelper)
 
 	http.HandleFunc("/js/", FileHelper)
 	http.HandleFunc("/css/", FileHelper)
 	http.HandleFunc("/html/", FileHelper)
 	
-	//http.HandleFunc("/ckeditor/", FileHelper)
+	http.HandleFunc("/ckeditor/", FileHelper)
 	//http.HandleFunc("/templates/", FileHelper)
 
 	http.ListenAndServe(":80", nil)
