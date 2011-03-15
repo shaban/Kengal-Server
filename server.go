@@ -85,12 +85,154 @@ func ParseParameters(url, host string) os.Error {
 	}
 	return os.ENOTDIR
 }
-func CommandUnit(w http.ResponseWriter, r *http.Request) {
-	err := View.loadBlogData()
+func BlogSave(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	b := new(Blog)
+	f := r.Form
+	
+	b.Title=f["Title"][0]
+	b.Slogan=f["Slogan"][0]
+	b.Keywords=f["Keywords"][0]
+	b.Description=f["Description"][0]
+	b.Template,_=strconv.Atoi(f["Template"][0])
+	b.ID,_=strconv.Atoi(f["ID"][0])
+	b.Server,_=strconv.Atoi(f["Server"][0])
+	b.Url=f["Url"][0]
+	
+	err := statement.UpdateBlog.BindParams(b.Description, b.Keywords, b.Server, b.Slogan, b.Template, b.Title, b.Url, b.ID)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Blog %s fehlgeschlagen",b.Title)))
+		return
+	}
+	err = statement.UpdateBlog.Execute()
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Blog %s fehlgeschlagen",b.Title)))
+		return
+	}
+	View.Blogs.Replace(b)
+	w.Write([]byte(fmt.Sprintf("Blog %s erfolgreich gespeichert", b.Title)))
+}
+
+func RubricSave(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	rb := new(Rubric)
+	f := r.Form
+	fmt.Println(f)
+	rb.Title=f["Title"][0]
+	rb.Keywords=f["Keywords"][0]
+	rb.Description=f["Description"][0]
+	rb.Blog,_=strconv.Atoi(f["Blog"][0])
+	rb.ID,_=strconv.Atoi(f["ID"][0])
+	rb.Url=f["Url"][0]
+	
+	err := statement.UpdateRubric.BindParams(rb.Description, rb.Keywords, rb.Blog, rb.Title, rb.Url, rb.ID)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Rubrik %s fehlgeschlagen | BindParams",rb.Title)))
+		return
+	}
+	err = statement.UpdateRubric.Execute()
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Rubrik %s fehlgeschlagen | Execute",rb.Title)))
+		return
+	}
+	View.Rubrics.Replace(rb)
+	w.Write([]byte(fmt.Sprintf("Rubrik %s erfolgreich gespeichert", rb.Title)))
+}
+
+func ArticleSave(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	a := new(Article)
+	f := r.Form
+	fmt.Println(f["Blog"][0])
+	a.Title=f["Title"][0]
+	a.Keywords=f["Keywords"][0]
+	a.Description=f["Description"][0]
+	a.Rubric,_=strconv.Atoi(f["Rubric"][0])
+	a.ID,_=strconv.Atoi(f["ID"][0])
+	a.Url=f["Url"][0]
+	a.Blog,_=strconv.Atoi(f["Blog"][0])
+	a.Date = f["Date"][0]
+	a.Teaser = f["Teaser"][0]
+	a.Text = f["Text"][0]
+	
+	err := statement.UpdateArticle.BindParams(a.Description, a.Keywords, a.Blog, a.Rubric, a.Date, a.Title, a.Url, a.Text, a.Teaser, a.ID)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Artikel %s fehlgeschlagen | BindParams",a.Title)))
+		return
+	}
+	err = statement.UpdateArticle.Execute()
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Artikel %s fehlgeschlagen | Execute",a.Title)))
+		return
+	}
+	View.Articles.Replace(a)
+	w.Write([]byte(fmt.Sprintf("Artikel %s erfolgreich gespeichert", a.Title)))
+}
+
+func BlogNew(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	b := new(Blog)
+	f := r.Form
+	
+	b.Title=f["Title"][0]
+	b.Slogan=f["Slogan"][0]
+	b.Keywords=f["Keywords"][0]
+	b.Description=f["Description"][0]
+	b.Template,_=strconv.Atoi(f["Template"][0])
+	b.Server,_=strconv.Atoi(f["Server"][0])
+	b.Url=f["Url"][0]
+	
+	err := statement.InsertBlog.BindParams(b.Description, b.Keywords, b.Server, b.Slogan, b.Template, b.Title, b.Url)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Blog %s fehlgeschlagen",b.Title)))
+		return
+	}
+	err = statement.InsertBlog.Execute()
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Blog %s fehlgeschlagen",b.Title)))
+		return
+	}
+	b.ID = int(statement.InsertBlog.LastInsertId)
+	View.Blogs = append(View.Blogs,b)
+	w.Write([]byte(fmt.Sprintf("Blog %s erfolgreich angelegt", b.Title)))
+}
+
+func RubricNew(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	rb := new(Rubric)
+	f := r.Form
+	fmt.Println(f)
+	rb.Title=f["Title"][0]
+	rb.Keywords=f["Keywords"][0]
+	rb.Description=f["Description"][0]
+	rb.Blog,_=strconv.Atoi(f["Blog"][0])
+	rb.Url=f["Url"][0]
+	
+	err := statement.InsertRubric.BindParams(rb.Description, rb.Keywords, rb.Blog, rb.Title, rb.Url)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Rubrik %s fehlgeschlagen",rb.Title)))
+		return
+	}
+	err = statement.InsertRubric.Execute()
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Rubrik %s fehlgeschlagen",rb.Title)))
+		return
+	}
+	rb.ID = int(statement.InsertRubric.LastInsertId)
+	View.Rubrics = append(View.Rubrics,rb)
+	w.Write([]byte(fmt.Sprintf("Rubrik %s erfolgreich angelegt", rb.Title)))
+}
+
+func ArticleNew(w http.ResponseWriter, r *http.Request) {
+}
+
+
+func CommandUnit(w http.ResponseWriter, r *http.Request) {	
+	/*err := View.loadBlogData()
 	if err != nil {
 		fmt.Println(err.String())
 		os.Exit(1)
-	}
+	}*/
 }
 func Controller(w http.ResponseWriter, r *http.Request) {
 	ParseParameters(r.URL.Path, r.Host)
@@ -105,37 +247,48 @@ func Controller(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
-	w.SetHeader("Content-Encoding", "gzip")
+	
+	if View.Blogs.Current() == nil{
+		kw := new(KengalWebError)
+		kw.Code = 403
+		kw.Msg = "Zugriff nicht erlaubt"
+		kw.Write(w)
+		return
+	}
 
 	if View.Index != 0 {
+		w.SetHeader("Content-Encoding", "gzip")
 		View.HeadMeta = fmt.Sprintf(`<meta name="description" content="%s" />`, View.Blogs.Current().Description)
 		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, View.Blogs.Current().Keywords)
 		Dispatch(w)
 		return
 	}
 	if View.Article != 0 {
+		w.SetHeader("Content-Encoding", "gzip")
 		View.HeadMeta = fmt.Sprintf(`<meta name="description\" content=\"%s\" />`, View.Articles.Current().Description)
 		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, View.Articles.Current().Keywords)
 		Dispatch(w)
 		return
 	}
 	if View.Rubric != 0 {
+		w.SetHeader("Content-Encoding", "gzip")
 		View.HeadMeta = fmt.Sprintf(`<meta name="description" content="%s" />`, View.Rubrics.Current().Description)
 		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, View.Rubrics.Current().Keywords)
 		Dispatch(w)
 		return
 	}
 	if View.Imprint {
+		w.SetHeader("Content-Encoding", "gzip")
 		View.HeadMeta = fmt.Sprintf(`<meta name="description" content="%s" />`, "Impressum")
 		View.HeadMeta += fmt.Sprintf(`<meta name="keywords" content="%s" />`, "Impressum")
 		Dispatch(w)
 		return
 	}
-
-	bufNozip := bytes.NewBufferString(Error)
-	gz, _ := gzip.NewWriter(w)
-	gz.Write(bufNozip.Bytes())
-	gz.Close()
+	kw := new(KengalWebError)
+		kw.Code = 404
+		kw.Msg = "Möglicherweise haben Sie eine falsche Url eingegeben"
+		kw.Write(w)
+		return
 }
 func Images(w http.ResponseWriter, r *http.Request) {
 	imagePath := path.Base(r.URL.Path)

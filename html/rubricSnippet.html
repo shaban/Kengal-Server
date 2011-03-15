@@ -1,28 +1,48 @@
 {.section Rubrics.Current}
-<fieldset>
-<a class="half" href="javascript:$('#detailRubric').toggle();">Rubrik [anzeigen | verbergen]</a>
-<a class="half" href="http://{Blogs.Current.Url}/kategorie/{ID}/{Url}" target="_blank">Rubrik Inspizieren</a>
-<div id="detailRubric">
-	<label class="half">Title</label><label class="half">Url</label>
-	<input class="half" type="text" value="{Title}"/><input class="half" type="text" value="{Url}"/>
-	<label class="half">Keywords</label><label class="half">Description</label>
-	<input class="half" type="text" value="{Keywords}"/><input class="half" type="text" value="{Description}"/>
+	<fieldset>
+	
+	<a class="half" href="javascript:$('#detailRubric').toggle();">Rubrik [anzeigen | verbergen]</a>
+	<a class="half" href="http://{Blogs.Current.Url}/kategorie/{ID}/{Url}" target="_blank">Rubrik Inspizieren</a>
+	
+	<div id="detailRubric">
+	<form id="UpdateRubric">
+	
+	<label class="half">Title</label>
+	<label class="half">Url</label>
+	
+	<input class="half" type="text" value="{Title}" name="Title"/>
+	<input class="half" type="text" value="{Url}" name="Url"/>
+	
+	<label class="half">Keywords</label>
+	<label class="half">Description</label>
+	
+	<input class="half" type="text" value="{Keywords}" name="Keywords"/>
+	<input class="half" type="text" value="{Description}" name="Description"/>
 	
 	<label class="full">In Anderen Blog verschieben</label>
-	<select class="full" name="blogArticlesRubric" size="1">
+	<select class="full" size="1" name="Blog">
 	{.repeated section Blogs}
-		<option {.section @}{.section Active}selected="selected"{.end}{.end} name="{ID}">{Title}</option>
+		<option {.section @}{.section Active}selected="selected"{.end}{.end} value="{ID}">{Title}</option>
 	{.end}
 	</select>
+	
 	<br/>
 	<br/>
+	
 	<a class="half" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=rubrics&mode=snippet&server={Servers.Current.ID}&rubric={ID}',true);">Änderungen an Rubric verwerfen</a>
-	<a class="half" onclick="" href="#">Änderungen an Rubrik übernehmen</a>
-<hr/>
-<label class="full">Artikel</label>
-{.repeated section Articles.Rubric}
-<a class="fourth" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=articles&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" name="blogArticlesRubric" size="1">{Title}</a>
-{.end}
-</fieldset>
-</div>
+	<a class="half" onclick="" href="javascript:$.post('/admin/rubric/save', $('#UpdateRubric').serialize(),function(data){.meta-left}$('#console').prepend(data+'<hr/>');{.meta-right});">Änderungen an Rubrik übernehmen</a>
+	
+	<input type="hidden" value="{ID}" name="ID"/>
+	
+	<hr/>
+	
+	<label class="full">Artikel</label>
+	<a class="full" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=newarticle&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}');">Neuen Artikel anlegen</a>
+	{.repeated section Articles.Rubric}
+		<a class="fourth" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=articles&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" name="blogArticlesRubric" size="1">{Title}</a>
+	{.end}
+	
+	</fieldset>
+	</form>
+	</div>
 {.end}

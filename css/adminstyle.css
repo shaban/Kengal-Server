@@ -1,0 +1,245 @@
+body {
+        padding:0;
+        border:0px;			/* This removes the border around the viewport in old versions of IE */
+        width:1200px;
+        background:LightSlateGray;
+        min-width:600px;    /* Minimum width of layout - remove line if not required */							/* The min-width property does not work in old versions of Internet Explorer */
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 10px;	
+    }
+    h1, h2, h3 {
+        margin:.8em 0 .2em 0;
+        padding:0;
+    }
+    p {
+        margin:.4em 0 .8em 0;
+        padding:0;
+    }
+	img {
+		margin:10px 0 5px;
+	}
+	/* Header styles */
+    #header {
+        clear:both;
+        float:left;
+        width:100%;
+    }
+	#header {
+		border-bottom:1px solid #000;
+	}
+	#header p,
+	#header h1,
+	#header h2 {
+	    padding:.4em 15px 0 15px;
+        margin:0;
+	}
+	#header ul {
+	    clear:left;
+	    float:left;
+	    width:100%;
+	    list-style:none;
+	    margin:10px 0 0 0;
+	    padding:0;
+	}
+	#header ul li {
+	    display:inline;
+	    list-style:none;
+	    margin:0;
+	    padding:0;
+	}
+	#header ul li a {
+	    display:block;
+	    float:left;
+	    margin:0 0 0 1px;
+	    padding:3px 10px;
+	    text-align:center;
+	    background:#eee;
+	    color:#000;
+	    text-decoration:none;
+	    position:relative;
+	    left:15px;
+		line-height:1.3em;
+	}
+	#header ul li a:hover {
+	    background:#369;
+		color:#fff;
+	}
+	#header ul li a.active,
+	#header ul li a.active:hover {
+	    color:#fff;
+	    background:#000;
+	    font-weight:bold;
+	}
+	#header ul li a span {
+	    display:block;
+	}
+	/* 'widths' sub menu */
+	#layoutdims {
+		clear:both;
+		background:#eee;
+		border-top:4px solid #000;
+		margin:0;
+		font-size: 14px;
+		padding:6px 15px !important;
+		text-align:right;
+	}
+	/* column container */
+	.colmask {
+		position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+	    clear:both;
+	    float:left;
+        width:100%;				/* width of whole page */
+		overflow:hidden;		/* This chops off any overhanging divs */
+	}
+	/* holy grail 3 column settings */
+	.holygrail {
+	    background:#000;    	/* Right column background colour */
+	}
+    .holygrail .colmid {
+        float:left;
+        width:200%;
+        margin-left:0px; 	/* Width of right column */
+        position:relative;
+        right:100%;
+        background:aliceblue;    	/* Centre column background colour */
+    }
+    .holygrail .colleft {
+        float:left;
+        width:100%;
+        margin-left:-50%;
+        position:relative;
+        left:399px;         	/* Left column width + right column width */
+        background:#bbb;    	/* Left column background colour */
+    }
+    .holygrail .col1wrap {
+        float:left;
+	    width:50%;
+	    position:relative;
+	    right:399px;        	/* Width of left column */
+	    padding-bottom:0px; 	/* Centre column bottom padding. Leave it out if it's zero */
+	}
+	.holygrail .col1 {
+        margin:0 0 0 399px;     	/* Centre column side padding:
+                            	Left padding = left column width + centre column left padding width
+                            	Right padding = right column width + centre column right padding width */
+        position:relative;
+	    left:200%;
+	    overflow:hidden;
+	}
+    .holygrail .col2 {
+        float:left;
+        float:right;			/* This overrides the float:left above */
+        width:399px;        	/* Width of left column content (left column width minus left and right padding) */
+        position:relative;
+        right:0px;         	/* Width of the left-had side padding on the left column */
+    }
+    .holygrail .col3 {
+        float:left;
+        float:right;			/* This overrides the float:left above */
+        width:0px;        	/* Width of right column content (right column width minus left and right padding) */
+        margin-right:0px;  	/* Width of right column right-hand padding + left column left and right padding */
+        position:relative;
+        left:50%;
+    }
+	/* Footer styles */
+	#footer {
+        clear:both;
+        float:left;
+        width:100%;
+		border-top:1px solid #000;
+    }
+    #footer p {
+        padding:10px;
+        margin:0;
+    }
+a {
+	background: #adf;
+	color: #369;
+	width: 100%;
+	border-right: 1px solid #999;
+	border-bottom: 1px solid #999;
+	text-decoration: none;
+	font-weight: bold;
+}
+fieldset{
+	background: #333;
+}
+a, label{
+	display: inline-block;
+	padding: 5px;
+	font-size: 12px;
+}
+input{
+	padding: 3px;
+	display: inline-block;
+	font-size: 12px;
+}
+
+label{
+	font-weight: bold;
+	color: aliceblue;
+}
+a:hover {
+	text-shadow: 1px 1px 4px black;
+	background:#369;
+	color: #fff;
+}
+
+a.selected {
+	background: #333;
+	color: #6cf;
+}
+select{
+	padding: 2px 3px;
+}
+#header {
+	background: #fee;
+}
+.twelfth {
+	width: 8%;
+}
+.sixth{
+	width: 16%;
+}
+.fourth{
+	float: left;
+	width: 178px;
+}
+.third {
+	width: 29%;
+}
+.third2{
+	width: 119px;
+}
+.half{
+	width: 365px;
+}
+.twothird{
+	width: 65%;
+}
+.full{
+	width: 745px;
+}
+
+.title {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.title span {
+	padding-left: 15px;
+	font-style: italic;
+}
+
+.CodeMirror-line-numbers {
+	width: 2.2em;
+	color: #999;
+	background-color: #eee;
+	text-align: right;
+	padding-right: .3em;
+	font-size: 10px;
+	font-family: monospace;
+	padding-top: .4em;
+	line-height: normal;
+}

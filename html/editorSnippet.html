@@ -1,45 +1,38 @@
 {.section Articles.Current}
-<fieldset>
-<a class="full" href="javascript:$('#detailEditor').toggle();">Editor [anzeigen | verbergen]</a>
-<div id="detailEditor">
-<label class="full">Teaser</label>
-<textarea id="editor1" name="editor1">{Teaser}</textarea>
-<label class="full">Text</label>
-<textarea id="editor2" name="editor2">{Text}</textarea>
-<br/>
-<a class="half" onclick="$('#detail4').load('/?host={Blogs.Current.Url}&which=editor&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" href="#">Änderungen an Artikeltexten verwerfen</a>
-<a class="half" href="#">Änderungen an Artikeltexten übernehmen</a>
-{.end}
-</fieldset>
-</div>
-<script>
-if(CKEDITOR.instances['editor1'])
-	delete CKEDITOR.instances['editor1'];
-CKEDITOR.replace( 'editor1',
-{.meta-left}
-toolbar :
-	[
-	    ['Source','-','Undo','Redo','-','Find','Replace','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
-	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink'],
-	    ['Image','Table']
-	],
-	height : 130
-{.meta-right});	
+	<fieldset>
+	
+	<a class="half" href="javascript:$('#detailEditor').toggle();">Editor [anzeigen | verbergen]</a>
+	<a class="half" href="http://{Blogs.Current.Url}/artikel/{ID}/{Url}" target="_blank">Artikel Inspizieren</a>
+	
+	<div id="detailEditor">
+	<form id="UpdateEditor">
+	
+	<label class="full">Text</label>
+	<textarea id="editor2" name="Text">{Text}</textarea>
 
-if(CKEDITOR.instances['editor2'])
-	delete CKEDITOR.instances['editor2'];
-CKEDITOR.replace( 'editor2',
-{.meta-left}
-toolbar :
-	[
-	    ['Source','-','Undo','Redo','-','Find','Replace','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
-	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink'],
-	    ['Image','Table']
-	],
-	height : 270
-{.meta-right});
+	<label class="full">Teaser</label>
+	<textarea id="editor1" name="Teaser">{Teaser}</textarea>
+	
+	<br/>
+	
+	<a class="half" onclick="$('#detail4').load('/?host={Blogs.Current.Url}&which=editor&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" href="#">Änderungen an Artikeltexten verwerfen</a>
+	<a class="half" href="javascript:retrieveTextAndSubmit();">
+	Änderungen an Artikeltexten speichern
+	</a>
+	
+	<input type="hidden" value="{ID}" name="ID"/>
+	<input type="hidden" value="{Rubric}" name="Rubric"/>
+	<input type="hidden" value="{Blog}" name="Blog"/>
+	<input type="hidden" value="{Description}" name="Description"/>
+	<input type="hidden" value="{Keywords}" name="Keywords"/>
+	<input type="hidden" value="{Title}" name="Title"/>
+	<input type="hidden" value="{Url}" name="Url"/>
+	<input type="hidden" value={DateTime} name="Date"/>
+	
+	</form>
+	</div>
+	</fieldset>
+{.end}
+<script>
+spawnEditors();
 </script>

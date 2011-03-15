@@ -27,36 +27,53 @@ type Statement struct {
 	Articles  *mysql.Statement
 	Servers   *mysql.Statement
 	Globals   *mysql.Statement
+
+	UpdateBlog    *mysql.Statement
+	UpdateRubric  *mysql.Statement
+	UpdateArticle *mysql.Statement
+
+	InsertBlog    *mysql.Statement
+	InsertRubric  *mysql.Statement
+	InsertArticle *mysql.Statement
 }
 
-func InitMysql(sock, user, pw, dbname string) os.Error {
+func InitMysql() os.Error {
 	var err os.Error
-	if sock == "" {
-		db, err = mysql.DialUnix(mysql.DEFAULT_SOCKET, user, pw, dbname)
-	} else {
-		db, err = mysql.DialTCP(sock, user, pw, dbname)
-	}
+	db, err = mysql.DialUnix(mysql.DEFAULT_SOCKET, app.User, app.Password, app.Database)
 	if err != nil {
 		return err
 	}
-	db.LogLevel = 0
+	db.LogLevel = uint8(app.LogLevel)
 	db.Query("SET NAMES 'utf8'")
 	return nil
 }
 func prepareMysql() os.Error {
 	var err os.Error
-	statement.Servers, err = db.Prepare("SELECT * FROM servers")
+	statement.UpdateBlog, err = db.Prepare("UPDATE blogs SET Description=?, Keywords=?, Server=?, Slogan=?, Template=?, Title=? ,Url=? WHERE ID=?")
 	if err != nil {
 		return err
 	}
-	statement.Blogs, err = db.Prepare("SELECT * FROM blogs WHERE Server=? ORDER by Title")
+	
+	statement.UpdateRubric, err = db.Prepare("UPDATE rubrics SET Description=?, Keywords=?, Blog=?, Title=? ,Url=? WHERE ID=?")
 	if err != nil {
 		return err
 	}
-	statement.Themes, err = db.Prepare("SELECT * FROM templates")
+	
+	statement.UpdateArticle, err = db.Prepare("UPDATE articles SET Description=?, Keywords=?, Blog=?, Rubric=?, Date=?, Title=?, Url=?, Text=?, Teaser=? WHERE ID=?")
 	if err != nil {
 		return err
 	}
+	
+	statement.InsertBlog, err = db.Prepare("INSERT INTO blogs (Description, Keywords, Server, Slogan, Template, Title, Url) VALUES (?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+	
+	statement.InsertRubric, err = db.Prepare("INSERT INTO rubrics (Description, Keywords, Blog, Title, Url) VALUES (?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
 	statement.Resources, err = db.Prepare("SELECT * FROM resources WHERE Template !=-1")
 	if err != nil {
 		return err
@@ -65,33 +82,41 @@ func prepareMysql() os.Error {
 	if err != nil {
 		return err
 	}
-	statement.Rubrics, err = db.Prepare("SELECT * FROM rubrics WHERE Blog IN (SELECT ID FROM blogs WHERE Server=?)")
+	statement.Themes, err = db.Prepare("SELECT * FROM templates")
 	if err != nil {
 		return err
 	}
-	statement.Articles, err = db.Prepare("SELECT * FROM articles WHERE Blog IN (SELECT ID FROM blogs WHERE Server=?) ORDER BY Date DESC")
+	statement.Servers, err = db.Prepare("SELECT * FROM servers")
+	if err != nil {
+		return err
+	}
+	statement.Blogs, err = db.Prepare("SELECT * FROM blogs ORDER by Title")
+	if err != nil {
+		return err
+	}
+	statement.Rubrics, err = db.Prepare("SELECT * FROM rubrics")
+	if err != nil {
+		return err
+	}
+	statement.Articles, err = db.Prepare("SELECT * FROM articles ORDER BY Date DESC")
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *Page) loadBlogData() os.Error {
-	err := InitMysql(app.DataHost, app.User, app.Password, app.Database)
-	if err != nil {
-		return err
-	}
-	err = prepareMysql()
-	if err != nil {
-		return err
-	}
+func (p *Page) reloadBlogData() os.Error {
+	p.Blogs = nil
+	p.Articles = nil
+	p.Rubrics = nil
+
 	db.Lock()
 	// Load Blogs
-	err = statement.Blogs.BindParams(app.Server)
+	/*err := statement.Blogs.BindParams(View.Server)
 	if err != nil {
 		return err
-	}
-	err = statement.Blogs.Execute()
+	}*/
+	err := statement.Blogs.Execute()
 	if err != nil {
 		return err
 	}
@@ -99,7 +124,11 @@ func (p *Page) loadBlogData() os.Error {
 	if err != nil {
 		return err
 	}
-	p.Blogs = make([]*Blog, statement.Blogs.RowCount())
+	rc := statement.Blogs.RowCount()
+	if rc == 0 {
+		return os.ENOENT
+	}
+	p.Blogs = make([]*Blog, rc)
 	for k, _ := range p.Blogs {
 		p.Blogs[k] = new(Blog)
 		err = statement.Blogs.BindResult(&p.Blogs[k].ID, &p.Blogs[k].Title, &p.Blogs[k].Url,
@@ -117,8 +146,88 @@ func (p *Page) loadBlogData() os.Error {
 		}
 	}
 
+	// Load Rubrics 
+	/*err = statement.Rubrics.BindParams(View.Server)
+	if err != nil {
+		return err
+	}*/
+	err = statement.Rubrics.Execute()
+	if err != nil {
+		return err
+	}
+	err = statement.Rubrics.StoreResult()
+	if err != nil {
+		return err
+	}
+	rc = statement.Rubrics.RowCount()
+	if rc == 0 {
+		return os.ENOENT
+	}
+	p.Rubrics = make([]*Rubric, rc)
+	for k, _ := range p.Rubrics {
+		p.Rubrics[k] = new(Rubric)
+
+		err = statement.Rubrics.BindResult(&p.Rubrics[k].ID, &p.Rubrics[k].Title, &p.Rubrics[k].Url,
+			&p.Rubrics[k].Keywords, &p.Rubrics[k].Description, &p.Rubrics[k].Blog)
+		if err != nil {
+			return err
+		}
+		eof, err := statement.Rubrics.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
+	}
+
+	// Load Articles 
+	/*err = statement.Articles.BindParams(View.Server)
+	if err != nil {
+		return err
+	}*/
+	err = statement.Articles.Execute()
+	if err != nil {
+		return err
+	}
+	err = statement.Articles.StoreResult()
+	if err != nil {
+		return err
+	}
+	rc = statement.Articles.RowCount()
+	if rc == 0 {
+		return os.ENOENT
+	}
+	p.Articles = make([]*Article, rc)
+	for k, _ := range p.Articles {
+		p.Articles[k] = new(Article)
+
+		err = statement.Articles.BindResult(&p.Articles[k].ID, &p.Articles[k].Title, &p.Articles[k].Rubric, &p.Articles[k].Text,
+			&p.Articles[k].Teaser, &p.Articles[k].Blog, &p.Articles[k].Keywords, &p.Articles[k].Description,
+			&p.Articles[k].Date, &p.Articles[k].Url)
+		if err != nil {
+			return err
+		}
+		eof, err := statement.Articles.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
+	}
+	db.Unlock()
+
+	statement.Blogs.FreeResult()
+	statement.Articles.FreeResult()
+	statement.Rubrics.FreeResult()
+	return nil
+}
+
+func (p *Page) loadBlogData() os.Error {
+	db.Lock()
 	// load Templates
-	err = statement.Themes.Execute()
+	err := statement.Themes.Execute()
 	if err != nil {
 		return err
 	}
@@ -220,11 +329,46 @@ func (p *Page) loadBlogData() os.Error {
 		}
 	}
 
-	// Load Rubrics 
-	err = statement.Rubrics.BindParams(app.Server)
+	// Load Blogs
+	/*err = statement.Blogs.BindParams(View.Server)
+	if err != nil {
+		return err
+	}*/
+	err = statement.Blogs.Execute()
 	if err != nil {
 		return err
 	}
+	err = statement.Blogs.StoreResult()
+	if err != nil {
+		return err
+	}
+	rc := statement.Blogs.RowCount()
+	if rc == 0 {
+		return os.ENOENT
+	}
+	p.Blogs = make([]*Blog, rc)
+	for k, _ := range p.Blogs {
+		p.Blogs[k] = new(Blog)
+		err = statement.Blogs.BindResult(&p.Blogs[k].ID, &p.Blogs[k].Title, &p.Blogs[k].Url,
+			&p.Blogs[k].Template, &p.Blogs[k].Keywords, &p.Blogs[k].Description, &p.Blogs[k].Slogan,
+			&p.Blogs[k].Server)
+		if err != nil {
+			return err
+		}
+		eof, err := statement.Blogs.Fetch()
+		if err != nil {
+			return err
+		}
+		if eof {
+			return os.EOF
+		}
+	}
+
+	// Load Rubrics 
+	/*err = statement.Rubrics.BindParams(View.Server)
+	if err != nil {
+		return err
+	}*/
 	err = statement.Rubrics.Execute()
 	if err != nil {
 		return err
@@ -233,7 +377,11 @@ func (p *Page) loadBlogData() os.Error {
 	if err != nil {
 		return err
 	}
-	p.Rubrics = make([]*Rubric, statement.Rubrics.RowCount())
+	rc = statement.Rubrics.RowCount()
+	if rc == 0 {
+		return os.ENOENT
+	}
+	p.Rubrics = make([]*Rubric, rc)
 	for k, _ := range p.Rubrics {
 		p.Rubrics[k] = new(Rubric)
 
@@ -252,10 +400,10 @@ func (p *Page) loadBlogData() os.Error {
 	}
 
 	// Load Articles 
-	err = statement.Articles.BindParams(app.Server)
+	/*err = statement.Articles.BindParams(View.Server)
 	if err != nil {
 		return err
-	}
+	}*/
 	err = statement.Articles.Execute()
 	if err != nil {
 		return err
@@ -264,7 +412,11 @@ func (p *Page) loadBlogData() os.Error {
 	if err != nil {
 		return err
 	}
-	p.Articles = make([]*Article, statement.Articles.RowCount())
+	rc = statement.Articles.RowCount()
+	if rc == 0 {
+		return os.ENOENT
+	}
+	p.Articles = make([]*Article, rc)
 	for k, _ := range p.Articles {
 		p.Articles[k] = new(Article)
 
@@ -292,4 +444,33 @@ func (p *Page) loadBlogData() os.Error {
 	statement.Themes.FreeResult()
 	statement.Servers.FreeResult()
 	return nil
+}
+
+func (b *Blog) updateBlog() {
+	err := statement.UpdateBlog.BindParams(b.Description, b.Keywords, b.Server, b.Slogan, b.Template, b.Title, b.Url, b.ID)
+	if err != nil {
+		fmt.Println("pbl.BindParams")
+		fmt.Println(err)
+	}
+	err = statement.UpdateBlog.Execute()
+	if err != nil {
+		fmt.Println("pbl.Execute")
+		fmt.Println(err)
+	}
+	View.Blogs.Replace(b)
+}
+
+func updateRubric(b *Rubric) {
+}
+
+func updateArticle(b *Rubric) {
+}
+
+func insertBlog(b *Blog) {
+}
+
+func insertRubric(b *Rubric) {
+}
+
+func insertArticle(b *Rubric) {
 }

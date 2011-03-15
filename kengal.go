@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"flag"
-	"mysql"
+	//"mysql"
 	"http"
 )
 
@@ -50,6 +50,34 @@ func (r *Rubric) Active() bool {
 		return true
 	}
 	return false
+}
+func (b Blogs) Replace(blg *Blog)bool{
+	for k, v := range b{
+		if v.ID == blg.ID{
+			b[k] = blg
+			return false
+		}
+	}
+	return true
+}
+func (r Rubrics) Replace(rb *Rubric)bool{
+	for k, v := range r{
+		if v.ID == rb.ID{
+			r[k] = rb
+			return false
+		}
+	}
+	return true
+}
+
+func (a Articles) Replace(art *Article)bool{
+	for k, v := range a{
+		if v.ID == art.ID{
+			a[k] = art
+			return false
+		}
+	}
+	return true
 }
 
 func (b Blogs) Current() *Blog {
@@ -199,7 +227,7 @@ type Rubric struct {
 
 type Article struct {
 	ID          int
-	Date        mysql.DateTime
+	Date       	string
 	Title       string
 	Keywords    string
 	Description string
@@ -249,7 +277,7 @@ type Application struct {
 	User     string
 	Password string
 	Database string
-	DataHost string
+	LogLevel int
 	Server   int
 }
 
@@ -258,7 +286,7 @@ var View = new(Page)
 var PaginatorMax = 5
 
 func (a *Article) DateTime() string {
-	return a.Date.String()
+	return a.Date
 }
 func (a *Article) Path() string {
 	return fmt.Sprintf("/artikel/%v/%s", a.ID, a.Url)
@@ -292,11 +320,11 @@ func (r *Rubric) Path() string {
 }
 
 func main() {
-	flag.StringVar(&app.User, "u", "root", "set Mysql User here, default is root")
-	flag.StringVar(&app.Password, "p", "password", "set Mysql Password for selected User here")
-	flag.StringVar(&app.Database, "db", "mysql", "set Database that MySql is supposed to connect to here")
-	flag.StringVar(&app.DataHost, "h", "", "set Host MySql Adress like so -h myserver.com")
-	flag.IntVar(&app.Server, "s", 0, "Set Server ID here")
+	flag.StringVar(&app.User, "u", "root", "geben Sie den Mysql User an")
+	flag.StringVar(&app.Password, "p", "password", "setzen Sie das Mysql passwort")
+	flag.StringVar(&app.Database, "db", "mysql", "Geben Sie hier die Datenbank an, die der Server benutzen soll")
+	flag.IntVar(&app.LogLevel, "l", 0, "Bei Werten ungleich 0 gibt der Server Statusmeldungen aus - Zur fehlersuche")
+	flag.IntVar(&app.Server, "s", 0, "Geben Sie hier die ID des Servers an")
 
 	flag.Parse()
 
@@ -304,8 +332,22 @@ func main() {
 		flag.Usage()
 		os.Exit(0)
 	}
+	
+	View.Server=app.Server
+	
+	err := InitMysql()
+	if err != nil {
+		fmt.Println(err.String())
+		os.Exit(1)
+	}
+	
+	err = prepareMysql()
+	if err != nil {
+		fmt.Println(err.String())
+		os.Exit(1)
+	}
 
-	err := View.loadBlogData()
+	err = View.loadBlogData()
 	if err != nil {
 		fmt.Println(err.String())
 		os.Exit(1)
@@ -315,6 +357,13 @@ func main() {
 	//http.HandleFunc("/admin/", AdminController)
 
 	http.HandleFunc("/command/", CommandUnit)
+	http.HandleFunc("/admin/blog/save", BlogSave)
+	http.HandleFunc("/admin/rubric/save", RubricSave)
+	http.HandleFunc("/admin/article/save", ArticleSave)
+	
+	http.HandleFunc("/admin/blog/new", BlogNew)
+	http.HandleFunc("/admin/rubric/new", RubricNew)
+	http.HandleFunc("/admin/article/new", ArticleNew)
 
 	http.HandleFunc("/global/", GlobalController)
 	http.HandleFunc("/images/", Images)

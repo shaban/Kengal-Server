@@ -129,11 +129,12 @@ func popdb() {
 }
 
 func SnippetController(w http.ResponseWriter, r *http.Request) {
+	j := r.FormValue("which")
+	
 	s, _ := strconv.Atoi(r.FormValue("server"))
 	h := r.FormValue("host")
-	a,_ := strconv.Atoi(r.FormValue("article"))
-	rb,_ := strconv.Atoi(r.FormValue("rubric"))
-	j := r.FormValue("which")
+	a, _ := strconv.Atoi(r.FormValue("article"))
+	rb, _ := strconv.Atoi(r.FormValue("rubric"))
 
 	os := View.Server
 	oh := View.Host
@@ -161,6 +162,10 @@ func SnippetController(w http.ResponseWriter, r *http.Request) {
 		data, _ := json.Marshal(View.Themes)
 		w.Write(data)
 		w.Flush()
+	case "newblog":
+		tplFile = "html/blogNewSnippet.html"
+	case "newrubric":
+		tplFile = "html/rubricNewSnippet.html"
 	}
 	var Templ = template.New(nil)
 	snippetTempl, err := ioutil.ReadFile(tplFile)
@@ -179,8 +184,8 @@ func SnippetController(w http.ResponseWriter, r *http.Request) {
 	w.Write(buf.Bytes())
 	View.Server = os
 	View.Host = oh
-	View.Article = oa;
-	View.Rubric = orb;
+	View.Article = oa
+	View.Rubric = orb
 }
 
 func AdminController(w http.ResponseWriter, r *http.Request) {
@@ -189,10 +194,18 @@ func AdminController(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		View.Server = app.Server
 	} else {
+		app.Server = View.Server
 		View.Server = i
+		if View.Server != app.Server {
+			fmt.Println(app.Server)
+			fmt.Println(View.Server)
+			View.reloadBlogData()
+			fmt.Println("success")
+		}
 	}
 	//ParseParameters(r.URL.Path, r.Host)
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 	AdminDispatch(w)
 }
+

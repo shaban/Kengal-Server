@@ -1,0 +1,39 @@
+<fieldset>
+<form id="InsertBlog">
+
+<label class="half">Title</label>
+<label class="half">Slogan</label>
+
+<input class="half" type="text" value=""  name="Title"/>
+<input class="half" type="text" value="" name="Slogan"/>
+
+<label class="half">Keywords</label>
+<label class="half">Description</label>
+
+<input class="half" type="text" value="" name="Keywords" />
+<input class="half" type="text" value="" name="Description" />
+
+<label class="half">Url</label>
+<label class="half">Server</label>
+
+<input class="half" type="text" value="" name="Url"/>
+<select class="half" name="Server" size="1">
+{.repeated section Servers}
+	<option value="{ID}">{IP} | {Vendor}</option>
+{.end}
+</select>
+
+<label class="full">Template</label>
+<select class="full" name="Template" size="1">
+{.repeated section Themes}
+	<option value="{ID}">{Title}</option>
+{.end}
+</select>
+
+<br/>
+<br/>
+
+<a class="full" href="javascript:$.post('/admin/blog/new', $('#InsertBlog').serialize(),function(data){.meta-left}$('#console').prepend(data+'<hr/>');{.meta-right});">Neuen Blog speichern</a>
+
+</form>
+</fieldset>

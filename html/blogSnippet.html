@@ -1,27 +1,50 @@
 {.section Blogs.Current}
 	<fieldset>
+	
 	<a class="half" href="javascript:$('#detailBlog').toggle();">Blog [anzeigen | verbergen]</a>
 	<a class="half" href="http://{Url}" target="_blank">Blog Inspizieren</a>
-	<form action="/">
+	
 	<div id="detailBlog">
-	<label class="half">Title</label><label class="half">Slogan</label>
-	<input class="half" type="text" value="{Title}"/><input class="half" type="text" value="{Slogan}"/>
-	<label class="half">Keywords</label><label class="half">Description</label>
-	<input class="half" type="text" value="{Keywords}"/><input class="half" type="text" value="{Description}"/>
+	<form id="UpdateBlog">
+	
+	<label class="half">Title</label>
+	<label class="half">Slogan</label>
+	
+	<input class="half" type="text" value="{Title}"  name="Title"/>
+	<input class="half" type="text" value="{Slogan}" name="Slogan"/>
+	
+	<label class="half">Keywords</label>
+	<label class="half">Description</label>
+	
+	<input class="half" type="text" value="{Keywords}" name="Keywords" />
+	<input class="half" type="text" value="{Description}" name="Description" />
+	
 	<label class="full">Template</label>
-	<select class="full" name="blogTemplates" size="1">
+	<select class="full" name="Template" size="1">
 	{.repeated section Themes}
-		<option {.section @}{.section Active}selected="selected"{.end}{.end}>{Title}</option>
+		<option {.section @}{.section Active}selected="selected"{.end}{.end} value="{ID}">{Title}</option>
 	{.end}
 	</select>
-	<br/><br/>
+	
+	<br/>
+	<br/>
+	
 	<a class="half" href="javascript:loadDetail(1,'/?host={Url}&which=blogs&mode=snippet&server={Servers.Current.ID}',true);">Änderungen an Blog verwerfen</a>
-	<a class="half" href="#">Änderungen an Blog speichern</a>
-<hr/>
+	<a class="half" href="javascript:$.post('/admin/blog/save', $('#UpdateBlog').serialize(),function(data){.meta-left}$('#console').prepend(data+'<hr/>');{.meta-right});">Änderungen an Blog speichern</a>
+	
+	<input type="hidden" value="{ID}" name="ID"/>
+	<input type="hidden" value="{Server}" name="Server"/>
+	<input type="hidden" value="{Url}" name="Url"/>
+	
+	<hr/>
+	
 	<label class="full">Rubriken</label>
+	<a class="full" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=newrubric&mode=snippet&server={Servers.Current.ID}&rubric={ID}')">Neue Rubrik anlegen</a>
 	{.repeated section Rubrics.Index}
 		<a class="fourth" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=rubrics&mode=snippet&server={Servers.Current.ID}&rubric={ID}')">{Title}</a>
 	{.end}
+	
 	</fieldset>
+	</form>
 	</div>
 {.end}
