@@ -1,4 +1,6 @@
-$.ajaxSetup ({cache: false});
+$.ajaxSetup( {
+	cache : false
+});
 function retrieveTextAndSubmit() {
 	document.getElementById("editor1").value = CKEDITOR.instances.editor1
 			.getData();
@@ -62,7 +64,15 @@ function getMarkupEditor() {
 		lineNumbers : true
 	});
 }
-
+function saveNewElem(action, elem) {
+	$.post(action, $(elem).serialize(), function(data) {
+		$('#console').prepend(data + '<hr/>');
+		$("#detail1").empty();
+		$("#detail2").empty();
+		$("#detail3").empty();
+		$("#detail4").empty();
+	});
+}
 function loadDetail(pane, url, reset) {
 
 	if (pane == 1) {

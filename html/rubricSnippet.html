@@ -30,7 +30,7 @@
 	<br/>
 	
 	<a class="half" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=rubrics&mode=snippet&server={Servers.Current.ID}&rubric={ID}',true);">Änderungen an Rubric verwerfen</a>
-	<a class="half" onclick="" href="javascript:$.post('/admin/rubric/save', $('#UpdateRubric').serialize(),function(data){.meta-left}$('#console').prepend(data+'<hr/>');{.meta-right});">Änderungen an Rubrik übernehmen</a>
+	<a class="half" onclick="" href="javascript:saveNewElem('/admin/rubric/save','#UpdateRubric');">Änderungen an Rubrik übernehmen</a>
 	
 	<input type="hidden" value="{ID}" name="ID"/>
 	

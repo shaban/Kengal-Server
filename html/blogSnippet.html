@@ -30,7 +30,7 @@
 	<br/>
 	
 	<a class="half" href="javascript:loadDetail(1,'/?host={Url}&which=blogs&mode=snippet&server={Servers.Current.ID}',true);">Änderungen an Blog verwerfen</a>
-	<a class="half" href="javascript:$.post('/admin/blog/save', $('#UpdateBlog').serialize(),function(data){.meta-left}$('#console').prepend(data+'<hr/>');{.meta-right});">Änderungen an Blog speichern</a>
+	<a class="half" href="javascript:saveNewElem('/admin/blog/save','#UpdateBlog');">Änderungen an Blog speichern</a>
 	
 	<input type="hidden" value="{ID}" name="ID"/>
 	<input type="hidden" value="{Server}" name="Server"/>
