@@ -27,7 +27,7 @@
 	</select>
 	
 	<label class="full">Erstellungsdatum</label>
-	<input class="full" type="text" value="{DateTime}" name="Date"/>
+	<input class="full" type="text" value="{Date}" name="Date"/>
 	
 	<br/>
 	<br/>
@@ -36,7 +36,7 @@
 	Änderungen an Artikel verwerfen
 	</a>
 	
-	<a class="half" href="javascript:$.post('/admin/article/save', $('#UpdateArticle').serialize(),function(data){.meta-left}$('#console').prepend(data+'<hr/>');{.meta-right});">
+	<a class="half" href="javascript:saveNewElem('/admin/article/save', '#UpdateArticle');">
 	Änderungen an Artikel speichern
 	</a>
 	

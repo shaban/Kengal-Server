@@ -1,0 +1,30 @@
+{.section Rubrics.Current}
+	<fieldset>
+	<div id="detailArticle">
+	<form id="InsertArticle">
+	
+	<label class="half">Title</label>
+	<label class="half">Url</label>
+	
+	<input class="half" type="text" value="" name="Title"/>
+	<input class="half" type="text" value="" name="Url"/>
+	
+	<label class="half">Keywords</label>
+	<label class="half">Description</label>
+	
+	<input class="half" type="text" value="" name="Keywords"/>
+	<input class="half" type="text" value="" name="Description"/>
+	
+	<br/>
+	<br/>
+	
+	<a class="half" href="javascript:saveNewElem('/admin/article/new', '#InsertArticle');">Neuen Artikel speichern</a>
+	
+	<input type="hidden" value="{ID}" name="Rubric"/>
+	<input type="hidden" value="{Blog}" name="Blog"/>
+	
+	<hr/>	
+	</form>
+	</div>
+	</fieldset>
+{.end}

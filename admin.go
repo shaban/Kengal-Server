@@ -166,6 +166,8 @@ func SnippetController(w http.ResponseWriter, r *http.Request) {
 		tplFile = "html/blogNewSnippet.html"
 	case "newrubric":
 		tplFile = "html/rubricNewSnippet.html"
+	case "newarticle":
+		tplFile = "html/articleNewSnippet.html"
 	}
 	var Templ = template.New(nil)
 	snippetTempl, err := ioutil.ReadFile(tplFile)

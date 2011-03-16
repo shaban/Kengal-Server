@@ -11,6 +11,7 @@ import (
 	"path"
 	"os"
 	"strconv"
+	"time"
 )
 
 func Dispatch(w http.ResponseWriter) {
@@ -201,7 +202,7 @@ func RubricNew(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	rb := new(Rubric)
 	f := r.Form
-	fmt.Println(f)
+	
 	rb.Title=f["Title"][0]
 	rb.Keywords=f["Keywords"][0]
 	rb.Description=f["Description"][0]
@@ -224,6 +225,34 @@ func RubricNew(w http.ResponseWriter, r *http.Request) {
 }
 
 func ArticleNew(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	a := new(Article)
+	f := r.Form
+	fmt.Println(f)
+	
+	a.Title=f["Title"][0]
+	a.Keywords=f["Keywords"][0]
+	a.Description=f["Description"][0]
+	a.Blog,_=strconv.Atoi(f["Blog"][0])
+	a.Url=f["Url"][0]
+	a.Rubric,_=strconv.Atoi(f["Rubric"][0])
+	a.Teaser="<p>Geben Sie hier Ihren Teasertext ein</p>"
+	a.Text="<p>Geben Sie hier den Text des Artikels ein</p>"
+	a.Date = time.LocalTime().Format("02.01.2006 15:04:05")
+
+	err := statement.InsertArticle.BindParams(a.Description, a.Keywords, a.Blog, a.Rubric, a.Title, a.Url, a.Text,a.Teaser,a.Date)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Artikel %s fehlgeschlagen",a.Title)))
+		return
+	}
+	err = statement.InsertArticle.Execute()
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Artikel %s fehlgeschlagen",a.Title)))
+		return
+	}
+	a.ID = int(statement.InsertArticle.LastInsertId)
+	View.Articles = append(View.Articles,a)
+	w.Write([]byte(fmt.Sprintf("Artikel %s erfolgreich angelegt", a.Title)))
 }
 
 
@@ -330,8 +359,10 @@ func FileHelper(w http.ResponseWriter, r *http.Request) {
 	mimeType := mime.TypeByExtension(path.Ext(r.URL.Path))
 	w.SetHeader("Content-Encoding", "gzip")
 	w.SetHeader("Content-Type", mimeType)
+	//fmt.Println(r.URL)
 	//w.SetHeader("Expires", "Fri, 30 Oct 2013 14:19:41 GMT")
 	b, _ := ioutil.ReadFile("." + r.URL.Path)
+		//fmt.Println(string(b[0:300]))
 	gz, _ := gzip.NewWriter(w)
 	gz.Write(b)
 	gz.Close()

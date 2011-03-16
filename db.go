@@ -73,6 +73,11 @@ func prepareMysql() os.Error {
 	if err != nil {
 		return err
 	}
+	
+	statement.InsertArticle, err = db.Prepare("INSERT INTO articles (Description, Keywords, Blog, Rubric, Title, Url, Text, Teaser,Date) VALUES (?,?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
 
 	statement.Resources, err = db.Prepare("SELECT * FROM resources WHERE Template !=-1")
 	if err != nil {
