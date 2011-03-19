@@ -62,6 +62,15 @@ function saveNewElem(action, elem) {
 		$("#detail4").empty();
 	});
 }
+function delElem(action){
+	$.get(action, function(data) {
+		$('#console').prepend(data + '<hr/>');
+		$("#detail1").empty();
+		$("#detail2").empty();
+		$("#detail3").empty();
+		$("#detail4").empty();
+	});
+}
 function loadDetail(pane, url, reset) {
 
 	if (pane == 1) {

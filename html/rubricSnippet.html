@@ -40,6 +40,8 @@
 	<a class="full" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=newarticle&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}');">Neuen Artikel anlegen</a>
 	{.repeated section Articles.Rubric}
 		<a class="fourth" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=articles&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" name="blogArticlesRubric" size="1">{Title}</a>
+	{.or}
+	<a class="full" href="javascript:delElem('/admin/rubric/delete/?ID={ID}');">Rubrik löschen</a>
 	{.end}
 	
 	</fieldset>

@@ -364,6 +364,9 @@ func main() {
 	http.HandleFunc("/admin/blog/new", BlogNew)
 	http.HandleFunc("/admin/rubric/new", RubricNew)
 	http.HandleFunc("/admin/article/new", ArticleNew)
+	
+	http.HandleFunc("/admin/rubric/delete/", RubricDelete)
+	http.HandleFunc("/admin/article/delete/", ArticleDelete)
 
 	http.HandleFunc("/global/", GlobalController)
 	http.HandleFunc("/images/", Images)
@@ -375,6 +378,7 @@ func main() {
 	http.HandleFunc("/js/", FileHelper)
 	http.HandleFunc("/css/", FileHelper)
 	http.HandleFunc("/html/", FileHelper)
+	http.HandleFunc("/tpl/", FileHelper)
 	
 	http.HandleFunc("/ckeditor/", FileHelper)
 	//http.HandleFunc("/templates/", FileHelper)

@@ -1,0 +1,130 @@
+/* Global */
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: "Lato";
+	line-height: 150%;
+}
+body{
+	background: aliceblue;
+}
+a.box{
+	display: block;
+	width: 100%;
+	color: #4e9eed;
+	text-decoration: none;
+	
+	padding: 3px;
+}
+a.box:hover{
+	text-shadow: 1px 1px 7px black;
+}
+div#page {
+	border: 1px solid white;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	width: 960px;
+	margin-left: auto;
+	margin-right: auto;
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.33, #222), color-stop(0.66, #333) );
+	background-image: -moz-linear-gradient(center top, #222 33%, #333 66%);
+}
+div#header, div#footer{
+	padding: 20px;
+	background: darkorange;
+}
+div#header{
+	border-bottom: 1px solid white;
+}
+div#footer{
+	border-top: 1px solid white;
+	font-size: 140%;
+	color: #311;
+}
+div#main{
+	display: table;
+}
+div#left, div#right{
+	display: table-cell;
+	vertical-align: top;
+	padding: 20px;
+}
+
+a#blogtitle{
+	font-size: 500%;
+	color: white;
+	text-decoration: none;
+}
+a#blogtitle:hover{
+	text-shadow: 2px 2px 2px black;
+}
+p#slogan{
+	font-style: italic;
+	color: #333;
+	font-size: 200%;
+}
+body{
+	font-size: 16px;
+}
+div.postBox{
+	margin-bottom: 15px;
+	color: aliceblue;
+	text-align: justify;
+}
+div.postHead{
+	font-size: 200%;
+	color: white;
+}
+div.postBody{
+	line-height: 180%;
+	border-top: 2px dashed white;
+	border-bottom: 2px dashed white;
+}
+div.postBody p{
+	margin-bottom: 15px;
+}
+div.postFoot{
+}
+div.postHead, div.postBody, div.postFoot{
+	padding: 5px;
+}
+div#right{
+	width: 250px;
+	background: #123;
+}
+div#right h4{
+	color: orange;
+}
+a.paginatorcontrol{
+	line-height: 200%;
+	display: inline-box;
+	color: white;
+	padding: 5px;
+	text-decoration: none;
+}
+a.paginatorcontrol:hover{
+	background: white;
+	color: #369;
+}
+a{
+	text-decoration: none;
+	color: white;
+}
+a:hover{
+	text-shadow: 1px 1px 1px black;
+}
+ul{
+	margin-left: 50px;
+}
+.postHead a{
+	color: darkorange;
+}
+.right{
+	float: right ! important;
+}
+.left{
+	float: left ! important;
+}
+code, pre{
+	font-family: 'Andale Mono', Courier;
+}

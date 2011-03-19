@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="/style.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+<title>{Blogs.Current.Title}</title>
+{HeadMeta}
+</head>
+<body>
+<div id="page">
+	<div id="header">
+		<a id="blogtitle" href="/">{Blogs.Current.Title}</a>
+		<p id="slogan">{Blogs.Current.Slogan}</p>
+	</div>
+	<div id="topnav"></div>
+	<div id="main">
+		<div id="left">
+		{.section Articles.Index.Paginated}
+		{.repeated section @}
+			<div class="postBox">
+				<div class="postHead">
+				<p><a title="{Title}" href="{Path}">{Title}</a>
+					<a href="{RubricPath}" class="right">{RubricTitle}</a>
+				</p>
+				</div>
+				<div class="postBody">{Teaser}</div>
+				<div class="postFoot"><a href="{Path}" >Den ganzen Artikel lesen</a><span class="right" >{Date}</span></div>
+			</div>
+		{.end}
+		{.section Articles.Index.Prev}
+			<a class="paginatorcontrol" href ="{@}">Vorige Seite</a>
+		{.end}
+		{.section Articles.Index.Next}
+			<a class="paginatorcontrol" href ="{@}">Nächste Seite</a>
+		{.end}
+		{.end}
+		{.repeated section Articles.Index.Rubric}
+			<div class="postBox">
+				<div class="postHead">
+					<p><a title="{Title}" href="{Path}">{Title}</a>
+						<a href="{RubricPath}" class="right" >{RubricTitle}</a>
+					</p>
+				</div>
+				<div class="postBody">{Teaser}</div>
+				<div class="postFoot"><a href="{Path}" >Den ganzen Artikel lesen</a><span  class="right" >{Date}</span></div>
+			</div>
+		{.end}
+		{.section Articles.Index.Current}
+			<div class="postBox">
+				<div class="postHead">
+					<p><a title="{Title}" href="{Path}">{Title}</a>
+						<a href="{RubricPath}"  class="right">{RubricTitle}</a>
+					</p>
+				</div>
+				<div class="postBody">{Text}</div>
+				<div class="postFoot"><a href="{Path}" >{Keywords}</a><span class="right">{Date}</span></div>
+			</div>
+		{.end}
+		{.section Imprint}
+			<img src="/global/imprint.png" /></img>
+		{.end}
+		</div>
+		<div id="right">
+			<h4>Kategorien</h4>
+			<hr/>
+			<div id="category">
+			{.repeated section Rubrics.Index}
+				<a title="{Title}" class="box" href="{Path}"><svg width="20px" height="10px" ><circle cx="5" cy="5" r="5" fill="#5af" /></svg>{Title}</a>
+			{.end}
+			</div>
+			<br/>
+			<h4>Neueste Beiträge</h4>
+			<hr/>
+			<div id="category">
+			{.repeated section Articles.Index.Latest}
+				<a title="{Title}" class="box" href="{Path}"><svg width="20px" height="10px" ><circle cx="5" cy="5" r="5" fill="#5af" /></svg>{Title}</a>
+			{.end}
+			</div>
+			<br/>
+			<h4>Tags</h4>
+			<hr/>
+			<div id="category">
+			{.repeated section Articles.Index}
+				<a  href="{Path}">{Keywords}</a>
+			{.end}
+			</div>
+		</div>
+	</div>
+	<div id="footer">
+		<p>Author: <a href="mailto:mr.naasso@gmail.com">mr.naasso@gmail.com</a></p>
+		<p>Lizenz: <a href="http://creativecommons.org/licenses/by/3.0/">CC-3.0-BY</a></p>
+	</div>
+</div>
+</body>
+</html>

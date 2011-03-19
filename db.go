@@ -35,6 +35,9 @@ type Statement struct {
 	InsertBlog    *mysql.Statement
 	InsertRubric  *mysql.Statement
 	InsertArticle *mysql.Statement
+	
+	DeleteArticle	*mysql.Statement
+	DeleteRubric	*mysql.Statement
 }
 
 func InitMysql() os.Error {
@@ -75,6 +78,15 @@ func prepareMysql() os.Error {
 	}
 	
 	statement.InsertArticle, err = db.Prepare("INSERT INTO articles (Description, Keywords, Blog, Rubric, Title, Url, Text, Teaser,Date) VALUES (?,?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+	
+	statement.DeleteRubric, err = db.Prepare("DELETE FROM rubrics where ID=?")
+	if err != nil {
+		return err
+	}
+	statement.DeleteArticle, err = db.Prepare("DELETE FROM articles where ID=?")
 	if err != nil {
 		return err
 	}
