@@ -15,7 +15,7 @@ type Serializer interface {
 	//At(key string) interface{}
 	//All() []interface{}
 }
-const DB_ROOT = "/root/db"
+const DB_ROOT = "db"
 func loadAll() os.Error {
 	res, err := loadKind("articles", View.Articles)
 	if err != nil {
