@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"flag"
-	//"mysql"
 	"http"
 )
 
@@ -14,6 +13,127 @@ type Rubrics []*Rubric
 type Blogs []*Blog
 type Themes []*Theme
 type Resources []*Resource
+type Globals []*Global
+
+func (a Articles)New()interface{}{
+	art := new(Article)
+	return art
+}
+func (a Articles)Insert(insert interface{})interface{}{
+	a = append(a,insert.(*Article))
+	return a
+}
+func (a Articles)ID()int{
+	id := 0
+	for _,v := range a{
+		if v.ID > id{
+			id= v.ID
+		}
+	}
+	return id+1
+}
+func (b Blogs)New()interface{}{
+	blg := new(Blog)
+	return blg
+}
+func (b Blogs)Insert(insert interface{})interface{}{
+	b = append(b,insert.(*Blog))
+	return b
+}
+func (b Blogs)ID()int{
+	id := 0
+	for _,v := range b{
+		if v.ID > id{
+			id= v.ID
+		}
+	}
+	return id+1
+}
+func (g Globals)New()interface{}{
+	glb := new(Global)
+	return glb
+}
+func (g Globals)Insert(insert interface{})interface{}{
+	g = append(g,insert.(*Global))
+	return g
+}
+func (g Globals)ID()int{
+	id := 0
+	for _,v := range g{
+		if v.ID > id{
+			id= v.ID
+		}
+	}
+	return id+1
+}
+func (r Resources)New()interface{}{
+	rsrc := new(Resource)
+	return rsrc
+}
+func (r Resources)Insert(insert interface{})interface{}{
+	r = append(r,insert.(*Resource))
+	return r
+}
+func (r Resources)ID()int{
+	id := 0
+	for _,v := range r{
+		if v.ID > id{
+			id= v.ID
+		}
+	}
+	return id+1
+}
+func (r Rubrics)New()interface{}{
+	rb := new(Rubric)
+	return rb
+}
+func (r Rubrics)Insert(insert interface{})interface{}{
+	r = append(r,insert.(*Rubric))
+	return r
+}
+func (r Rubrics)ID()int{
+	id := 0
+	for _,v := range r{
+		if v.ID > id{
+			id= v.ID
+		}
+	}
+	return id+1
+}
+func (s Servers)New()interface{}{
+	srv := new(Server)
+	return srv
+}
+func (s Servers)Insert(insert interface{})interface{}{
+	s= append(s, insert.(*Server))
+	return s
+}
+func (s Servers)ID()int{
+	id := 0
+	for _,v := range s{
+		if v.ID > id{
+			id= v.ID
+		}
+	}
+	return id+1
+}
+func (t Themes)New()interface{}{
+	thm := new(Theme)
+	return thm
+}
+func (t Themes)Insert(insert interface{})interface{}{
+	t = append(t,insert.(*Theme))
+	return t
+}
+func (t Themes)ID()int{
+	id := 0
+	for _,v := range t{
+		if v.ID > id{
+			id= v.ID
+		}
+	}
+	return id+1
+}
 
 func (s Servers) Current() *Server {
 	for k, v := range s {
@@ -201,8 +321,9 @@ type Server struct {
 	ID     int
 	IP     string
 	Vendor string
-	Type   string
-	Item   int
+	Cpu   string
+	Cache   string
+	Memory	string
 }
 
 type Blog struct {
@@ -239,14 +360,16 @@ type Article struct {
 }
 
 type Resource struct {
+	ID	int
 	Name     string
 	Template int
 	Data     []byte
 }
 
-type BlogError struct {
-	Code int
-	Msg  string
+type Global struct {
+	ID	int
+	Name     string
+	Data     []byte
 }
 
 type Page struct {
@@ -257,7 +380,7 @@ type Page struct {
 	Blog      int
 	Themes    Themes
 	Resources Resources
-	Globals   Resources
+	Globals   Globals
 	Servers   Servers
 	Index     int
 	Rubric    int
@@ -299,14 +422,7 @@ func (a *Article) RubricPath() string {
 	}
 	return ""
 }
-func (a *Article) ptrRubric() *Rubric {
-	for k, v := range View.Rubrics {
-		if v.ID == a.Rubric {
-			return View.Rubrics[k]
-		}
-	}
-	return nil
-}
+
 func (a *Article) RubricTitle() string {
 	for _, v := range View.Rubrics {
 		if v.ID == a.Rubric {
@@ -320,46 +436,34 @@ func (r *Rubric) Path() string {
 }
 
 func main() {
-	flag.StringVar(&app.User, "u", "root", "geben Sie den Mysql User an")
-	flag.StringVar(&app.Password, "p", "password", "setzen Sie das Mysql passwort")
-	flag.StringVar(&app.Database, "db", "mysql", "Geben Sie hier die Datenbank an, die der Server benutzen soll")
-	flag.IntVar(&app.LogLevel, "l", 0, "Bei Werten ungleich 0 gibt der Server Statusmeldungen aus - Zur fehlersuche")
+	//flag.StringVar(&app.User, "u", "root", "geben Sie den Mysql User an")
+	//flag.StringVar(&app.Password, "p", "password", "setzen Sie das Mysql passwort")
+	//flag.StringVar(&app.Database, "db", "mysql", "Geben Sie hier die Datenbank an, die der Server benutzen soll")
+	//flag.IntVar(&app.LogLevel, "l", 0, "Bei Werten ungleich 0 gibt der Server Statusmeldungen aus - Zur fehlersuche")
 	flag.IntVar(&app.Server, "s", 0, "Geben Sie hier die ID des Servers an")
 
 	flag.Parse()
 
-	if app.Password == "password" || app.Database == "mysql" || app.Server == 0 {
+	if app.Server == 0 {
 		flag.Usage()
 		os.Exit(0)
 	}
 	
 	View.Server=app.Server
-	
-	err := InitMysql()
-	if err != nil {
-		fmt.Println(err.String())
-		os.Exit(1)
-	}
-	
-	err = prepareMysql()
-	if err != nil {
-		fmt.Println(err.String())
-		os.Exit(1)
-	}
 
-	err = View.loadBlogData()
+	err := loadAll()
 	if err != nil {
 		fmt.Println(err.String())
 		os.Exit(1)
 	}
-	//popdb()
 	http.HandleFunc("/", Controller)
 	//http.HandleFunc("/admin/", AdminController)
 
-	http.HandleFunc("/command/", CommandUnit)
 	http.HandleFunc("/admin/blog/save", BlogSave)
 	http.HandleFunc("/admin/rubric/save", RubricSave)
 	http.HandleFunc("/admin/article/save", ArticleSave)
+	
+	http.HandleFunc("/admin/audit/",Audit)
 	
 	http.HandleFunc("/admin/blog/new", BlogNew)
 	http.HandleFunc("/admin/rubric/new", RubricNew)
@@ -372,8 +476,6 @@ func main() {
 	http.HandleFunc("/images/", Images)
 	http.HandleFunc("/style.css", Css)
 	http.HandleFunc("/favicon.ico", GlobalController)
-	//http.HandleFunc("/snippet/", DataController)
-	//http.HandleFunc("/spry/", FileHelper)
 
 	http.HandleFunc("/js/", FileHelper)
 	http.HandleFunc("/css/", FileHelper)
@@ -381,7 +483,6 @@ func main() {
 	http.HandleFunc("/tpl/", FileHelper)
 	
 	http.HandleFunc("/ckeditor/", FileHelper)
-	//http.HandleFunc("/templates/", FileHelper)
 
 	http.ListenAndServe(":80", nil)
 	os.Exit(0)

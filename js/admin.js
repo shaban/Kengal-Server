@@ -14,11 +14,13 @@ function retrieveTextAndSubmit() {
 }
 
 function spawnEditors() {
+	CKEDITOR.config.enterMode =  CKEDITOR.ENTER_P;
+	CKEDITOR.config.forcePasteAsPlainText = true;
 	if (CKEDITOR.instances['editor1'])
 		delete CKEDITOR.instances['editor1'];
 	CKEDITOR.replace('editor1', {
 		toolbar : [[ 'Source', '-', 'Undo', 'Redo', '-', 'Find', 'Replace', '-','Bold', 'Italic', 'Underline', 'Strike', '-','Subscript', 'Superscript' ],
-				[ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent','Blockquote' ],
+				[ 'NumberedList', 'BulletedList', '-', 'Styles','Blockquote' ],
 				[ 'JustifyLeft', 'JustifyCenter', 'JustifyRight','JustifyBlock' ], 
 				[ 'Link', 'Unlink','Image', 'Table' ] ],
 		height : 130
