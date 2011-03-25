@@ -142,6 +142,18 @@ func BlogSave(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("Speichern von Blog %s fehlgeschlagen", b.Title)))
 		return
 	}
+	buf := bytes.NewBufferString("")
+	err = MakeAudit(buf, b)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Serialisieren von Blog %s fehlgeschlagen", b.Title)))
+		return
+	}
+	url := fmt.Sprintf("http://%s/admin/save/blogs",b.Url)
+	_, err = http.Post(url,"application/octet-stream",buf)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Blog %s auf Client fehlgeschlagen", b.Title)))
+		return
+	}
 	w.Write([]byte(fmt.Sprintf("Blog %s erfolgreich gespeichert", b.Title)))
 }
 
@@ -160,6 +172,18 @@ func RubricSave(w http.ResponseWriter, r *http.Request) {
 	err := updateRubric(rb)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Speichern von Rubrik %s fehlgeschlagen", rb.Title)))
+		return
+	}
+	buf := bytes.NewBufferString("")
+	err = MakeAudit(buf, rb)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Serialisieren von Rubrik %s fehlgeschlagen", rb.Title)))
+		return
+	}
+	url := fmt.Sprintf("http://%s/admin/save/rubrics",rb.getBlog().Url)
+	_, err = http.Post(url,"application/octet-stream",buf)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Rubrik %s auf Client fehlgeschlagen", rb.Title)))
 		return
 	}
 	w.Write([]byte(fmt.Sprintf("Rubrik %s erfolgreich gespeichert", rb.Title)))
@@ -186,6 +210,18 @@ func ArticleSave(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("Speichern von Artikel %s fehlgeschlagen", a.Title)))
 		return
 	}
+	buf := bytes.NewBufferString("")
+	err = MakeAudit(buf, a)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Serialisieren von Artikel %s fehlgeschlagen", a.Title)))
+		return
+	}
+	url := fmt.Sprintf("http://%s/admin/save/articles",a.getBlog().Url)
+	_, err = http.Post(url,"application/octet-stream",buf)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Speichern von Artikel %s auf Client fehlgeschlagen", a.Title)))
+		return
+	}
 	w.Write([]byte(fmt.Sprintf("Artikel %s erfolgreich gespeichert", a.Title)))
 }
 
@@ -206,6 +242,18 @@ func BlogNew(w http.ResponseWriter, r *http.Request) {
 	err := insertBlog(b)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Anlegen von Blog %s fehlgeschlagen", b.Title)))
+		return
+	}
+	buf := bytes.NewBufferString("")
+	err = MakeAudit(buf, b)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Serialisieren von Blog %s fehlgeschlagen", b.Title)))
+		return
+	}
+	url := fmt.Sprintf("http://%s/admin/new/blogs",b.Url)
+	_, err = http.Post(url,"application/octet-stream",buf)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Blog %s auf Client fehlgeschlagen", b.Title)))
 		return
 	}
 	w.Write([]byte(fmt.Sprintf("Blog %s erfolgreich angelegt", b.Title)))
@@ -229,6 +277,18 @@ func RubricNew(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("Anlegen von Rubrik %s fehlgeschlagen", rb.Title)))
 		return
 	}
+	buf := bytes.NewBufferString("")
+	err = MakeAudit(buf, rb)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Serialisieren von Rubrik %s fehlgeschlagen", rb.Title)))
+		return
+	}
+	url := fmt.Sprintf("http://%s/admin/new/rubrics",rb.getBlog().Url)
+	_, err = http.Post(url,"application/octet-stream",buf)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Rubrik %s auf Client fehlgeschlagen", rb.Title)))
+		return
+	}
 	w.Write([]byte(fmt.Sprintf("Rubrik %s erfolgreich angelegt", rb.Title)))
 }
 
@@ -249,10 +309,21 @@ func ArticleNew(w http.ResponseWriter, r *http.Request) {
 	a.Date = time.LocalTime().Format("02.01.2006 15:04:05")
 	fmt.Println(a.Date)
 	a.ID = View.Articles.ID()
-
 	err := insertArticle(a)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Anlegen von Artikel %s fehlgeschlagen", a.Title)))
+		return
+	}
+	buf := bytes.NewBufferString("")
+	err = MakeAudit(buf, a)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Serialisieren von Artikel %s fehlgeschlagen", a.Title)))
+		return
+	}
+	url := fmt.Sprintf("http://%s/admin/new/articles",a.getBlog().Url)
+	_, err = http.Post(url,"application/octet-stream",buf)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Anlegen von Artikel %s auf Client fehlgeschlagen", a.Title)))
 		return
 	}
 	w.Write([]byte(fmt.Sprintf("Artikel %s erfolgreich angelegt", a.Title)))
@@ -260,52 +331,55 @@ func ArticleNew(w http.ResponseWriter, r *http.Request) {
 func ArticleDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.FormValue("ID"))
 	err := deleteArticle(id)
+	host := ArticleByID(id).getBlog().Url
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Artikel %v konnte nicht gelöscht werden", id)))
+	}
+	_,_, err = http.Get(fmt.Sprintf("http://%s/admin/delete/articles/?id=%v",host,id))
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Artikel %v konnte auf dem Client nicht gelöscht werden", id)))
 	}
 	w.Write([]byte(fmt.Sprintf("Artikel %v erfolgreich gelöscht", id)))
 }
 func RubricDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.FormValue("ID"))
+	host := RubricByID(id).getBlog().Url
 	err := deleteRubric(id)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Rubrik %v konnte nicht gelöscht werden", id)))
+	}
+	_,_, err = http.Get(fmt.Sprintf("http://%s/admin/delete/rubrics/?id=%v",host,id))
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Rubrik %v konnte auf dem Client nicht gelöscht werden", id)))
 	}
 	w.Write([]byte(fmt.Sprintf("Rubrik %v erfolgreich gelöscht", id)))
 }
 func Audit(w http.ResponseWriter, r *http.Request) {
 	_, file := path.Split(r.URL.Path)
-	var data []byte
+	w.SetHeader("Content-Type", "application/octet-stream; charset=utf-8")
+	w.SetHeader("Content-Encoding", "gzip")
+	
 	var err os.Error
 	switch file{
 		case "articles":
-			data, err = MakeAudit(View.Articles)
+			err = MakeAudit(w, View.Articles)
 		case "blogs":
-			data, err = MakeAudit(View.Blogs)
+			err = MakeAudit(w, View.Blogs)
 		case "globals":
-			data, err = MakeAudit(View.Globals)
+			err = MakeAudit(w, View.Globals)
 		case "resources":
-			data, err = MakeAudit(View.Resources)
+			err = MakeAudit(w, View.Resources)
 		case "rubrics":
-			data, err = MakeAudit(View.Rubrics)
+			err = MakeAudit(w, View.Rubrics)
 		case "servers":
-			data, err = MakeAudit(View.Servers)
+			err = MakeAudit(w, View.Servers)
 		case "themes":
-			data, err = MakeAudit(View.Themes)
+			err = MakeAudit(w, View.Themes)
 	}
 	if err != nil{
 		w.WriteHeader(500)
 		return
 	}
-	gz, err := gzip.NewWriter(w)
-	if err != nil{
-		w.WriteHeader(500)
-		return
-	}
-	w.SetHeader("Content-Type", "application/json; charset=utf-8")
-	w.SetHeader("Content-Encoding", "gzip")
-	gz.Write(data)
-	gz.Close()
 }
 
 func Controller(w http.ResponseWriter, r *http.Request) {

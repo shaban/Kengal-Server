@@ -435,6 +435,39 @@ func (r *Rubric) Path() string {
 	return fmt.Sprintf("/kategorie/%v/%s", r.ID, r.Url)
 }
 
+func (a *Article)getBlog() *Blog{
+	for k, v := range View.Blogs{
+		if v.ID == a.Blog{
+			return View.Blogs[k]
+		}
+	}
+	return nil
+}
+func (r *Rubric)getBlog() *Blog{
+	for k, v := range View.Blogs{
+		if v.ID == r.Blog{
+			return View.Blogs[k]
+		}
+	}
+	return nil
+}
+func RubricByID(id int)* Rubric{
+	for k, v := range View.Rubrics{
+		if v.ID == id{
+			return View.Rubrics[k]
+		}
+	}
+	return nil
+}
+
+func ArticleByID(id int)* Article{
+	for k, v := range View.Articles{
+		if v.ID == id{
+			return View.Articles[k]
+		}
+	}
+	return nil
+}
 func main() {
 	//flag.StringVar(&app.User, "u", "root", "geben Sie den Mysql User an")
 	//flag.StringVar(&app.Password, "p", "password", "setzen Sie das Mysql passwort")
@@ -484,6 +517,6 @@ func main() {
 	
 	http.HandleFunc("/ckeditor/", FileHelper)
 
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(":6060", nil)
 	os.Exit(0)
 }

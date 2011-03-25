@@ -3,9 +3,11 @@ package main
 import (
 	"os"
 	"fmt"
-	"json"
-	"io/ioutil"
+	"bytes"
 	"strings"
+	"gob"
+	"io"
+	"compress/gzip"
 )
 
 type Serializer interface {
@@ -55,22 +57,35 @@ func loadAll() os.Error {
 	return nil
 }
 func loadKind(kind string, scheme Serializer) (interface{}, os.Error) {
-	dir, err := ioutil.ReadDir(fmt.Sprintf("%s/%s", DB_ROOT,kind))
+	fdir, err := os.Open(fmt.Sprintf("%s/%s", DB_ROOT,kind),os.O_RDONLY, 0)
 	if err != nil {
 		return nil, err
 	}
-	for _, fileInfo := range dir {
-		// ignore unix backup files (since data format is human readable one can edit like this)
-		if strings.HasSuffix(fileInfo.Name, "~") || strings.HasPrefix(fileInfo.Name, ".") {
+	defer fdir.Close()
+	dir, err := fdir.Readdirnames(-1)
+	if err != nil {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	for _, fileName := range dir {
+		// ignore unix backup files and hidden files (since data format is human readable one can edit like this)
+		if strings.HasSuffix(fileName, "~") || strings.HasPrefix(fileName, ".") {
 			continue
 		}
-		item := scheme.New()
-
-		data, err := ioutil.ReadFile(fmt.Sprintf("%s/%s/%s", DB_ROOT,kind, fileInfo.Name))
+		
+		f, err := os.Open(fmt.Sprintf("%s/%s/%s", DB_ROOT,kind, fileName),os.O_RDONLY, 0)
+		defer f.Close()
 		if err != nil {
 			return nil, err
 		}
-		err = json.Unmarshal(data, &item)
+		gz, err := gzip.NewReader(f)
+		defer gz.Close()
+		
+		item := scheme.New()
+		gdec := gob.NewDecoder(gz)
+		err = gdec.Decode(item)
 		if err != nil {
 			return nil, err
 		}
@@ -80,14 +95,27 @@ func loadKind(kind string, scheme Serializer) (interface{}, os.Error) {
 }
 
 func saveItem(kind string, item interface{}, key int) os.Error {
-	data, err := json.MarshalIndent(item, "", "\t")
+	f, err := os.Open(fmt.Sprintf("%s/%s/%v.bin.gz", DB_ROOT,kind, key), os.O_CREATE|os.O_WRONLY, 0666)
+	defer f.Close()
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(fmt.Sprintf("%s/%s/%v.json", DB_ROOT,kind, key), data, 0666)
+	buf := bytes.NewBufferString("")
+	
+	genc := gob.NewEncoder(buf)
+	err = genc.Encode(item)
 	if err != nil {
 		return err
 	}
+	gz, err := gzip.NewWriter(f)
+	if err != nil {
+		return err
+	}
+	_, err = gz.Write(buf.Bytes())
+	if err != nil {
+		return err
+	}
+	gz.Close()
 	return nil
 }
 func deleteItem(kind string, id int) os.Error {
@@ -180,7 +208,21 @@ func deleteArticle(id int) os.Error {
 	View.Articles = s
 	return nil
 }
-func MakeAudit(scheme interface{})([]byte, os.Error){
-	data, err := json.Marshal(scheme)
-	return data, err
+func MakeAudit(w io.Writer, scheme interface{})(os.Error){
+	buf := bytes.NewBufferString("")
+	genc := gob.NewEncoder(buf)
+	err := genc.Encode(scheme)
+	if err != nil {
+		return err
+	}
+	gz, err := gzip.NewWriter(w)
+	if err != nil {
+		return err
+	}
+	_, err = gz.Write(buf.Bytes())
+	if err != nil {
+		return err
+	}
+	gz.Close()
+	return nil
 }
