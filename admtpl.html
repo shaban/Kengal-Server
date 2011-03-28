@@ -31,9 +31,10 @@
             </div> 
             <div class="col2"> 
 				<!-- Column 2 start --> 
-				<a style="width:388px;" href="javascript:loadDetail(1,'/?which=newblog&mode=snippet&server={Servers.Current.ID}',true);" >Neuen Blog anlegen</a>
+				<a style="width:388px;" href="javascript:loadDetail(1,'/snippet/?which=newblog',true);" >Neuen Blog anlegen</a>
 				{.repeated section Blogs}
-				<a style="float:left;width:30.6%;padding:5px;margin:0px;" href="javascript:loadDetail(1,'/?host={Url}&which=blogs&mode=snippet&server={Servers.Current.ID}',true);">{Title}</a>
+				<!--  <a style="float:left;width:30.6%;padding:5px;margin:0px;" href="javascript:loadDetail(1,'/snippet/?host={Url}&which=blogs',true);">{Title}</a>-->
+				<a style="float:left;width:30.6%;padding:5px;margin:0px;" href="javascript:loadDetail(1,'/snippet/?host={Url}&which=blogs',true);">{Title}</a>
 				{.end}
                 <!-- Column 2 end --> 
             </div> 

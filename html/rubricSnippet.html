@@ -29,19 +29,19 @@
 	<br/>
 	<br/>
 	
-	<a class="half" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=rubrics&mode=snippet&server={Servers.Current.ID}&rubric={ID}',true);">Änderungen an Rubric verwerfen</a>
-	<a class="half" onclick="" href="javascript:saveNewElem('/admin/rubric/save','#UpdateRubric');">Änderungen an Rubrik übernehmen</a>
+	<a class="half" href="javascript:loadDetail(2,'/snippet/?host={Blogs.Current.Url}&which=rubrics&rubric={ID}',true);">Änderungen an Rubric verwerfen</a>
+	<a class="half" onclick="" href="javascript:saveNewElem('/admin/replace/rubrics','#UpdateRubric');">Änderungen an Rubrik übernehmen</a>
 	
 	<input type="hidden" value="{ID}" name="ID"/>
 	
 	<hr/>
 	
 	<label class="full">Artikel</label>
-	<a class="full" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=newarticle&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}');">Neuen Artikel anlegen</a>
+	<a class="full" href="javascript:loadDetail(3,'/snippet/?host={Blogs.Current.Url}&which=newarticle&rubric={Rubrics.Current.ID}');">Neuen Artikel anlegen</a>
 	{.repeated section Articles.Rubric}
-		<a class="fourth" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=articles&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');" name="blogArticlesRubric" size="1">{Title}</a>
+		<a class="fourth" href="javascript:loadDetail(3,'/snippet/?host={Blogs.Current.Url}&which=articles&rubric={Rubrics.Current.ID}&article={ID}');" name="blogArticlesRubric" size="1">{Title}</a>
 	{.or}
-	<a class="full" href="javascript:delElem('/admin/rubric/delete/?ID={ID}');">Rubrik löschen</a>
+	<a class="full" href="javascript:javascript:saveNewElem('/admin/delete/rubrics','#UpdateRubric');">Rubrik löschen</a>
 	{.end}
 	
 	</fieldset>

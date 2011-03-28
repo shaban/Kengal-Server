@@ -7,7 +7,7 @@ function retrieveTextAndSubmit() {
 	document.getElementById("editor2").value = CKEDITOR.instances.editor2
 			.getData();
 
-	$.post('/admin/article/save', $('#UpdateEditor').serialize(),
+	$.post('/admin/update/articles', $('#UpdateEditor').serialize(),
 			function(data) {
 				$('#console').prepend(data + '<hr/>');
 			});

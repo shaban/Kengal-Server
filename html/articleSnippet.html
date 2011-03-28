@@ -32,11 +32,11 @@
 	<br/>
 	<br/>
 	
-	<a class="half" href="javascript:loadDetail(3,'/?host={Blogs.Current.Url}&which=articles&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}',true);">
+	<a class="half" href="javascript:loadDetail(3,'/snippet/?host={Blogs.Current.Url}&which=articles&rubric={Rubrics.Current.ID}&article={ID}',true);">
 	Änderungen an Artikel verwerfen
 	</a>
 	
-	<a class="half" href="javascript:saveNewElem('/admin/article/save', '#UpdateArticle');">
+	<a class="half" href="javascript:saveNewElem('/admin/replace/articles', '#UpdateArticle');">
 	Änderungen an Artikel speichern
 	</a>
 	
@@ -47,8 +47,8 @@
 	
 	<hr/>
 	
-	<a class="half" href="javascript:loadDetail(4,'/?host={Blogs.Current.Url}&which=editor&mode=snippet&server={Servers.Current.ID}&rubric={Rubrics.Current.ID}&article={ID}');">Text & Teaser bearbeiten</a>
-	<a class="half" href="javascript:delElem('/admin/article/delete/?ID={ID}');">Artikel löschen</a>
+	<a class="half" href="javascript:loadDetail(4,'/snippet/?host={Blogs.Current.Url}&which=editor&rubric={Rubrics.Current.ID}&article={ID}');">Text & Teaser bearbeiten</a>
+	<a class="half" href="javascript:saveNewElem('/admin/delete/articles','#UpdateArticle');">Artikel löschen</a>
 	
 	</form>
 	</div>

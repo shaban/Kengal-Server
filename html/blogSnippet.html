@@ -29,8 +29,8 @@
 	<br/>
 	<br/>
 	
-	<a class="half" href="javascript:loadDetail(1,'/?host={Url}&which=blogs&mode=snippet&server={Servers.Current.ID}',true);">Änderungen an Blog verwerfen</a>
-	<a class="half" href="javascript:saveNewElem('/admin/blog/save','#UpdateBlog');">Änderungen an Blog speichern</a>
+	<a class="half" href="javascript:loadDetail(1,'/snippet/?host={Url}&which=blogs',true);">Änderungen an Blog verwerfen</a>
+	<a class="half" href="javascript:saveNewElem('/admin/replace/blogs','#UpdateBlog');">Änderungen an Blog speichern</a>
 	
 	<input type="hidden" value="{ID}" name="ID"/>
 	<input type="hidden" value="{Server}" name="Server"/>
@@ -39,9 +39,11 @@
 	<hr/>
 	
 	<label class="full">Rubriken</label>
-	<a class="full" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=newrubric&mode=snippet&server={Servers.Current.ID}&rubric={ID}')">Neue Rubrik anlegen</a>
+	<a class="full" href="javascript:loadDetail(2,'/snippet/?host={Blogs.Current.Url}&which=newrubric&rubric={ID}')">Neue Rubrik anlegen</a>
 	{.repeated section Rubrics.Index}
-		<a class="fourth" href="javascript:loadDetail(2,'/?host={Blogs.Current.Url}&which=rubrics&mode=snippet&server={Servers.Current.ID}&rubric={ID}')">{Title}</a>
+		<a class="fourth" href="javascript:loadDetail(2,'/snippet/?host={Blogs.Current.Url}&which=rubrics&rubric={ID}')">{Title}</a>
+	{.or}
+	<a class="full" href="javascript:saveNewElem('/admin/delete/blogs','#UpdateBlog');">Blog löschen</a>
 	{.end}
 	
 	</fieldset>

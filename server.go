@@ -11,7 +11,7 @@ import (
 	"path"
 	"os"
 	"strconv"
-	"time"
+	//gobzip "github.com/shaban/kengal/gobzip"
 )
 
 const errHtml = `
@@ -123,7 +123,7 @@ func ParseParameters(url, host string) os.Error {
 	}
 	return os.ENOTDIR
 }
-func BlogSave(w http.ResponseWriter, r *http.Request) {
+/*func BlogSave(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	b := new(Blog)
 	f := r.Form
@@ -137,13 +137,14 @@ func BlogSave(w http.ResponseWriter, r *http.Request) {
 	b.Server, _ = strconv.Atoi(f["Server"][0])
 	b.Url = f["Url"][0]
 
-	err := updateBlog(b)
+	//err := updateBlog(b)
+	err := View.Blogs.Replace(b)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Speichern von Blog %s fehlgeschlagen", b.Title)))
 		return
 	}
 	buf := bytes.NewBufferString("")
-	err = MakeAudit(buf, b)
+	err = gobzip.MakeAudit(buf, b)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Serialisieren von Blog %s fehlgeschlagen", b.Title)))
 		return
@@ -169,13 +170,14 @@ func RubricSave(w http.ResponseWriter, r *http.Request) {
 	rb.ID, _ = strconv.Atoi(f["ID"][0])
 	rb.Url = f["Url"][0]
 
-	err := updateRubric(rb)
+	//err := updateRubric(rb)
+	err := View.Rubrics.Replace(rb)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Speichern von Rubrik %s fehlgeschlagen", rb.Title)))
 		return
 	}
 	buf := bytes.NewBufferString("")
-	err = MakeAudit(buf, rb)
+	err = gobzip.MakeAudit(buf, rb)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Serialisieren von Rubrik %s fehlgeschlagen", rb.Title)))
 		return
@@ -205,13 +207,14 @@ func ArticleSave(w http.ResponseWriter, r *http.Request) {
 	a.Teaser = f["Teaser"][0]
 	a.Text = f["Text"][0]
 
-	err := updateArticle(a)
+	//err := updateArticle(a)
+	err := View.Articles.Replace(a)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Speichern von Artikel %s fehlgeschlagen", a.Title)))
 		return
 	}
 	buf := bytes.NewBufferString("")
-	err = MakeAudit(buf, a)
+	err = gobzip.MakeAudit(buf, a)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Serialisieren von Artikel %s fehlgeschlagen", a.Title)))
 		return
@@ -237,15 +240,17 @@ func BlogNew(w http.ResponseWriter, r *http.Request) {
 	b.Template, _ = strconv.Atoi(f["Template"][0])
 	b.Server, _ = strconv.Atoi(f["Server"][0])
 	b.Url = f["Url"][0]
-	b.ID = View.Blogs.ID()
+	b.ID = View.Blogs.NewKey()
 
-	err := insertBlog(b)
+	//err := insertBlog(b)
+	View.Blogs = View.Blogs.Insert(b).(Blogs)
+	err := master.Save(b)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Anlegen von Blog %s fehlgeschlagen", b.Title)))
 		return
 	}
 	buf := bytes.NewBufferString("")
-	err = MakeAudit(buf, b)
+	err = gobzip.MakeAudit(buf, b)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Serialisieren von Blog %s fehlgeschlagen", b.Title)))
 		return
@@ -269,16 +274,18 @@ func RubricNew(w http.ResponseWriter, r *http.Request) {
 	rb.Description = f["Description"][0]
 	rb.Blog, _ = strconv.Atoi(f["Blog"][0])
 	rb.Url = f["Url"][0]
-	rb.ID = View.Rubrics.ID()
+	rb.ID = View.Rubrics.NewKey()
 
-	err := insertRubric(rb)
+	//err := insertRubric(rb)
+	View.Rubrics = View.Rubrics.Insert(rb).(Rubrics)
+	err := master.Save(rb)
 
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Anlegen von Rubrik %s fehlgeschlagen", rb.Title)))
 		return
 	}
 	buf := bytes.NewBufferString("")
-	err = MakeAudit(buf, rb)
+	err = gobzip.MakeAudit(buf, rb)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Serialisieren von Rubrik %s fehlgeschlagen", rb.Title)))
 		return
@@ -308,14 +315,16 @@ func ArticleNew(w http.ResponseWriter, r *http.Request) {
 	a.Text = "<p>Geben Sie hier den Text des Artikels ein</p>"
 	a.Date = time.LocalTime().Format("02.01.2006 15:04:05")
 	fmt.Println(a.Date)
-	a.ID = View.Articles.ID()
-	err := insertArticle(a)
+	a.ID = View.Articles.NewKey()
+	//err := insertArticle(a)
+	View.Articles = View.Articles.Insert(a).(Articles)
+	err := master.Save(a)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Anlegen von Artikel %s fehlgeschlagen", a.Title)))
 		return
 	}
 	buf := bytes.NewBufferString("")
-	err = MakeAudit(buf, a)
+	err = gobzip.MakeAudit(buf, a)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Serialisieren von Artikel %s fehlgeschlagen", a.Title)))
 		return
@@ -330,29 +339,49 @@ func ArticleNew(w http.ResponseWriter, r *http.Request) {
 }
 func ArticleDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.FormValue("ID"))
-	err := deleteArticle(id)
-	host := ArticleByID(id).getBlog().Url
+	fmt.Println(id)
+	//err := deleteArticle(id)
+	err := View.Articles.Delete(id)
+	//host := ArticleByID(id).getBlog().Url
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Artikel %v konnte nicht gelöscht werden", id)))
 	}
 	_,_, err = http.Get(fmt.Sprintf("http://%s/admin/delete/articles/?id=%v",host,id))
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Artikel %v konnte auf dem Client nicht gelöscht werden", id)))
+		return
 	}
 	w.Write([]byte(fmt.Sprintf("Artikel %v erfolgreich gelöscht", id)))
 }
 func RubricDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.FormValue("ID"))
 	host := RubricByID(id).getBlog().Url
-	err := deleteRubric(id)
+	//err := deleteRubric(id)
+	err := View.Rubrics.Delete(id)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Rubrik %v konnte nicht gelöscht werden", id)))
 	}
 	_,_, err = http.Get(fmt.Sprintf("http://%s/admin/delete/rubrics/?id=%v",host,id))
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("Rubrik %v konnte auf dem Client nicht gelöscht werden", id)))
+		return
 	}
 	w.Write([]byte(fmt.Sprintf("Rubrik %v erfolgreich gelöscht", id)))
+}
+func BlogDelete(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.FormValue("ID"))
+	host := BlogByID(id).Url
+	//err := deleteBlog(id)
+	err := View.Blogs.Delete(id)
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Blog %v konnte nicht gelöscht werden", id)))
+	}
+	_,_, err = http.Get(fmt.Sprintf("http://%s/admin/delete/blogs/?id=%v",host,id))
+	if err != nil {
+		w.Write([]byte(fmt.Sprintf("Blog %v konnte auf dem Client nicht gelöscht werden", id)))
+		return
+	}
+	w.Write([]byte(fmt.Sprintf("Blog %v erfolgreich gelöscht", id)))
 }
 func Audit(w http.ResponseWriter, r *http.Request) {
 	_, file := path.Split(r.URL.Path)
@@ -362,25 +391,25 @@ func Audit(w http.ResponseWriter, r *http.Request) {
 	var err os.Error
 	switch file{
 		case "articles":
-			err = MakeAudit(w, View.Articles)
+			err = gobzip.MakeAudit(w, View.Articles)
 		case "blogs":
-			err = MakeAudit(w, View.Blogs)
+			err = gobzip.MakeAudit(w, View.Blogs)
 		case "globals":
-			err = MakeAudit(w, View.Globals)
+			err = gobzip.MakeAudit(w, View.Globals)
 		case "resources":
-			err = MakeAudit(w, View.Resources)
+			err = gobzip.MakeAudit(w, View.Resources)
 		case "rubrics":
-			err = MakeAudit(w, View.Rubrics)
+			err = gobzip.MakeAudit(w, View.Rubrics)
 		case "servers":
-			err = MakeAudit(w, View.Servers)
+			err = gobzip.MakeAudit(w, View.Servers)
 		case "themes":
-			err = MakeAudit(w, View.Themes)
+			err = gobzip.MakeAudit(w, View.Themes)
 	}
 	if err != nil{
 		w.WriteHeader(500)
 		return
 	}
-}
+}*/
 
 func Controller(w http.ResponseWriter, r *http.Request) {
 	ParseParameters(r.URL.Path, r.Host)
@@ -394,7 +423,7 @@ func Controller(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.SetHeader("Content-Type", "text/html; charset=utf-8")
+	/*w.SetHeader("Content-Type", "text/html; charset=utf-8")
 
 	if View.Blogs.Current() == nil {
 		se := &ServerError{403, "Forbidden"}
@@ -432,7 +461,7 @@ func Controller(w http.ResponseWriter, r *http.Request) {
 	}
 	se := &ServerError{404, "Not Found"}
 	se.Write(w)
-	return
+	return*/
 }
 func Images(w http.ResponseWriter, r *http.Request) {
 	imagePath := path.Base(r.URL.Path)

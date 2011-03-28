@@ -40,10 +40,10 @@ func SnippetController(w http.ResponseWriter, r *http.Request) {
 	a, _ := strconv.Atoi(r.FormValue("article"))
 	rb, _ := strconv.Atoi(r.FormValue("rubric"))
 
-	os := View.Server
+	/*os := View.Server
 	oh := View.Host
 	oa := View.Article
-	orb := View.Rubric
+	orb := View.Rubric*/
 
 	View.Server = s
 	View.Host = h
@@ -88,20 +88,22 @@ func SnippetController(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	w.Write(buf.Bytes())
-	View.Server = os
+	/*View.Server = os
 	View.Host = oh
 	View.Article = oa
-	View.Rubric = orb
+	View.Rubric = orb*/
 }
 
 func AdminController(w http.ResponseWriter, r *http.Request) {
-	i, err := strconv.Atoi(r.FormValue("server"))
-	if err != nil {
-		View.Server = app.Server
-	} else {
+	i, _ := strconv.Atoi(r.FormValue("server"))
+	View.Server = i
+	//if err != nil {
+	//	View.Server = app.Server
+	//	}
+	/*} else {
 		app.Server = View.Server
 		View.Server = i
-	}
+	}*/
 	//ParseParameters(r.URL.Path, r.Host)
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
