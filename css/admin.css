@@ -1,0 +1,150 @@
+*{
+	margin: 0px;
+	padding: 0px;
+	font-family: Arial;
+	font-size: 13px;
+}
+body{
+	background: #333;
+}
+div#page{
+	width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	background: black;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+div#main{
+	display: table;
+	width: 1200px;
+}
+div#left{
+	background: black;
+	width: 600px
+}
+div#center{
+	background: darkorange;
+	color: black;
+	width: 600px;
+}
+div#left, div#center{
+	vertical-align: top;
+	display: table-cell;
+}
+a:hover{
+	text-decoration: underline ! important;
+}
+a{
+	display: inline-block;
+	text-decoration: none;
+	border-right: 1px solid aliceblue;
+	border-bottom: 1px solid aliceblue;
+	float: left;
+	padding: 5px;
+	color: aliceblue;
+}
+a.console{
+	background: orange;
+	color: black;
+}
+a.servers{
+	background: #db0000;
+}
+a.blogs {
+	background: #369;
+}
+a.rubrics {
+	background: sienna;
+}
+a.articles {
+	background: maroon;
+}
+a.central{
+	background: darkorange;
+}
+a.themes {
+	background: #4c0000;
+}
+a.globals {
+	background: #870000;
+}
+input, label, select{
+	display: inline-block;
+	float: left;
+	padding: 5px;
+	font-size: 120%;
+	margin-right: 10px;
+	margin-left: 10px;
+	margin-top: 0px;
+	margin-bottom: 10px;
+	border: 0px;
+}
+label{
+	margin-top: 5px;
+	margin-bottom: 0px;
+}
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]{
+	padding-left: 0px;
+	padding-right: 0px;
+	width: 280px ! important;
+}
+select{
+	padding-left: 0px;
+	padding-right: 0px;
+	width: 580px;
+}
+select.half{
+	width: 280px ! important;
+}
+select.full, label.full, input.full{
+	width: 570px ! important;
+}
+.full{
+	width: 589px;
+}
+
+.half{
+	width: 270px;
+}
+.third{
+	width: 189px;
+}
+.quarter{
+	width: 139px;
+}
+.threequarter{
+	width: 439px;
+}
+.bold{
+	font-weight: bold ! important;
+}
+.cautious{
+	color: #db0000;
+}
+.tr{
+	display:table-row;
+	width: 100%;
+}
+.th{
+	display: table-caption;
+}
+.td{
+	display: table-cell;
+}
+.tbl{
+	display: table;
+}
+textarea#console{
+	width: 1164px;
+	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: auto;
+	height: 120px;
+	background: black;
+	color: yellow;
+	font-family: Courier;
+	border: 0px;
+	resize: none;
+	line-height: 150%;
+}

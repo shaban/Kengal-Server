@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="quarter bold central" href="/">Zentrale</a>
+		<a class="threequarter blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
+		<br style="clear:both;"/>
+		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="threequarter bold rubrics" href="/newrubrics/">Neue Rubrik anlegen</a>
+		{.repeated section Blogs}
+			<a class="blogs quarter" href="/blogs/{ID}">{Title}</a>
+		{.end}
+		</div>
+		<div id="center">
+			<form method="post" id="insertRubric">
+				<label class="half">Title</label>
+				<label class="half">Url</label>
+				
+				<input class="half" placeholder="Titel eingeben" type="text" value=""  name="Title"/>
+				<input class="half" placeholder="Titel für Adresszeile aufbereiten" type="text" value="" name="Url"/>
+				
+				<label class="half">Keywords</label>
+				<label class="half">Description</label>
+				
+				<input class="half" placeholder="Vergeben Sie Suchbegriffe" type="text" value=""  name="Keywords"/>
+				<input class="half" placeholder="Verfassen Sie eine Beschreibung" type="text" value="" name="Description"/>
+
+				<input type="submit" value="Rubrik anlegen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="{Blogs.Current.ID}" name="Blog"/>
+				<input type="hidden" value="/admin/insert/rubrics" name="Route"/>
+			</form>
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

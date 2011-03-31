@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<script type="text/javascript" src="/global/jquery1.5.1.min.js"></script>
+<script type="text/javascript" src="/js/admin.js"></script>
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+	{.section Articles.Current}
+		<div id="left">
+		<a class="quarter bold central" href="/">Zentrale</a>
+		<a class="quarter blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
+		<a class="quarter rubrics" href="/rubrics/{Blogs.Current.ID},{Rubrics.Current.ID}">{Rubrics.Current.Title}</a>
+		<a class="quarter articles" href="/articles/{Blogs.Current.ID},{Rubrics.Current.ID},{ID}">{Title}</a>
+		
+		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="quarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
+		<a class="quarter bold rubrics" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik anlegen</a>
+		<a class="quarter bold articles" href="/newarticles/{Blogs.Current.ID},{Rubrics.Current.ID}">Neuen Artikel anlegen</a>
+		<hr style="clear:both;"/>
+		{.repeated section Blogs}
+			<a class="blogs quarter" href="/blogs/{ID}">{Title}</a>
+		{.end}
+		</div>
+		<div id="center">
+			<form method="post">
+				<label class="half">Title</label>
+				<label class="half">Url</label>
+				
+				<input class="half" type="text" value="{Title}"  name="Title"/>	
+				<input class="half" type="text" value="{Url}" name="Url"/>
+				
+				<label class="half">Keywords</label>
+				<label class="half">Description</label>
+				
+				<input class="half" type="text" value="{Keywords}"  name="Keywords"/>
+				<input class="half" type="text" value="{Description}" name="Description"/>
+				
+				<label class="half">Erstellungsdatum</label>
+				<input class="half" type="text" value="{Date}" name="Date"/>
+				
+				<label class="full">Text</label>
+				<textarea id="editor2" name="Text">{Text}</textarea>
+
+				<label class="full">Teaser</label>
+				<textarea id="editor1" name="Teaser">{Teaser}</textarea>
+				
+				<input class="half" type="submit" value="Änderungen übernehmen"/>
+				<input class="half" type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="{Blog}" name="Blog"/>
+				<input type="hidden" value="{Rubric}" name="Rubric"/>
+				<input type="hidden" value="/admin/replace/articles" name="Route"/>
+			</form>
+			<form method="post" id="deleteArticle">
+				<input class="cautious" type="submit" value="Diesen Artikel löschen"/>
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/delete/articles" name="Route"/>
+			</form>
+		</div>
+	{.end}
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+<script>
+spawnEditors();
+</script>
+</body>
+</html>

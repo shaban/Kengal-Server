@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+	{.section Rubrics.Current}
+		<div id="left">
+		<a class="quarter bold central" href="/">Zentrale</a>
+		<a class="quarter blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
+		<a class="quarter rubrics" href="/rubrics/{Blogs.Current.ID},{ID}">{Title}</a>
+		<hr style="clear:both;"/>
+		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="quarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
+		<a class="quarter bold rubrics" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik anlegen</a>
+		<a class="quarter bold articles" href="/newarticles/{Blogs.Current.ID},{ID}">Neuen Artikel anlegen</a>
+		<hr style="clear:both;"/>
+		{.repeated section Blogs}
+			<a class="blogs quarter" href="/blogs/{ID}">{Title}</a>
+		{.end}
+		</div>
+		<div id="center">
+			<form method="post" id="updateRubric">
+				<label class="half">Title</label>
+				<label class="half">Url</label>
+				
+				<input class="half" type="text" value="{Title}"  name="Title"/>
+				<input class="half" type="text" value="{Url}" name="Url"/>
+				
+				<label class="half">Keywords</label>
+				<label class="half">Description</label>
+				
+				<input class="half" type="text" value="{Keywords}"  name="Keywords"/>
+				<input class="half" type="text" value="{Description}" name="Description"/>
+
+				<input type="submit" value="Änderungen übernehmen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="{Blog}" name="Blog"/>
+				<input type="hidden" value="/admin/replace/rubrics" name="Route"/>
+			</form>
+			<form method="post" id="deleteRubric">
+				{.repeated section Articles.Rubric}
+					<a class="quarter articles" href="/articles/{Blogs.Current.ID},{Rubrics.Current.ID},{ID}">{Title}</a>
+				{.or}
+				<input class="cautious" type="submit" value="Diese Rubrik löschen"/>
+				{.end}
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/delete/rubrics" name="Route"/>
+			</form>
+		</div>
+	{.end}
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

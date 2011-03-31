@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="full bold central" href="/">Zentrale</a>
+		{.section Servers.Current}
+		<a class="quarter servers" href="/servers/{ID}">{IP}</a>
+		{.end}
+		<a class="servers full bold" href="/newservers/">Neuen Server anlegen</a>
+		{.repeated section Servers}
+			<a class="servers quarter" href="/servers/{ID}">{IP}</a>
+		{.end}
+		</div>
+		<div id="center">
+			{.section Servers.Current}
+			<form method="post" id="updateServer">
+			<fieldset>
+				<label class="half">IP</label>
+				<label class="half">Provider</label>
+				
+				<input class="half" type="text" value="{IP}"  name="IP"/>
+				<input class="half" type="text" value="{Vendor}" name="Vendor"/>
+
+				<input type="submit" value="Änderungen übernehmen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/replace/servers" name="Route"/>
+				</fieldset>
+			</form>
+			<form method="post" id="deleteServer">
+			<fieldset>
+				<input class="cautious" type="submit" value="Diesen Server löschen"/>
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/delete/servers" name="Route"/>
+			</fieldset>
+			</form>
+		{.end}
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

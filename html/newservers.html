@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="full bold central" href="/">Zentrale</a>
+		<a class="full bold servers" href="/newservers/">Neuen Server anlegen</a>
+		{.repeated section Servers}
+			<a class="servers quarter" href="/servers/{ID}">{IP}</a>
+		{.end}
+		</div>
+		<div id="center">
+			<form method="post" id="updateServer">
+			<fieldset>
+				<label class="half">IP</label>
+				<label class="half">Provider</label>
+				
+				<input class="half" type="text" value=""  name="IP"/>
+				<input class="half" type="text" value="" name="Vendor"/>
+
+				<input type="submit" value="Server Anlegen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="/admin/insert/servers" name="Route"/>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

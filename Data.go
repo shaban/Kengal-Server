@@ -5,6 +5,7 @@ import (
 	gobzip "github.com/shaban/kengal/gobzip"
 	"strconv"
 	"time"
+	"fmt"
 )
 
 type Servers []*Server
@@ -183,57 +184,57 @@ func (ser Themes) NewKey() int {
 	}
 	return id + 1
 }
-func (ser Articles)At(key int)gobzip.Serial{
-	for k, v := range ser{
-		if v.ID == key{
+func (ser Articles) At(key int) gobzip.Serial {
+	for k, v := range ser {
+		if v.ID == key {
 			return ser[k]
 		}
 	}
 	return nil
 }
-func (ser Blogs)At(key int)gobzip.Serial{
-	for k, v := range ser{
-		if v.ID == key{
+func (ser Blogs) At(key int) gobzip.Serial {
+	for k, v := range ser {
+		if v.ID == key {
 			return ser[k]
 		}
 	}
 	return nil
 }
-func (ser Globals)At(key int)gobzip.Serial{
-	for k, v := range ser{
-		if v.ID == key{
+func (ser Globals) At(key int) gobzip.Serial {
+	for k, v := range ser {
+		if v.ID == key {
 			return ser[k]
 		}
 	}
 	return nil
 }
-func (ser Resources)At(key int)gobzip.Serial{
-	for k, v := range ser{
-		if v.ID == key{
+func (ser Resources) At(key int) gobzip.Serial {
+	for k, v := range ser {
+		if v.ID == key {
 			return ser[k]
 		}
 	}
 	return nil
 }
-func (ser Rubrics)At(key int)gobzip.Serial{
-	for k, v := range ser{
-		if v.ID == key{
+func (ser Rubrics) At(key int) gobzip.Serial {
+	for k, v := range ser {
+		if v.ID == key {
 			return ser[k]
 		}
 	}
 	return nil
 }
-func (ser Servers)At(key int)gobzip.Serial{
-	for k, v := range ser{
-		if v.ID == key{
+func (ser Servers) At(key int) gobzip.Serial {
+	for k, v := range ser {
+		if v.ID == key {
 			return ser[k]
 		}
 	}
 	return nil
 }
-func (ser Themes)At(key int)gobzip.Serial{
-	for k, v := range ser{
-		if v.ID == key{
+func (ser Themes) At(key int) gobzip.Serial {
+	for k, v := range ser {
+		if v.ID == key {
 			return ser[k]
 		}
 	}
@@ -330,86 +331,86 @@ func (ser Themes) Replace(s gobzip.Serial) os.Error {
 	}
 	return os.ENOENT
 }
-func (ser Articles) Init()gobzip.Serializer{
+func (ser Articles) Init() gobzip.Serializer {
 	s := make([]*Article, 0)
 	var o Articles = s
 	return o
 }
-func (ser Blogs) Init()gobzip.Serializer{
+func (ser Blogs) Init() gobzip.Serializer {
 	s := make([]*Blog, 0)
 	var o Blogs = s
 	return o
 }
-func (ser Globals) Init()gobzip.Serializer{
+func (ser Globals) Init() gobzip.Serializer {
 	s := make([]*Global, 0)
 	var o Globals = s
 	return o
 }
-func (ser Resources) Init()gobzip.Serializer{
+func (ser Resources) Init() gobzip.Serializer {
 	s := make([]*Resource, 0)
 	var o Resources = s
 	return o
 }
-func (ser Rubrics) Init()gobzip.Serializer{
+func (ser Rubrics) Init() gobzip.Serializer {
 	s := make([]*Rubric, 0)
 	var o Rubrics = s
 	return o
 }
-func (ser Servers) Init()gobzip.Serializer{
+func (ser Servers) Init() gobzip.Serializer {
 	s := make([]*Server, 0)
 	var o Servers = s
 	return o
 }
-func (ser Themes) Init()gobzip.Serializer{
+func (ser Themes) Init() gobzip.Serializer {
 	s := make([]*Theme, 0)
 	var o Themes = s
 	return o
 }
-func (ser Articles) Keys()[]int{
-	keys := make([]int,0)
-	for _, v := range ser{
+func (ser Articles) Keys() []int {
+	keys := make([]int, 0)
+	for _, v := range ser {
 		keys = append(keys, v.ID)
 	}
 	return keys
 }
-func (ser Blogs) Keys()[]int{
-	keys := make([]int,0)
-	for _, v := range ser{
+func (ser Blogs) Keys() []int {
+	keys := make([]int, 0)
+	for _, v := range ser {
 		keys = append(keys, v.ID)
 	}
 	return keys
 }
-func (ser Globals) Keys()[]int{
-	keys := make([]int,0)
-	for _, v := range ser{
+func (ser Globals) Keys() []int {
+	keys := make([]int, 0)
+	for _, v := range ser {
 		keys = append(keys, v.ID)
 	}
 	return keys
 }
-func (ser Resources) Keys()[]int{
-	keys := make([]int,0)
-	for k, _ := range ser{
-		keys = append(keys, k)
-	}
-	return keys
-}
-func (ser Rubrics) Keys()[]int{
-	keys := make([]int,0)
-	for _, v := range ser{
+func (ser Resources) Keys() []int {
+	keys := make([]int, 0)
+	for _, v := range ser {
 		keys = append(keys, v.ID)
 	}
 	return keys
 }
-func (ser Servers) Keys()[]int{
-	keys := make([]int,0)
-	for _, v := range ser{
+func (ser Rubrics) Keys() []int {
+	keys := make([]int, 0)
+	for _, v := range ser {
 		keys = append(keys, v.ID)
 	}
 	return keys
 }
-func (ser Themes) Keys()[]int{
-	keys := make([]int,0)
-	for _, v := range ser{
+func (ser Servers) Keys() []int {
+	keys := make([]int, 0)
+	for _, v := range ser {
+		keys = append(keys, v.ID)
+	}
+	return keys
+}
+func (ser Themes) Keys() []int {
+	keys := make([]int, 0)
+	for _, v := range ser {
 		keys = append(keys, v.ID)
 	}
 	return keys
@@ -417,7 +418,7 @@ func (ser Themes) Keys()[]int{
 
 func (ser Articles) NewFromForm(from map[string][]string) gobzip.Serial {
 	a := new(Article)
-	key :=View.KeyFromForm(from)
+	key := View.KeyFromForm(from)
 	if key == 0 {
 		a.ID = ser.NewKey()
 	} else {
@@ -436,7 +437,7 @@ func (ser Articles) NewFromForm(from map[string][]string) gobzip.Serial {
 }
 func (ser Blogs) NewFromForm(from map[string][]string) gobzip.Serial {
 	a := new(Blog)
-	key :=View.KeyFromForm(from)
+	key := View.KeyFromForm(from)
 	if key == 0 {
 		a.ID = ser.NewKey()
 	} else {
@@ -453,7 +454,7 @@ func (ser Blogs) NewFromForm(from map[string][]string) gobzip.Serial {
 }
 func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.Serial {
 	a := new(Rubric)
-	key :=View.KeyFromForm(from)
+	key := View.KeyFromForm(from)
 	if key == 0 {
 		a.ID = ser.NewKey()
 	} else {
@@ -476,7 +477,17 @@ func (ser Themes) NewFromForm(from map[string][]string) gobzip.Serial {
 	return nil
 }
 func (ser Servers) NewFromForm(from map[string][]string) gobzip.Serial {
-	return nil
+	fmt.Println(from)
+	a := new(Server)
+	key := View.KeyFromForm(from)
+	if key == 0 {
+		a.ID = ser.NewKey()
+	} else {
+		a.ID = key
+	}
+	a.IP = from["IP"][0]
+	a.Vendor = from["Vendor"][0]
+	return a
 }
 
 func (send *Article) Host() string {
@@ -503,7 +514,16 @@ func (send *Rubric) Host() string {
 	}
 	return ""
 }
-func (multisend *Global) Hosts() []string {
+func (send *Global) Host() string {
+	return ""
+}
+func (send *Theme) Host() string {
+	return ""
+}
+func (send *Resource) Host() string {
+	return ""
+}
+/*func (multisend *Global) Hosts() []string {
 	slice := make([]string, 0)
 	for _, v := range View.Servers {
 		slice = append(slice, v.IP)
@@ -523,7 +543,7 @@ func (multisend *Theme) Hosts() []string {
 		slice = append(slice, v.IP)
 	}
 	return slice
-}
+}*/
 
 func (p *Page) Delegate(kind string) gobzip.Serializer {
 	switch kind {
@@ -545,7 +565,7 @@ func (p *Page) Delegate(kind string) gobzip.Serializer {
 	return nil
 }
 func (p *Page) KeyFromForm(from map[string][]string) int {
-	if from["ID"] !=nil{
+	if from["ID"] != nil {
 		key, err := strconv.Atoi(from["ID"][0])
 		if err != nil {
 			return 0
@@ -555,13 +575,39 @@ func (p *Page) KeyFromForm(from map[string][]string) int {
 	return 0
 }
 
+func (p *Page) Hosts() []string {
+	slice := make([]string, 0)
+	for _, v := range p.Servers {
+		slice = append(slice, v.IP)
+	}
+	return slice
+}
+func (p *Page) Senders(kind string) gobzip.Serializer {
+	switch kind {
+	case "articles":
+		return p.Articles
+	case "blogs":
+		return p.Blogs
+	case "globals":
+		return p.Globals
+	case "resources":
+		return p.Resources
+	case "rubrics":
+		return p.Rubrics
+	case "servers":
+		return p.Servers
+	case "themes":
+		return p.Themes
+	}
+	return nil
+}
+func (p *Page) Console()string {
+	return master.Logged()
+}
 type Server struct {
 	ID     int
 	IP     string
 	Vendor string
-	Cpu    string
-	Cache  string
-	Memory string
 }
 
 type Blog struct {
@@ -615,15 +661,18 @@ type Page struct {
 	Rubrics   Rubrics
 	Articles  Articles
 	Blogs     Blogs
-	Blog      int
 	Themes    Themes
 	Resources Resources
 	Globals   Globals
 	Servers   Servers
 	Index     int
+	Blog      int
 	Rubric    int
 	Article   int
 	Server    int
+	Theme     int
+	Global    int
+	Resource	int
 	Imprint   bool
 	Host      string
 }

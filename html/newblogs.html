@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="full bold central" href="/">Zentrale</a>
+		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="threequarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
+		<hr style="clear:both;"/>
+		{.repeated section Blogs}
+			<a class="blogs quarter" href="/blogs/{ID}">{Title}</a>
+		{.end}
+		</div>
+		<div id="center">
+			<form method="post" id="insertBlog">
+				<label class="half">Title</label>
+				<label class="half">Slogan</label>
+				
+				<input class="half" type="text" placeholder="Titel eingeben" value=""  name="Title"/>
+				<input class="half" type="text" placeholder="Formulieren Sie einen Slogan" value="" name="Slogan"/>
+				
+				<label class="half">Keywords</label>
+				<label class="half">Description</label>
+				
+				<input class="half" type="text" placeholder="Vergeben Sie Suchbegriffe" value=""  name="Keywords"/>
+				<input class="half" type="text" placeholder="Verfassen Sie eine Beschreibung" value="" name="Description"/>
+				
+				<label class="half">Url</label>
+				<label class="half">Server</label>
+
+				<input class="half" placeholder="Prüfen Sie die URL sorgfältig" type="text" value="" name="Url"/>
+				<select class="half" name="Server" size="1">
+				{.repeated section Servers}
+					<option value="{ID}">{IP} | {Vendor}</option>
+				{.end}
+				</select>
+				
+				<label class="full">Template</label>
+				<select name="Template" size="1">
+				{.repeated section Themes}
+					<option value="{ID}">{Title}</option>
+				{.end}
+				</select>
+
+				<input type="submit" value="Blog anlegen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				<input type="hidden" value="/admin/insert/blogs" name="Route"/>
+			</form>
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

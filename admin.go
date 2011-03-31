@@ -8,14 +8,98 @@ import (
 	"bytes"
 	"io/ioutil"
 	"strconv"
-	"json"
+	"path"
+	"strings"
+	"mime"
 )
+const errHtml = `
+	<html>
+		<head>
+		<style>
+		body{
+			font-family: Arial;
+		}
+		div{
+			padding: 15px 30px;
+			border: 1px solid black;
+			width: 640px;
+			margin-top: 40px;
+			margin-left: auto;
+			margin-right: auto;
+			background: white;
+			color: #369;
+		}
+		</style>
+		</head><body>
+			<div>
+				<h1>%v - %s</h1>
+				<p>Kengal 0.9.1</p>
+			</div>
+		</body>
+	</html>`
 
-func AdminDispatch(w http.ResponseWriter) {
+type ServerError struct {
+	Code int
+	Msg  string
+}
+
+func (se *ServerError) Write(w http.ResponseWriter) {
+	w.WriteHeader(se.Code)
+	errOut := fmt.Sprintf(errHtml, se.Code, se.Msg)
+	w.Write([]byte(errOut))
+	w.Flush()
+}
+func Images(w http.ResponseWriter, r *http.Request) {
+	imagePath := path.Base(r.URL.Path)
+	mimeType := mime.TypeByExtension(path.Ext(imagePath))
+
+	w.SetHeader("Content-Type", mimeType)
+	w.SetHeader("Cache-Control", "max-age=31104000, public")
+	current := View.Themes.Current()
+	for _, v := range View.Resources {
+		if v.Template == current.ID {
+			if v.Name == imagePath {
+				w.Write(v.Data)
+				w.Flush()
+			}
+		}
+	}
+}
+func GlobalController(w http.ResponseWriter, r *http.Request) {
+	imagePath := path.Base(r.URL.Path)
+	mimeType := mime.TypeByExtension(path.Ext(imagePath))
+	w.SetHeader("Content-Type", mimeType)
+	for _, v := range View.Globals {
+		if v.Name == imagePath {
+			w.Write(v.Data)
+			w.Flush()
+		}
+	}
+}
+func Css(w http.ResponseWriter, r *http.Request) {
+	w.SetHeader("Content-Encoding", "gzip")
+	w.SetHeader("Content-Type", "text/css")
+
+	gz, _ := gzip.NewWriter(w)
+	gz.Write([]byte(View.Themes.Current().Style))
+	gz.Close()
+}
+
+func FileHelper(w http.ResponseWriter, r *http.Request) {
+	mimeType := mime.TypeByExtension(path.Ext(r.URL.Path))
+	w.SetHeader("Content-Encoding", "gzip")
+	w.SetHeader("Content-Type", mimeType)
+	//w.SetHeader("Expires", "Fri, 30 Oct 2013 14:19:41 GMT")
+	b, _ := ioutil.ReadFile("." + r.URL.Path)
+	gz, _ := gzip.NewWriter(w)
+	gz.Write(b)
+	gz.Close()
+}
+func AdminDispatch(w http.ResponseWriter, kind string) {
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 	var Templ = template.New(nil)
-	admintemplate, _ := ioutil.ReadFile("admtpl.html")
+	admintemplate, _ := ioutil.ReadFile(fmt.Sprintf("html/%s.html",kind))
 
 	err := Templ.Parse(string(admintemplate))
 	if err != nil {
@@ -31,81 +115,52 @@ func AdminDispatch(w http.ResponseWriter) {
 		fmt.Println(err)
 	}
 }
-
-func SnippetController(w http.ResponseWriter, r *http.Request) {
-	j := r.FormValue("which")
-	
-	s, _ := strconv.Atoi(r.FormValue("server"))
-	h := r.FormValue("host")
-	a, _ := strconv.Atoi(r.FormValue("article"))
-	rb, _ := strconv.Atoi(r.FormValue("rubric"))
-
-	/*os := View.Server
-	oh := View.Host
-	oa := View.Article
-	orb := View.Rubric*/
-
-	View.Server = s
-	View.Host = h
-	View.Rubric = rb
-	View.Article = a
-
-	tplFile := ""
-	w.SetHeader("Content-Type", "text/html; charset=utf-8")
-
-	switch j {
-	case "blogs":
-		tplFile = "html/blogSnippet.html"
-	case "articles":
-		tplFile = "html/articleSnippet.html"
-	case "rubrics":
-		tplFile = "html/rubricSnippet.html"
-	case "editor":
-		tplFile = "html/editorSnippet.html"
-	case "templates":
-		data, _ := json.Marshal(View.Themes)
-		w.Write(data)
-		w.Flush()
-	case "newblog":
-		tplFile = "html/blogNewSnippet.html"
-	case "newrubric":
-		tplFile = "html/rubricNewSnippet.html"
-	case "newarticle":
-		tplFile = "html/articleNewSnippet.html"
-	}
-	var Templ = template.New(nil)
-	snippetTempl, err := ioutil.ReadFile(tplFile)
-	if err != nil {
-		fmt.Println(err)
-	}
-	buf := bytes.NewBufferString("")
-	err = Templ.Parse(string(snippetTempl))
-	if err != nil {
-		fmt.Println(err)
-	}
-	err = Templ.Execute(buf, View)
-	if err != nil {
-		fmt.Println(err)
-	}
-	w.Write(buf.Bytes())
-	/*View.Server = os
-	View.Host = oh
-	View.Article = oa
-	View.Rubric = orb*/
-}
-
 func AdminController(w http.ResponseWriter, r *http.Request) {
-	i, _ := strconv.Atoi(r.FormValue("server"))
-	View.Server = i
-	//if err != nil {
-	//	View.Server = app.Server
-	//	}
-	/*} else {
-		app.Server = View.Server
-		View.Server = i
-	}*/
-	//ParseParameters(r.URL.Path, r.Host)
+	View.Blog = 0
+	View.Rubric = 0
+	View.Article = 0
+	View.Server = 0
+	View.Theme = 0
+	View.Global=0
+	View.Resource = 0
+	
+	// Originalpfad der Url zwischenspeichern und nach Redirect widerherstellen
+	route := r.FormValue("Route")
+	if route !=""{
+		orig := r.URL.Path
+		r.URL.Path = route
+		master.HandleForm(route,w,r)
+		r.URL.Path = orig
+	}
+
+	dir, file := path.Split(r.URL.Path)
+	ids := strings.Split(file, ",", -1)
+
+	kind  := strings.Replace(dir,"/","",-1)
+	switch kind{
+		case "blogs","newrubrics":
+			View.Blog, _ = strconv.Atoi(ids[0])
+		case "rubrics","newarticles":
+			View.Blog, _ = strconv.Atoi(ids[0])
+			View.Rubric, _ = strconv.Atoi(ids[1])
+		case "articles":
+			View.Blog, _ = strconv.Atoi(ids[0])
+			View.Rubric, _ = strconv.Atoi(ids[1])
+			View.Article, _ = strconv.Atoi(ids[2])
+		case "servers":
+			View.Server, _ = strconv.Atoi(ids[0])
+		case "globals":
+			View.Global, _ = strconv.Atoi(ids[0])
+		case "themes","newresources":
+			View.Theme, _ = strconv.Atoi(ids[0])
+		case "resources":
+			View.Theme, _ = strconv.Atoi(ids[0])
+			View.Resource, _ = strconv.Atoi(ids[1])
+		case "":
+			kind = "admin"
+	}
+
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
-	AdminDispatch(w)
+	AdminDispatch(w, kind)
 }

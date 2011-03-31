@@ -19,10 +19,7 @@ function spawnEditors() {
 	if (CKEDITOR.instances['editor1'])
 		delete CKEDITOR.instances['editor1'];
 	CKEDITOR.replace('editor1', {
-		toolbar : [[ 'Source', '-', 'Undo', 'Redo', '-', 'Find', 'Replace', '-','Bold', 'Italic', 'Underline', 'Strike', '-','Subscript', 'Superscript' ],
-				[ 'NumberedList', 'BulletedList', '-', 'Styles','Blockquote' ],
-				[ 'JustifyLeft', 'JustifyCenter', 'JustifyRight','JustifyBlock' ], 
-				[ 'Link', 'Unlink','Image', 'Table' ] ],
+		toolbar : [[ 'Source'] ],
 		height : 130
 	});
 
