@@ -9,9 +9,9 @@
 <div id="page">
 	<div id="main">
 		<div id="left">
-		<a class="full bold central" href="/">Zentrale</a>
+		<a class="quarter bold central" href="/">Zentrale</a>
 		{.section Servers.Current}
-		<a class="quarter servers" href="/servers/{ID}">{IP}</a>
+		<a class="threequarter servers" href="/servers/{ID}">{IP}</a>
 		{.end}
 		<a class="servers full bold" href="/newservers/">Neuen Server anlegen</a>
 		{.repeated section Servers}
@@ -21,7 +21,6 @@
 		<div id="center">
 			{.section Servers.Current}
 			<form method="post" id="updateServer">
-			<fieldset>
 				<label class="half">IP</label>
 				<label class="half">Provider</label>
 				
@@ -33,7 +32,6 @@
 				
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/replace/servers" name="Route"/>
-				</fieldset>
 			</form>
 			<form method="post" id="deleteServer">
 			<fieldset>
