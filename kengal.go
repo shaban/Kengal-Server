@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"os"
 	"http"
+	"path"
 	gobzip "github.com/shaban/kengal/gobzip"
 )
-
-var master = gobzip.DefaultMaster
 var View = new(Page)
 var PaginatorMax = 5
 
@@ -117,6 +116,24 @@ func (s Servers) Current() *Server {
 	}
 	return nil
 }
+func (s Globals) Current() *Global {
+	for k, v := range s {
+		if v.ID == View.Global {
+			return s[k]
+		}
+	}
+	return nil
+}
+
+func (s *Global) DataString() string {
+	switch path.Ext(s.Name){
+	case ".js",".css","html",".htm":
+		return string(s.Data)
+	default:
+		return ""
+	}
+	return ""
+}
 
 func (srv *Server) Active() bool {
 	if View.Server == 0 || srv.ID != View.Server {
@@ -164,9 +181,8 @@ func (b Blogs) Current() *Blog {
 	return nil
 }
 func (t Themes) Current() *Theme {
-	current := View.Blogs.Current()
 	for k, v := range t {
-		if v.ID == current.Template {
+		if v.ID == View.Theme {
 			return t[k]
 		}
 	}
@@ -241,8 +257,9 @@ func (r Rubrics) Index() Rubrics {
 	return s
 }
 func main() {
-	master.Init(View, "db", "/admin/delete/", "/admin/replace/", "/admin/insert/", "/admin/audit/")
-	master.HandleForms()
+	View.Master = gobzip.DefaultMaster
+	View.Master.Init(View, "db", "/admin/delete/", "/admin/replace/", "/admin/insert/", "/admin/audit/")
+	View.Master.HandleForms()
 
 	err := LoadAll()
 	if err != nil {
@@ -282,6 +299,7 @@ func main() {
 	http.HandleFunc("/js/", FileHelper)
 	http.HandleFunc("/css/", FileHelper)
 	http.HandleFunc("/html/", FileHelper)
+	http.HandleFunc("/admin/clear/log/",DeleteLog)
 	//http.HandleFunc("/tpl/", FileHelper)
 
 	http.HandleFunc("/ckeditor/", FileHelper)

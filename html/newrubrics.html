@@ -12,14 +12,15 @@
 		<a class="quarter bold central" href="/">Zentrale</a>
 		<a class="threequarter blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
 		<br style="clear:both;"/>
-		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
 		<a class="threequarter bold rubrics" href="/newrubrics/">Neue Rubrik anlegen</a>
+		<hr style="clear:both;"/>
 		{.repeated section Blogs}
 			<a class="blogs quarter" href="/blogs/{ID}">{Title}</a>
 		{.end}
 		</div>
 		<div id="center">
-			<form method="post" id="insertRubric">
+			<form method="post">
 				<label class="half">Title</label>
 				<label class="half">Url</label>
 				
@@ -37,6 +38,7 @@
 				
 				<input type="hidden" value="{Blogs.Current.ID}" name="Blog"/>
 				<input type="hidden" value="/admin/insert/rubrics" name="Route"/>
+				<input type="hidden" value="/rubrics/{Blogs.Current.ID}," name="Redir"/>
 			</form>
 		</div>
 	</div>

@@ -58,6 +58,27 @@ func (s *Server) Kind() string {
 func (s *Theme) Kind() string {
 	return "themes"
 }
+func (s *Article) Log() string {
+	return fmt.Sprintf("Typ: Article, ID: %v, Title: %s, Url: %s", s.ID, s.Title, s.Url)
+}
+func (s *Blog) Log() string {
+	return fmt.Sprintf("Typ: Blog, ID: %v, Title: %s, Url: %s", s.ID, s.Title, s.Url)
+}
+func (s *Global) Log() string {
+	return fmt.Sprintf("Typ: Global, ID: %v, Name: %s", s.ID, s.Name)
+}
+func (s *Resource) Log() string {
+	return fmt.Sprintf("Typ: Resource, ID: %v, Name: %s", s.ID, s.Name)
+}
+func (s *Rubric) Log() string {
+	return fmt.Sprintf("Typ: Rubric, ID: %v, Title: %s, Url: %s", s.ID, s.Title, s.Url)
+}
+func (s *Server) Log() string {
+	return fmt.Sprintf("Typ: Server, ID: %v, Vendor: %s", s.ID, s.Vendor)
+}
+func (s *Theme) Log() string {
+	return fmt.Sprintf("Typ: Theme, ID: %v, Title: %s, FromUrl: %s", s.ID, s.Title, s.FromUrl)
+}
 func (ser Articles) Kind() string {
 	return "articles"
 }
@@ -122,7 +143,7 @@ func (ser Themes) All(ins gobzip.Serializer) {
 	View.Themes = ins.(Themes)
 }
 func (ser Articles) NewKey() int {
-	id := 1
+	id := 0
 	for _, v := range ser {
 		if v.ID > id {
 			id = v.ID
@@ -131,7 +152,7 @@ func (ser Articles) NewKey() int {
 	return id + 1
 }
 func (ser Blogs) NewKey() int {
-	id := 1
+	id := 0
 	for _, v := range ser {
 		if v.ID > id {
 			id = v.ID
@@ -140,7 +161,7 @@ func (ser Blogs) NewKey() int {
 	return id + 1
 }
 func (ser Globals) NewKey() int {
-	id := 1
+	id := 0
 	for _, v := range ser {
 		if v.ID > id {
 			id = v.ID
@@ -149,7 +170,7 @@ func (ser Globals) NewKey() int {
 	return id + 1
 }
 func (ser Resources) NewKey() int {
-	id := 1
+	id := 0
 	for _, v := range ser {
 		if v.ID > id {
 			id = v.ID
@@ -158,7 +179,7 @@ func (ser Resources) NewKey() int {
 	return id + 1
 }
 func (ser Rubrics) NewKey() int {
-	id := 1
+	id := 0
 	for _, v := range ser {
 		if v.ID > id {
 			id = v.ID
@@ -167,7 +188,7 @@ func (ser Rubrics) NewKey() int {
 	return id + 1
 }
 func (ser Servers) NewKey() int {
-	id := 1
+	id := 0
 	for _, v := range ser {
 		if v.ID > id {
 			id = v.ID
@@ -176,7 +197,7 @@ func (ser Servers) NewKey() int {
 	return id + 1
 }
 func (ser Themes) NewKey() int {
-	id := 1
+	id := 0
 	for _, v := range ser {
 		if v.ID > id {
 			id = v.ID
@@ -468,16 +489,53 @@ func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.Serial {
 	return a
 }
 func (ser Globals) NewFromForm(from map[string][]string) gobzip.Serial {
-	return nil
+	a := new(Global)
+	key := View.KeyFromForm(from)
+	if key == 0 {
+		a.ID = ser.NewKey()
+	} else {
+		a.ID = key
+	}
+	a.Name = from["Name"][0]
+	if from["DataString"] == nil {
+		a.Data = []byte(from["Data"][0])
+	} else {
+		a.Data = []byte(from["DataString"][0])
+	}
+	return a
 }
 func (ser Resources) NewFromForm(from map[string][]string) gobzip.Serial {
-	return nil
+	a := new(Resource)
+	key := View.KeyFromForm(from)
+	if key == 0 {
+		a.ID = ser.NewKey()
+	} else {
+		a.ID = key
+	}
+	a.Name = from["Name"][0]
+	if from["DataString"] == nil {
+		a.Data = []byte(from["Data"][0])
+	} else {
+		a.Data = []byte(from["DataString"][0])
+	}
+	a.Template,_=strconv.Atoi(from["Template"][0])
+	return a
 }
 func (ser Themes) NewFromForm(from map[string][]string) gobzip.Serial {
-	return nil
+	a := new(Theme)
+	key := View.KeyFromForm(from)
+	if key == 0 {
+		a.ID = ser.NewKey()
+	} else {
+		a.ID = key
+	}
+	a.Title=from["Title"][0]
+	a.Index=from["Index"][0]
+	a.Style=from["Style"][0]
+	a.FromUrl = from["FromUrl"][0]
+	return a
 }
 func (ser Servers) NewFromForm(from map[string][]string) gobzip.Serial {
-	fmt.Println(from)
 	a := new(Server)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -601,9 +659,10 @@ func (p *Page) Senders(kind string) gobzip.Serializer {
 	}
 	return nil
 }
-func (p *Page) Console()string {
-	return master.Logged()
+func (p *Page) Console() string {
+	return p.Master.Logged()
 }
+
 type Server struct {
 	ID     int
 	IP     string
@@ -672,9 +731,10 @@ type Page struct {
 	Server    int
 	Theme     int
 	Global    int
-	Resource	int
+	Resource  int
 	Imprint   bool
 	Host      string
+	Master    *gobzip.MasterFileSystem
 }
 type Theme struct {
 	ID      int
@@ -685,31 +745,31 @@ type Theme struct {
 }
 
 func LoadAll() os.Error {
-	err := master.LoadKind(&View.Articles)
+	err := View.Master.LoadKind(&View.Articles)
 	if err != nil {
 		return err
 	}
-	err = master.LoadKind(&View.Blogs)
+	err = View.Master.LoadKind(&View.Blogs)
 	if err != nil {
 		return err
 	}
-	err = master.LoadKind(&View.Globals)
+	err = View.Master.LoadKind(&View.Globals)
 	if err != nil {
 		return err
 	}
-	err = master.LoadKind(&View.Resources)
+	err = View.Master.LoadKind(&View.Resources)
 	if err != nil {
 		return err
 	}
-	err = master.LoadKind(&View.Rubrics)
+	err = View.Master.LoadKind(&View.Rubrics)
 	if err != nil {
 		return err
 	}
-	err = master.LoadKind(&View.Servers)
+	err = View.Master.LoadKind(&View.Servers)
 	if err != nil {
 		return err
 	}
-	err = master.LoadKind(&View.Themes)
+	err = View.Master.LoadKind(&View.Themes)
 	if err != nil {
 		return err
 	}

@@ -18,7 +18,7 @@
 		<a class="quarter rubrics" href="/rubrics/{Blogs.Current.ID},{Rubrics.Current.ID}">{Rubrics.Current.Title}</a>
 		<a class="quarter articles" href="/articles/{Blogs.Current.ID},{Rubrics.Current.ID},{ID}">{Title}</a>
 		
-		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
 		<a class="quarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
 		<a class="quarter bold rubrics" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik anlegen</a>
 		<a class="quarter bold articles" href="/newarticles/{Blogs.Current.ID},{Rubrics.Current.ID}">Neuen Artikel anlegen</a>
@@ -57,11 +57,13 @@
 				<input type="hidden" value="{Blog}" name="Blog"/>
 				<input type="hidden" value="{Rubric}" name="Rubric"/>
 				<input type="hidden" value="/admin/replace/articles" name="Route"/>
+				<input type="hidden" value="/articles/{Blogs.Current.ID},{Rubrics.Current.ID},{ID}" name="Redir"/>
 			</form>
-			<form method="post" id="deleteArticle">
+			<form method="post">
 				<input class="cautious" type="submit" value="Diesen Artikel löschen"/>
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/articles" name="Route"/>
+				<input type="hidden" value="/rubrics/{Blogs.Current.ID},{Rubrics.Current.ID}" name="Redir"/>
 			</form>
 		</div>
 	{.end}

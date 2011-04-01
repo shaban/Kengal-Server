@@ -13,14 +13,17 @@
 		{.section Servers.Current}
 		<a class="threequarter servers" href="/servers/{ID}">{IP}</a>
 		{.end}
-		<a class="servers full bold" href="/newservers/">Neuen Server anlegen</a>
+		<br style="clear:both;"/>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="servers threequarter bold" href="/newservers/">Neuen Server anlegen</a>
+		<hr style="clear:both;"/>
 		{.repeated section Servers}
 			<a class="servers quarter" href="/servers/{ID}">{IP}</a>
 		{.end}
 		</div>
 		<div id="center">
 			{.section Servers.Current}
-			<form method="post" id="updateServer">
+			<form method="post">
 				<label class="half">IP</label>
 				<label class="half">Provider</label>
 				
@@ -32,13 +35,13 @@
 				
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/replace/servers" name="Route"/>
+				<input type="hidden" value="/servers/{ID}" name="Redir"/>
 			</form>
-			<form method="post" id="deleteServer">
-			<fieldset>
+			<form method="post">
 				<input class="cautious" type="submit" value="Diesen Server löschen"/>
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/servers" name="Route"/>
-			</fieldset>
+				<input type="hidden" value="/" name="Redir"/>
 			</form>
 		{.end}
 		</div>

@@ -10,7 +10,7 @@
 	<div id="main">
 		<div id="left">
 		<a class="full bold central" href="/">Zentrale</a>
-		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
 		<a class="threequarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
 		<hr style="clear:both;"/>
 		{.repeated section Blogs}
@@ -18,7 +18,7 @@
 		{.end}
 		</div>
 		<div id="center">
-			<form method="post" id="insertBlog">
+			<form method="post">
 				<label class="half">Title</label>
 				<label class="half">Slogan</label>
 				
@@ -51,6 +51,7 @@
 				<input type="submit" value="Blog anlegen"/>
 				<input type="reset" value="Zurücksetzen"/>
 				<input type="hidden" value="/admin/insert/blogs" name="Route"/>
+				<input type="hidden" value="/blogs/" name="Redir"/>
 			</form>
 		</div>
 	</div>

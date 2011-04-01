@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="full bold central" href="/">Zentrale</a>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="globals threequarter bold" href="/newglobals/">Neue Globale Resource anlegen</a>
+		<hr style="clear:both;"/>
+		{.repeated section Globals}
+			<a class="globals quarter" href="/globals/{ID}">{Name}</a>
+		{.end}
+		</div>
+		<div id="center">
+			<form method="post" encType="multipart/form-data">
+				<label class="full">Name</label>
+				<input class="full" type="text" placeholder="Namen mit korrekter Dateiendung" name="Name"/>
+				
+				<label class="full">Data</label>
+				<input class="full" type="file" name="Data"> 
+
+				<input type="submit" value="Globale Resource Anlegen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="/admin/insert/globals" name="Route"/>
+				<input type="hidden" value="/globals/" name="Redir"/>
+			</form>
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

@@ -11,8 +11,42 @@ import (
 	"http"
 	"path"
 	"log"
+	"strconv"
 )
 // Datainterfaces
+type logMsg struct { 
+        data []byte 
+        next *logMsg 
+}
+type reverseBuffer struct { 
+        logMsgs *logMsg 
+}
+type reverseReader struct { 
+        data []byte 
+        logMsgs *logMsg 
+}
+func (w *reverseBuffer) Write(data []byte) (int, os.Error) { 
+        if len(data) == 0 { 
+                return 0, nil 
+        } 
+        w.logMsgs = &logMsg{append([]byte(nil), data...), w.logMsgs} 
+        return len(data), nil 
+}
+func (w *reverseBuffer) Reader() io.Reader { 
+        return &reverseReader{nil, w.logMsgs} 
+}
+func (r *reverseReader) Read(data []byte) (int, os.Error) { 
+        if len(r.data) == 0 { 
+                if r.logMsgs == nil { 
+                        return 0, os.EOF 
+                } 
+                r.data = r.logMsgs.data 
+                r.logMsgs = r.logMsgs.next 
+        } 
+        n := copy(data, r.data) 
+        r.data = r.data[n:] 
+        return n, nil 
+} 
 type Delegator interface {
 	Delegate(kind string) Serializer
 	KeyFromForm(from map[string][]string) int
@@ -23,6 +57,7 @@ type Sender interface {
 type Serial interface {
 	Key() int
 	Kind() string
+	Log()string
 }
 type SerialSender interface {
 	Serial
@@ -47,7 +82,7 @@ type FileSystem struct {
 	replacePattern string
 	insertPattern  string
 	auditPattern   string
-	logData *bytes.Buffer
+	logData *reverseBuffer
 	Logger *log.Logger
 }
 type MasterFileSystem struct {
@@ -62,6 +97,7 @@ type Database interface {
 	Save(s Serial) os.Error
 	Init(deleg Delegator, Root, DeletePattern, ReplacePattern, InsertPattern, AuditPattern string)
 	Logged()string
+	ClearLog()
 }
 type MasterDatabase interface {
 	Database
@@ -114,8 +150,15 @@ func (db *FileSystem) SaveKind(w io.Writer,s Serializer) os.Error {
 	return db.save(w,s)
 }
 func (db *FileSystem)Logged()string{
-	return db.logData.String()
+	out := bytes.NewBufferString("")
+	io.Copy(out,db.logData.Reader())
+	return out.String()
 }
+func (db *FileSystem)ClearLog(){
+	db.logData = new(reverseBuffer)
+	db.Logger = log.New(db.logData,"",log.Ldate | log.Ltime)
+}
+
 func (db *FileSystem) Init(deleg Delegator, Root, DeletePattern, ReplacePattern, InsertPattern, AuditPattern string) {
 	db.delegator = deleg
 	db.root = Root
@@ -123,7 +166,7 @@ func (db *FileSystem) Init(deleg Delegator, Root, DeletePattern, ReplacePattern,
 	db.insertPattern = InsertPattern
 	db.replacePattern = ReplacePattern
 	db.auditPattern = AuditPattern
-	db.logData = bytes.NewBufferString("")
+	db.logData = new(reverseBuffer)
 	db.Logger = log.New(db.logData,"",log.Ldate | log.Ltime)
 }
 func (db *MasterFileSystem) HandleForms() {
@@ -158,7 +201,10 @@ func handleDeleteForm(w http.ResponseWriter, r *http.Request) {
 	ser.All(n)
 	s := ser.At(key)
 	DefaultMaster.Delete(s)
-	DefaultMaster.Logger.Printf("%v erfolgreich gelöscht",s)
+	DefaultMaster.Logger.Printf("%v erfolgreich gelöscht",s.Log())
+	redir:= "http://"+r.Host+r.FormValue("Redir")
+	w.SetHeader("Location",redir)
+	w.WriteHeader(302)
 }
 func handleReplaceForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
@@ -167,7 +213,10 @@ func handleReplaceForm(w http.ResponseWriter, r *http.Request) {
 	s := ser.NewFromForm(r.Form)
 	ser.Replace(s)
 	DefaultMaster.Save(s)
-	DefaultMaster.Logger.Printf("%v erfolgreich modifiziert",s)
+	DefaultMaster.Logger.Printf("%v erfolgreich modifiziert",s.Log())
+	redir:= "http://"+r.Host+r.FormValue("Redir")
+	w.SetHeader("Location",redir)
+	w.WriteHeader(302)
 }
 func handleInsertForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
@@ -176,12 +225,14 @@ func handleInsertForm(w http.ResponseWriter, r *http.Request) {
 	s := ser.NewFromForm(r.Form)
 	ser.All(ser.Insert(s))
 	DefaultMaster.Save(s)
-	DefaultMaster.Logger.Printf("%v erfolgreich angelegt",s)
+	DefaultMaster.Logger.Printf("%v erfolgreich angelegt",s.Log())
+	redir:= "http://"+r.Host+r.FormValue("Redir")+strconv.Itoa(s.Key())
+	w.SetHeader("Location",redir)
+	w.WriteHeader(302)
 }
 func handleAudit(w http.ResponseWriter, r *http.Request) {
 	_, kind := path.Split(r.URL.Path)
 	ip := r.FormValue("IP")
-	fmt.Println(kind)
 	ser := DefaultMaster.delegator.Delegate(kind)
 	keys := ser.Keys()
 	n := ser.Init()

@@ -148,3 +148,17 @@ textarea#console{
 	resize: none;
 	line-height: 150%;
 }
+img.preview{
+	width:64px;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom:20px;
+	display:block;
+}
+img.preview:hover{
+	width: 100%;
+	height: auto;
+	display: block;
+	z-index:100;
+}

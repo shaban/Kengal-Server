@@ -12,6 +12,7 @@ import (
 	"strings"
 	"mime"
 )
+
 const errHtml = `
 	<html>
 		<head>
@@ -84,6 +85,10 @@ func Css(w http.ResponseWriter, r *http.Request) {
 	gz.Write([]byte(View.Themes.Current().Style))
 	gz.Close()
 }
+func DeleteLog(w http.ResponseWriter, r *http.Request) {
+	View.Master.ClearLog()
+	http.Redirect(w, r, r.Referer, http.StatusTemporaryRedirect)
+}
 
 func FileHelper(w http.ResponseWriter, r *http.Request) {
 	mimeType := mime.TypeByExtension(path.Ext(r.URL.Path))
@@ -99,7 +104,7 @@ func AdminDispatch(w http.ResponseWriter, kind string) {
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")
 	w.SetHeader("Content-Encoding", "gzip")
 	var Templ = template.New(nil)
-	admintemplate, _ := ioutil.ReadFile(fmt.Sprintf("html/%s.html",kind))
+	admintemplate, _ := ioutil.ReadFile(fmt.Sprintf("html/%s.html", kind))
 
 	err := Templ.Parse(string(admintemplate))
 	if err != nil {
@@ -121,43 +126,58 @@ func AdminController(w http.ResponseWriter, r *http.Request) {
 	View.Article = 0
 	View.Server = 0
 	View.Theme = 0
-	View.Global=0
+	View.Global = 0
 	View.Resource = 0
-	
+
+	rd, err := r.MultipartReader()
+	if err == nil {
+		r.Form = make(map[string][]string)
+		for {
+			pt, _ := rd.NextPart()
+			if pt == nil {
+				break
+			}
+			var fh [1]string
+			fd, _ := ioutil.ReadAll(pt)
+			fh[0] = strings.TrimSpace(string(fd))
+			r.Form[strings.TrimSpace(pt.FormName())] = fh[0:1]
+		}
+		//fmt.Println(r.Form)
+	}
 	// Originalpfad der Url zwischenspeichern und nach Redirect widerherstellen
 	route := r.FormValue("Route")
-	if route !=""{
+	if route != "" {
 		orig := r.URL.Path
 		r.URL.Path = route
-		master.HandleForm(route,w,r)
+		View.Master.HandleForm(route, w, r)
 		r.URL.Path = orig
 	}
 
 	dir, file := path.Split(r.URL.Path)
 	ids := strings.Split(file, ",", -1)
 
-	kind  := strings.Replace(dir,"/","",-1)
-	switch kind{
-		case "blogs","newrubrics":
-			View.Blog, _ = strconv.Atoi(ids[0])
-		case "rubrics","newarticles":
-			View.Blog, _ = strconv.Atoi(ids[0])
-			View.Rubric, _ = strconv.Atoi(ids[1])
-		case "articles":
-			View.Blog, _ = strconv.Atoi(ids[0])
-			View.Rubric, _ = strconv.Atoi(ids[1])
-			View.Article, _ = strconv.Atoi(ids[2])
-		case "servers":
-			View.Server, _ = strconv.Atoi(ids[0])
-		case "globals":
-			View.Global, _ = strconv.Atoi(ids[0])
-		case "themes","newresources":
-			View.Theme, _ = strconv.Atoi(ids[0])
-		case "resources":
-			View.Theme, _ = strconv.Atoi(ids[0])
-			View.Resource, _ = strconv.Atoi(ids[1])
-		case "":
-			kind = "admin"
+	kind := strings.Replace(dir, "/", "", -1)
+	switch kind {
+	case "blogs", "newrubrics":
+		View.Blog, _ = strconv.Atoi(ids[0])
+	case "rubrics", "newarticles":
+		View.Blog, _ = strconv.Atoi(ids[0])
+		View.Rubric, _ = strconv.Atoi(ids[1])
+	case "articles":
+		View.Blog, _ = strconv.Atoi(ids[0])
+		View.Rubric, _ = strconv.Atoi(ids[1])
+		View.Article, _ = strconv.Atoi(ids[2])
+	case "servers":
+		View.Server, _ = strconv.Atoi(ids[0])
+	case "globals":
+		View.Global, _ = strconv.Atoi(ids[0])
+	case "themes", "newresources":
+		View.Theme, _ = strconv.Atoi(ids[0])
+	case "resources":
+		View.Theme, _ = strconv.Atoi(ids[0])
+		View.Resource, _ = strconv.Atoi(ids[1])
+	case "":
+		kind = "admin"
 	}
 
 	w.SetHeader("Content-Type", "text/html; charset=utf-8")

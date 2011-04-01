@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="quarter bold central" href="/">Zentrale</a>
+		{.section Themes.Current}
+		<a class="threequarter themes" href="/themes/{ID}">{Title}</a>
+		{.end}
+		<br style="clear:both;"/>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="themes threequarter bold" href="/newthemes/">Neues Template anlegen</a>
+		<hr style="clear:both;"/>
+		{.repeated section Themes}
+			<a class="themes full" href="/themes/{ID}">{Title}</a>
+		{.end}
+		</div>
+		<div id="center">
+			{.section Themes.Current}
+			<form method="post">
+				<label class="half">Title</label>
+				<label class="half">From Url</label>
+				
+				<input class="half" type="text" value="{Title}"  name="Title"/>
+				<input class="half" type="text" value="{FromUrl}" name="FromUrl"/>
+				
+				<label class="full">Html</label>
+				<textarea rows="15" cols="69" style="padding: 5px;margin-left: 10px;" name="Index">{Index}</textarea>
+				<label class="full">Css</label>
+				<textarea rows="15" cols="69" style="padding: 5px;margin-left: 10px;" name="Style">{Style}</textarea>
+
+				<input type="submit" value="Änderungen übernehmen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/replace/themes" name="Route"/>
+				<input type="hidden" value="/themes/{ID}" name="Redir"/>
+			</form>
+			<form method="post">
+				<input class="cautious" type="submit" value="Dieses Template löschen"/>
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/delete/themes" name="Route"/>
+				<input type="hidden" value="/" name="Redir"/>
+			</form>
+		{.end}
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="quarter bold central" href="/">Zentrale</a>
+		{.section Globals.Current}
+		<a class="threequarter globals" href="/globals/{ID}">{Name}</a>
+		{.end}
+		<br style="clear:both;"/>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="globals threequarter bold" href="/newglobals/">Neue Globale Resource anlegen</a>
+		<hr style="clear:both;"/>
+		{.repeated section Globals}
+			<a class="globals quarter" href="/globals/{ID}">{Name}</a>
+		{.end}
+		</div>
+		<div id="center">
+			{.section Globals.Current}
+			<form method="post" encType="multipart/form-data">
+				<label class="full">Name</label>
+				<input class="full" type="text" value="{Name}"  name="Name"/>
+				
+				<label class="full">Data</label>
+				{.section DataString}
+				<textarea rows="35" cols="69" style="padding: 5px;margin-left: 10px;" name="DataString">{@}</textarea>
+				{.or}
+				<input class="full" type="file" name="Data">
+				<img class="preview" src="/global/{Name}"/>
+				{.end}
+				<input type="submit" value="Änderungen übernehmen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/replace/globals" name="Route"/>
+				<input type="hidden" value="/globals/{ID}" name="Redir"/>
+			</form>
+			<form method="post">
+				<input class="cautious" type="submit" value="Diese Globale Resource löschen"/>
+				<input type="hidden" value="{ID}" name="ID"/>
+				<input type="hidden" value="/admin/delete/globals" name="Route"/>
+				<input type="hidden" value="/" name="Redir"/>
+			</form>
+		{.end}
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

@@ -10,23 +10,25 @@
 	<div id="main">
 		<div id="left">
 		<a class="full bold central" href="/">Zentrale</a>
-		<a class="full bold servers" href="/newservers/">Neuen Server anlegen</a>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="threequarter bold servers" href="/newservers/">Neuen Server anlegen</a>
 		{.repeated section Servers}
 			<a class="servers quarter" href="/servers/{ID}">{IP}</a>
 		{.end}
 		</div>
 		<div id="center">
-			<form method="post" id="updateServer">
+			<form method="post">
 				<label class="half">IP</label>
 				<label class="half">Provider</label>
 				
-				<input class="half" type="text" value=""  name="IP"/>
-				<input class="half" type="text" value="" name="Vendor"/>
+				<input class="half" type="text" placeholder="Stamm-IP des Servers angeben" value=""  name="IP"/>
+				<input class="half" type="text" placeholder="URL des Providers angeben" value="" name="Vendor"/>
 
 				<input type="submit" value="Server Anlegen"/>
 				<input type="reset" value="Zurücksetzen"/>
 				
 				<input type="hidden" value="/admin/insert/servers" name="Route"/>
+				<input type="hidden" value="/servers/" name="Redir"/>
 			</form>
 		</div>
 	</div>

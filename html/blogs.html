@@ -14,7 +14,7 @@
 		<a class="threequarter blogs" href="/blogs/{ID}">{Title}</a>
 		{.end}
 		<br style="clear:both;"/>
-		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
 		<a class="quarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
 		<a class="quarter bold rubrics" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik anlegen</a>
 		<hr style="clear:both;"/>
@@ -24,7 +24,7 @@
 		</div>
 		<div id="center">
 		{.section Blogs.Current}
-			<form method="post" id="updateBlog">
+			<form method="post">
 				<label class="half">Title</label>
 				<label class="half">Slogan</label>
 				
@@ -51,8 +51,9 @@
 				<input type="hidden" value="{Server}" name="Server"/>
 				<input type="hidden" value="{Url}" name="Url"/>
 				<input type="hidden" value="/admin/replace/blogs" name="Route"/>
+				<input type="hidden" value="/blogs/{ID}" name="Redir"/>
 			</form>
-			<form method="post" id="deleteBlog">
+			<form method="post">
 				{.repeated section Rubrics.Index}
 					<a class="quarter rubrics" href="/rubrics/{Blogs.Current.ID},{ID}">{Title}</a>
 				{.or}
@@ -60,6 +61,7 @@
 				{.end}
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/blogs" name="Route"/>
+				<input type="hidden" value="/" name="Redir"/>
 			</form>
 		{.end}
 		</div>

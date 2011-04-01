@@ -13,8 +13,8 @@
 		<a class="quarter bold central" href="/">Zentrale</a>
 		<a class="quarter blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
 		<a class="quarter rubrics" href="/rubrics/{Blogs.Current.ID},{ID}">{Title}</a>
-		<hr style="clear:both;"/>
-		<a class="quarter bold console" href="#">Konsole leeren</a>
+		<br style="clear:both;"/>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
 		<a class="quarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
 		<a class="quarter bold rubrics" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik anlegen</a>
 		<a class="quarter bold articles" href="/newarticles/{Blogs.Current.ID},{ID}">Neuen Artikel anlegen</a>
@@ -24,7 +24,7 @@
 		{.end}
 		</div>
 		<div id="center">
-			<form method="post" id="updateRubric">
+			<form method="post">
 				<label class="half">Title</label>
 				<label class="half">Url</label>
 				
@@ -43,8 +43,9 @@
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="{Blog}" name="Blog"/>
 				<input type="hidden" value="/admin/replace/rubrics" name="Route"/>
+				<input type="hidden" value="/rubrics/{Blogs.Current.ID},{ID}" name="Redir"/>
 			</form>
-			<form method="post" id="deleteRubric">
+			<form method="post">
 				{.repeated section Articles.Rubric}
 					<a class="quarter articles" href="/articles/{Blogs.Current.ID},{Rubrics.Current.ID},{ID}">{Title}</a>
 				{.or}
@@ -52,6 +53,7 @@
 				{.end}
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/rubrics" name="Route"/>
+				<input type="hidden" value="/blogs/{Blogs.Current.ID}" name="Redir"/>
 			</form>
 		</div>
 	{.end}
