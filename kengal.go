@@ -124,6 +124,23 @@ func (s Globals) Current() *Global {
 	}
 	return nil
 }
+func (s Resources) Current() *Resource {
+	for k, v := range s {
+		if v.ID == View.Resource {
+			return s[k]
+		}
+	}
+	return nil
+}
+func (s Resources) Index() []*Resource {
+	slice := make([]*Resource, 0)
+	for k, v := range s {
+		if v.Template == View.Theme {
+			slice = append(slice, s[k])
+		}
+	}
+	return slice
+}
 
 func (s *Global) DataString() string {
 	switch path.Ext(s.Name){
@@ -162,16 +179,6 @@ func (r *Rubric) Active() bool {
 	}
 	return false
 }
-
-
-/*func (b Blogs) Current() *Blog {
-	for k, v := range b {
-		if v.Url == View.Host {
-			return b[k]
-		}
-	}
-	return nil
-}*/
 func (b Blogs) Current() *Blog {
 	for k, v := range b {
 		if v.ID == View.Blog {
@@ -266,29 +273,6 @@ func main() {
 		fmt.Println(err.String())
 		os.Exit(1)
 	}
-
-	/*for _, v := range View.Articles {
-		fmt.Printf("Art\tk: %v v:%s\n", v.ID, v.Title)
-	}
-	for _, v := range View.Blogs {
-		fmt.Printf("Blg\tk: %v v:%s\n", v.ID, v.Title)
-	}
-	for _, v := range View.Globals {
-		fmt.Printf("Glb\tk: %v v:%s\n", v.ID, v.Name)
-	}
-	for _, v := range View.Resources {
-		fmt.Printf("Rsr\tk: %v v:%s\n", v.ID, v.Name)
-	}
-	for _, v := range View.Rubrics {
-		fmt.Printf("Rbr\tk: %v v:%s\n", v.ID, v.Title)
-	}
-	for _, v := range View.Servers {
-		fmt.Printf("Srv\tk: %v v:%s\n", v.ID, v.Vendor)
-	}
-	for _, v := range View.Themes {
-		fmt.Printf("Thm\tk: %v v:%s\n", v.ID, v.Title)
-	}*/
-
 	http.HandleFunc("/", AdminController)
 
 	http.HandleFunc("/global/", GlobalController)
@@ -300,10 +284,8 @@ func main() {
 	http.HandleFunc("/css/", FileHelper)
 	http.HandleFunc("/html/", FileHelper)
 	http.HandleFunc("/admin/clear/log/",DeleteLog)
-	//http.HandleFunc("/tpl/", FileHelper)
 
 	http.HandleFunc("/ckeditor/", FileHelper)
 
-	http.ListenAndServe(":6060", nil)
-	os.Exit(0)
+	http.ListenAndServe(":80", nil)
 }

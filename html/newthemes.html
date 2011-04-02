@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<title>Kengal-Admin</title>
+</head>
+<body>
+<div id="page">
+	<div id="main">
+		<div id="left">
+		<a class="full bold central" href="/">Zentrale</a>
+		<br style="clear:both;"/>
+		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="new threequarter bold" href="/newthemes/">Neues Template</a>
+		<hr style="clear:both;"/>
+		{.repeated section Themes}
+			<a class="themes full" href="/themes/{ID}">{Title}</a>
+		{.end}
+		</div>
+		<div id="center">
+			<form method="post">
+				<label class="half">Title</label>
+				<label class="half">From Url</label>
+				
+				<input class="half" type="text" placeholder="Titel eingeben" name="Title"/>
+				<input class="half" type="text" placeholder="Link zum Original-Template" name="FromUrl"/>
+				
+				<label class="full">Html</label>
+				<textarea rows="15" cols="69" style="padding: 5px;margin-left: 10px;" name="Index">Kopieren Sie das Html Gerüst Ihres Templates hier hinein.</textarea>
+				<label class="full">Css</label>
+				<textarea rows="15" cols="69" style="padding: 5px;margin-left: 10px;" name="Style">Kopiern Sie den CSS-Code Ihres Templates in diesen Textbereich.</textarea>
+				
+				<input type="submit" value="Dieses Template anlegen"/>
+				<input type="reset" value="Zurücksetzen"/>
+				
+				<input type="hidden" value="/admin/insert/themes" name="Route"/>
+				<input type="hidden" value="/themes/" name="Redir"/>
+			</form>
+		</div>
+	</div>
+	<textarea id="console">{Console}</textarea>
+</div>
+</body>
+</html>

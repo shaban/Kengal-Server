@@ -11,12 +11,12 @@
 		<div id="left">
 		<a class="quarter bold central" href="/">Zentrale</a>
 		{.section Blogs.Current}
-		<a class="threequarter blogs" href="/blogs/{ID}">{Title}</a>
+		<a class="threequarter bold blogs" href="/blogs/{ID}">{Title}</a>
 		{.end}
 		<br style="clear:both;"/>
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="quarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
-		<a class="quarter bold rubrics" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik anlegen</a>
+		<a class="quarter bold new" href="/newblogs/">Neuer Blog</a>
+		<a class="quarter bold new" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik</a>
 		<hr style="clear:both;"/>
 		{.repeated section Blogs}
 			<a class="blogs quarter" href="/blogs/{ID}">{Title}</a>
@@ -43,13 +43,15 @@
 					<option {.section @}{.section Active}selected="selected"{.end}{.end} value="{ID}">{Title}</option>
 				{.end}
 				</select>
+				
+				<label class="half">Blog-Domain</label>
+				<input class="half" type="text" value="{Url}" name="Url"/>
 
 				<input type="submit" value="Änderungen übernehmen"/>
 				<input type="reset" value="Zurücksetzen"/>
 				
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="{Server}" name="Server"/>
-				<input type="hidden" value="{Url}" name="Url"/>
 				<input type="hidden" value="/admin/replace/blogs" name="Route"/>
 				<input type="hidden" value="/blogs/{ID}" name="Redir"/>
 			</form>

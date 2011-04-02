@@ -11,11 +11,14 @@
 		<div id="left">
 		<a class="quarter bold central" href="/">Zentrale</a>
 		{.section Themes.Current}
-		<a class="threequarter themes" href="/themes/{ID}">{Title}</a>
+		<a class="threequarter bold themes" href="/themes/{ID}">{Title}</a>
 		{.end}
 		<br style="clear:both;"/>
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="themes threequarter bold" href="/newthemes/">Neues Template anlegen</a>
+		<a class="new quarter bold" href="/newthemes/">Neues Template</a>
+		{.section Themes.Current}
+		<a class="new quarter bold" href="/newresources/{ID}">Neue Resource</a>
+		{.end}
 		<hr style="clear:both;"/>
 		{.repeated section Themes}
 			<a class="themes full" href="/themes/{ID}">{Title}</a>
@@ -43,7 +46,11 @@
 				<input type="hidden" value="/themes/{ID}" name="Redir"/>
 			</form>
 			<form method="post">
+				{.repeated section Resources.Index}
+				<a class="full resources" href="/resources/{Themes.Current.ID},{ID}">{Name}</a>
+				{.or}
 				<input class="cautious" type="submit" value="Dieses Template löschen"/>
+				{.end}
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/themes" name="Route"/>
 				<input type="hidden" value="/" name="Redir"/>

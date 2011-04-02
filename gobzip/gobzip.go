@@ -54,6 +54,13 @@ type Delegator interface {
 type Sender interface {
 	Host() string
 }
+type Broadcaster interface{
+	Hosts()[]string
+}
+type DelegatorBroadcaster interface{
+	Delegator
+	Broadcaster
+}
 type Serial interface {
 	Key() int
 	Kind() string
@@ -146,6 +153,17 @@ func (db *FileSystem) save(w io.Writer,s interface{}) os.Error {
 	
 	return nil
 }
+func (db *FileSystem) load(r io.Reader,ser Serializer) Serial {
+	gz, err := gzip.NewReader(r)
+	defer gz.Close()
+	item := ser.New()
+	gdec := gob.NewDecoder(gz)
+	err = gdec.Decode(item)
+	if err != nil {
+		return nil
+	}
+	return item
+}
 func (db *FileSystem) SaveKind(w io.Writer,s Serializer) os.Error {
 	return db.save(w,s)
 }
@@ -175,6 +193,11 @@ func (db *MasterFileSystem) HandleForms() {
 	http.HandleFunc(db.insertPattern, handleInsertForm)
 	http.HandleFunc(db.auditPattern, handleAudit)
 }
+func (db *ClientFileSystem) HandleEvents() {
+	http.HandleFunc(db.deletePattern, handleDeleteEvent)
+	http.HandleFunc(db.replacePattern, handleReplaceEvent)
+	http.HandleFunc(db.insertPattern, handleInsertEvent)
+}
 func (db *MasterFileSystem) HandleForm(pattern string, w http.ResponseWriter, r *http.Request){
 	dir,_ := path.Split(pattern)
 	switch dir{
@@ -199,36 +222,124 @@ func handleDeleteForm(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	ser.All(n)
-	s := ser.At(key)
+	s := ser.At(key).(SerialSender)
 	DefaultMaster.Delete(s)
+	out:= bytes.NewBufferString("")
+	host:= s.Host()
+	if host!=""{
+		DefaultMaster.save(out,s)
+		http.Post("http://"+host+DefaultMaster.deletePattern+kind,"application/octet-stream",out)
+	}else{
+		bc := DefaultMaster.delegator.(DelegatorBroadcaster)
+		for _,h := range bc.Hosts(){
+			out = bytes.NewBufferString("")
+			DefaultMaster.save(out,s)
+			http.Post("http://"+h+DefaultMaster.deletePattern+kind,"application/octet-stream",out)
+		}
+	}
 	DefaultMaster.Logger.Printf("%v erfolgreich gelöscht",s.Log())
 	redir:= "http://"+r.Host+r.FormValue("Redir")
 	w.SetHeader("Location",redir)
 	w.WriteHeader(302)
 }
+
+func handleDeleteEvent(w http.ResponseWriter, r *http.Request) {
+	_, kind := path.Split(r.URL.Path)
+	ser := DefaultClient.delegator.Delegate(kind)
+	s:= DefaultClient.load(r.Body,ser)
+	r.Body.Close()
+	keys := ser.Keys()
+	n := ser.Init()
+	for _, v := range keys {
+		if v != s.Key() {
+			n = n.Insert(ser.At(v))
+		}
+	}
+	ser.All(n)
+	DefaultClient.Delete(s)
+	w.WriteHeader(200)
+}
 func handleReplaceForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	_, kind := path.Split(r.URL.Path)
 	ser := DefaultMaster.delegator.Delegate(kind)
-	s := ser.NewFromForm(r.Form)
+	sraw := ser.NewFromForm(r.Form)
+	if sraw==nil{
+		r.Form = nil
+		w.SetHeader("Location",r.Referer)
+		w.WriteHeader(302)
+		return
+	}
+	s := sraw.(SerialSender)
 	ser.Replace(s)
 	DefaultMaster.Save(s)
+	out:= bytes.NewBufferString("")
+	host:= s.Host()
+	if host!=""{
+		DefaultMaster.save(out,s)
+		http.Post("http://"+host+DefaultMaster.replacePattern+kind,"application/octet-stream",out)
+	}else{
+		bc := DefaultMaster.delegator.(DelegatorBroadcaster)
+		for _,h := range bc.Hosts(){
+			out = bytes.NewBufferString("")
+			DefaultMaster.save(out,s)
+			http.Post("http://"+h+DefaultMaster.replacePattern+kind,"application/octet-stream",out)
+		}
+	}
 	DefaultMaster.Logger.Printf("%v erfolgreich modifiziert",s.Log())
 	redir:= "http://"+r.Host+r.FormValue("Redir")
 	w.SetHeader("Location",redir)
 	w.WriteHeader(302)
 }
+func handleReplaceEvent(w http.ResponseWriter, r *http.Request) {
+	_, kind := path.Split(r.URL.Path)
+	ser := DefaultClient.delegator.Delegate(kind)
+	s:= DefaultClient.load(r.Body,ser)
+	ser.Replace(s)
+	DefaultClient.Save(s)
+	r.Body.Close()
+	w.WriteHeader(200)
+}
 func handleInsertForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	_, kind := path.Split(r.URL.Path)
 	ser := DefaultMaster.delegator.Delegate(kind)
-	s := ser.NewFromForm(r.Form)
+	sraw := ser.NewFromForm(r.Form)
+	if sraw==nil{
+		r.Form = nil
+		w.SetHeader("Location",r.Referer)
+		w.WriteHeader(302)
+		return
+	}
+	s := sraw.(SerialSender)
 	ser.All(ser.Insert(s))
 	DefaultMaster.Save(s)
+	out:= bytes.NewBufferString("")
+	host:= s.Host()
+	if host!=""{
+		DefaultMaster.save(out,s)
+		http.Post("http://"+host+DefaultMaster.insertPattern+kind,"application/octet-stream",out)
+	}else{
+		bc := DefaultMaster.delegator.(DelegatorBroadcaster)
+		for _,h := range bc.Hosts(){
+			out = bytes.NewBufferString("")
+			DefaultMaster.save(out,s)
+			http.Post("http://"+h+DefaultMaster.insertPattern+kind,"application/octet-stream",out)
+		}
+	}
 	DefaultMaster.Logger.Printf("%v erfolgreich angelegt",s.Log())
 	redir:= "http://"+r.Host+r.FormValue("Redir")+strconv.Itoa(s.Key())
 	w.SetHeader("Location",redir)
 	w.WriteHeader(302)
+}
+func handleInsertEvent(w http.ResponseWriter, r *http.Request) {
+	_, kind := path.Split(r.URL.Path)
+	ser := DefaultClient.delegator.Delegate(kind)
+	s:= DefaultClient.load(r.Body,ser)
+	r.Body.Close()
+	ser.All(ser.Insert(s))
+	DefaultClient.Save(s)
+	w.WriteHeader(200)
 }
 func handleAudit(w http.ResponseWriter, r *http.Request) {
 	_, kind := path.Split(r.URL.Path)
@@ -288,20 +399,15 @@ func (db *MasterFileSystem) LoadKind(ser Serializer) os.Error {
 	return nil
 }
 func (db *ClientFileSystem) SaveKind(ser Serializer) os.Error {
-	r, _, err := http.Get(db.auditPattern)
-	if err != nil {
-		return err
-	}
-	gz, err := gzip.NewReader(r.Body)
-	if err != nil {
-		return err
-	}
-	defer gz.Close()
-	defer r.Body.Close()
-	decoder := gob.NewDecoder(gz)
-	err = decoder.Decode(ser)
-	if err != nil {
-		return err
+	keys := ser.Keys()
+	for _,v := range keys{
+		s := ser.At(v)
+		f, err := os.Open(fmt.Sprintf("%s/%s/%v.bin.gz", db.root, s.Kind(), s.Key()), os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil{
+			return err
+		}
+		db.save(f,s)
+		f.Close()
 	}
 	return nil
 }
@@ -323,22 +429,4 @@ func (db *ClientFileSystem)Audit(MasterIP, ClientIP string, ser Serializer){
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-func MakeAudit(w io.Writer, scheme interface{}) os.Error {
-	buf := bytes.NewBufferString("")
-	genc := gob.NewEncoder(buf)
-	err := genc.Encode(scheme)
-	if err != nil {
-		return err
-	}
-	gz, err := gzip.NewWriter(w)
-	if err != nil {
-		return err
-	}
-	_, err = gz.Write(buf.Bytes())
-	if err != nil {
-		return err
-	}
-	gz.Close()
-	return nil
 }

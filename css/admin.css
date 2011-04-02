@@ -45,8 +45,21 @@ a{
 	color: aliceblue;
 }
 a.console{
-	background: orange;
+	background: #fee;
 	color: black;
+	border-top: 1px solid black;
+	border-right:1px solid black;
+	border-bottom:1px solid black;
+}
+a.new{
+	background: #eef;
+	color: black;
+	border-top: 1px solid black;
+	border-right:1px solid black;
+	border-bottom:1px solid black;
+}
+a.resources{
+	background: #433;
 }
 a.servers{
 	background: #db0000;
@@ -160,5 +173,4 @@ img.preview:hover{
 	width: 100%;
 	height: auto;
 	display: block;
-	z-index:100;
 }

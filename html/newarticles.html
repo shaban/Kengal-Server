@@ -13,17 +13,17 @@
 	<div id="main">
 		<div id="left">
 		<a class="quarter bold central" href="/">Zentrale</a>
-		<a class="quarter blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
-		<a class="quarter rubrics" href="/rubrics/{Blogs.Current.ID},{Rubrics.Current.ID}">{Rubrics.Current.Title}</a>
+		<a class="quarter blogs bold" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
+		<a class="quarter rubrics bold" href="/rubrics/{Blogs.Current.ID},{Rubrics.Current.ID}">{Rubrics.Current.Title}</a>
 		<br style="clear:both"/>
 		
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="quarter bold blogs" href="/newblogs/">Neuen Blog anlegen</a>
-		<a class="quarter bold rubrics" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik anlegen</a>
-		<a class="quarter bold articles" href="/newarticles/{Blogs.Current.ID},{Rubrics.Current.ID}">Neuen Artikel anlegen</a>
+		<a class="quarter bold new" href="/newblogs/">Neuer Blog</a>
+		<a class="quarter bold new" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik</a>
+		<a class="quarter bold new" href="/newarticles/{Blogs.Current.ID},{Rubrics.Current.ID}">Neuer Artikel</a>
 		<hr style="clear:both;"/>
-		{.repeated section Blogs}
-			<a class="blogs quarter" href="/blogs/{ID}">{Title}</a>
+		{.repeated section Rubrics.Index}
+			<a class="blogs full" href="/blogs/{ID}">{Title}</a>
 		{.end}
 		</div>
 		<div id="center">

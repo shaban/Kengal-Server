@@ -454,6 +454,9 @@ func (ser Articles) NewFromForm(from map[string][]string) gobzip.Serial {
 	a.Text = from["Text"][0]
 	a.Title = from["Title"][0]
 	a.Url = from["Url"][0]
+	if a.Description=="" || a.Keywords=="" || a.Title=="" || a.Url==""{
+		return nil
+	}
 	return a
 }
 func (ser Blogs) NewFromForm(from map[string][]string) gobzip.Serial {
@@ -471,6 +474,9 @@ func (ser Blogs) NewFromForm(from map[string][]string) gobzip.Serial {
 	a.Template, _ = strconv.Atoi(from["Template"][0])
 	a.Title = from["Title"][0]
 	a.Url = from["Url"][0]
+	if a.Description=="" || a.Keywords=="" || a.Title=="" || a.Url==""{
+		return nil
+	}
 	return a
 }
 func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.Serial {
@@ -486,6 +492,9 @@ func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.Serial {
 	a.Keywords = from["Keywords"][0]
 	a.Title = from["Title"][0]
 	a.Url = from["Url"][0]
+	if a.Description=="" || a.Keywords=="" || a.Title=="" || a.Url==""{
+		return nil
+	}
 	return a
 }
 func (ser Globals) NewFromForm(from map[string][]string) gobzip.Serial {
@@ -497,10 +506,18 @@ func (ser Globals) NewFromForm(from map[string][]string) gobzip.Serial {
 		a.ID = key
 	}
 	a.Name = from["Name"][0]
-	if from["DataString"] == nil {
-		a.Data = []byte(from["Data"][0])
-	} else {
+	if from["Data"] != nil {
+			a.Data = []byte(from["Data"][0])
+	}
+	if from["DataString"] != nil {
 		a.Data = []byte(from["DataString"][0])
+	}
+	if key!=0 && len(a.Data)==0{
+		orig :=  View.Globals.At(key).(*Global)
+		a.Data = orig.Data
+	}
+	if a.Name=="" || len(a.Data)==0{
+		return nil
 	}
 	return a
 }
@@ -513,12 +530,20 @@ func (ser Resources) NewFromForm(from map[string][]string) gobzip.Serial {
 		a.ID = key
 	}
 	a.Name = from["Name"][0]
-	if from["DataString"] == nil {
-		a.Data = []byte(from["Data"][0])
-	} else {
+	if from["Data"] != nil {
+			a.Data = []byte(from["Data"][0])
+	}
+	if from["DataString"] != nil {
 		a.Data = []byte(from["DataString"][0])
 	}
-	a.Template,_=strconv.Atoi(from["Template"][0])
+	if key!=0 && len(a.Data)==0{
+	orig :=  View.Resources.At(key).(*Resource)
+	a.Data = orig.Data
+	}
+	if a.Name=="" || len(a.Data)==0{
+		return nil
+	}
+	a.Template, _ = strconv.Atoi(from["Template"][0])
 	return a
 }
 func (ser Themes) NewFromForm(from map[string][]string) gobzip.Serial {
@@ -529,10 +554,13 @@ func (ser Themes) NewFromForm(from map[string][]string) gobzip.Serial {
 	} else {
 		a.ID = key
 	}
-	a.Title=from["Title"][0]
-	a.Index=from["Index"][0]
-	a.Style=from["Style"][0]
+	a.Title = from["Title"][0]
+	a.Index = from["Index"][0]
+	a.Style = from["Style"][0]
 	a.FromUrl = from["FromUrl"][0]
+	if a.Title==""{
+		return nil
+	}
 	return a
 }
 func (ser Servers) NewFromForm(from map[string][]string) gobzip.Serial {
@@ -545,6 +573,9 @@ func (ser Servers) NewFromForm(from map[string][]string) gobzip.Serial {
 	}
 	a.IP = from["IP"][0]
 	a.Vendor = from["Vendor"][0]
+	if a.Vendor=="" || a.IP==""{
+		return nil
+	}
 	return a
 }
 
@@ -554,7 +585,7 @@ func (send *Article) Host() string {
 			return v.IP
 		}
 	}
-	return ""
+	return "no"
 }
 func (send *Blog) Host() string {
 	for _, v := range View.Servers {
@@ -562,7 +593,7 @@ func (send *Blog) Host() string {
 			return v.IP
 		}
 	}
-	return ""
+	return "no"
 }
 func (send *Rubric) Host() string {
 	for _, v := range View.Servers {
@@ -570,7 +601,7 @@ func (send *Rubric) Host() string {
 			return v.IP
 		}
 	}
-	return ""
+	return "no"
 }
 func (send *Global) Host() string {
 	return ""
@@ -581,27 +612,9 @@ func (send *Theme) Host() string {
 func (send *Resource) Host() string {
 	return ""
 }
-/*func (multisend *Global) Hosts() []string {
-	slice := make([]string, 0)
-	for _, v := range View.Servers {
-		slice = append(slice, v.IP)
-	}
-	return slice
+func (send *Server) Host() string {
+	return "no"
 }
-func (multisend *Resource) Hosts() []string {
-	slice := make([]string, 0)
-	for _, v := range View.Servers {
-		slice = append(slice, v.IP)
-	}
-	return slice
-}
-func (multisend *Theme) Hosts() []string {
-	slice := make([]string, 0)
-	for _, v := range View.Servers {
-		slice = append(slice, v.IP)
-	}
-	return slice
-}*/
 
 func (p *Page) Delegate(kind string) gobzip.Serializer {
 	switch kind {

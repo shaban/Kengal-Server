@@ -142,7 +142,6 @@ func AdminController(w http.ResponseWriter, r *http.Request) {
 			fh[0] = strings.TrimSpace(string(fd))
 			r.Form[strings.TrimSpace(pt.FormName())] = fh[0:1]
 		}
-		//fmt.Println(r.Form)
 	}
 	// Originalpfad der Url zwischenspeichern und nach Redirect widerherstellen
 	route := r.FormValue("Route")

@@ -11,14 +11,14 @@
 		<div id="left">
 		<a class="quarter bold central" href="/">Zentrale</a>
 		{.section Servers.Current}
-		<a class="threequarter servers" href="/servers/{ID}">{IP}</a>
+		<a class="threequarter servers bold" href="/servers/{ID}">{IP}</a>
 		{.end}
 		<br style="clear:both;"/>
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="servers threequarter bold" href="/newservers/">Neuen Server anlegen</a>
+		<a class="new threequarter bold" href="/newservers/">Neuen Server anlegen</a>
 		<hr style="clear:both;"/>
 		{.repeated section Servers}
-			<a class="servers quarter" href="/servers/{ID}">{IP}</a>
+			<a class="servers full" href="/servers/{ID}">{IP}</a>
 		{.end}
 		</div>
 		<div id="center">

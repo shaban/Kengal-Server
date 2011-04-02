@@ -10,42 +10,41 @@
 	<div id="main">
 		<div id="left">
 		<a class="quarter bold central" href="/">Zentrale</a>
-		{.section Globals.Current}
-		<a class="threequarter bold globals" href="/globals/{ID}">{Name}</a>
+		<a class="threequarter bold themes" href="/themes/{Themes.Current.ID}">{Themes.Current.Title}</a>
+		{.section Resources.Current}
+		<a class="quarter bold central" href="/">Resource >></a>
+		<a class="threequarter bold resources" href="/resources/{Template},{ID}">{Name}</a>
 		{.end}
 		<br style="clear:both;"/>
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="new threequarter bold" href="/newglobals/">Neue Global-Resource</a>
+		<a class="new threequarter bold" href="/newresources/{Themes.Current.ID}">Neue Resource anlegen</a>
 		<hr style="clear:both;"/>
-		{.repeated section Globals}
-			<a class="globals full" href="/globals/{ID}">{Name}</a>
+		{.repeated section Resources.Index}
+			<a class="resources full" href="/resources/{Template},{ID}">{Name}</a>
 		{.end}
 		</div>
 		<div id="center">
-			{.section Globals.Current}
+			{.section Resources.Current}
 			<form method="post" encType="multipart/form-data">
 				<label class="full">Name</label>
 				<input class="full" type="text" value="{Name}"  name="Name"/>
 				
 				<label class="full">Data</label>
-				{.section DataString}
-				<textarea rows="35" cols="69" style="padding: 5px;margin-left: 10px;" name="DataString">{@}</textarea>
-				{.or}
 				<input class="full" type="file" name="Data">
-				<img class="preview" src="/global/{Name}"/>
-				{.end}
+				<img class="preview" src="/images/{Name}"/>
 				<input type="submit" value="Änderungen übernehmen"/>
 				<input type="reset" value="Zurücksetzen"/>
 				
 				<input type="hidden" value="{ID}" name="ID"/>
-				<input type="hidden" value="/admin/replace/globals" name="Route"/>
-				<input type="hidden" value="/globals/{ID}" name="Redir"/>
+				<input type="hidden" value="{Template}" name="Template"/>
+				<input type="hidden" value="/admin/replace/resources" name="Route"/>
+				<input type="hidden" value="/resources/{Template},{ID}" name="Redir"/>
 			</form>
 			<form method="post">
-				<input class="cautious" type="submit" value="Diese Globale Resource löschen"/>
+				<input class="cautious" type="submit" value="Diese Template Resource löschen"/>
 				<input type="hidden" value="{ID}" name="ID"/>
-				<input type="hidden" value="/admin/delete/globals" name="Route"/>
-				<input type="hidden" value="/" name="Redir"/>
+				<input type="hidden" value="/admin/delete/resources" name="Route"/>
+				<input type="hidden" value="/themes/{Template}" name="Redir"/>
 			</form>
 		{.end}
 		</div>

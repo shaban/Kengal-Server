@@ -8,13 +8,16 @@
 <body>
 <div id="page">
 	<div id="main">
+	{.section Themes.Current}
 		<div id="left">
-		<a class="full bold central" href="/">Zentrale</a>
+		<a class="quarter bold central" href="/">Zentrale</a>
+		<a class="threequarter bold themes" href="/themes/{ID}">{Title}</a>
+		
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="new threequarter bold" href="/newglobals/">Neue Global-Resource</a>
+		<a class="new threequarter bold" href="/newresources/{ID}">Neue Resource</a>
 		<hr style="clear:both;"/>
-		{.repeated section Globals}
-			<a class="globals full" href="/globals/{ID}">{Name}</a>
+		{.repeated section Resources.Index}
+			<a class="themes full" href="/resources/{Themes.Current.ID},{ID}">{Name}</a>
 		{.end}
 		</div>
 		<div id="center">
@@ -23,15 +26,17 @@
 				<input class="full" type="text" placeholder="Namen mit korrekter Dateiendung" name="Name"/>
 				
 				<label class="full">Data</label>
-				<input class="full" type="file" name="Data"> 
+				<input class="full" type="file" name="Data">
 
-				<input type="submit" value="Globale Resource Anlegen"/>
+				<input type="submit" value="Resource Anlegen"/>
 				<input type="reset" value="Zurücksetzen"/>
 				
-				<input type="hidden" value="/admin/insert/globals" name="Route"/>
-				<input type="hidden" value="/globals/" name="Redir"/>
+				<input type="hidden" value="{ID}" name="Template"/>
+				<input type="hidden" value="/admin/insert/resources" name="Route"/>
+				<input type="hidden" value="/resources/{ID}," name="Redir"/>
 			</form>
 		</div>
+	{.end}
 	</div>
 	<textarea id="console">{Console}</textarea>
 </div>
