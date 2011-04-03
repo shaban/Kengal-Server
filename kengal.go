@@ -7,8 +7,8 @@ import (
 	"path"
 	gobzip "github.com/shaban/kengal/gobzip"
 )
+
 var View = new(Page)
-var PaginatorMax = 5
 
 func (a *Article) getBlog() *Blog {
 	for k, v := range View.Blogs {
@@ -25,38 +25,6 @@ func (r *Rubric) getBlog() *Blog {
 		}
 	}
 	return nil
-}
-
-func (a Articles) Paginated() []*Article {
-	if View.Index == 0 {
-		return nil
-	}
-	l := len(a)
-	if l < PaginatorMax {
-		return a
-	}
-	if (View.Index-1)*PaginatorMax+PaginatorMax > l {
-		return a[(View.Index-1)*PaginatorMax : l]
-	}
-	return a[(View.Index-1)*PaginatorMax : (View.Index-1)*PaginatorMax+PaginatorMax]
-}
-func (a Articles) Prev() string {
-	if View.Index <= 1 {
-		return ""
-	}
-	return fmt.Sprintf("/index/%v", View.Index-1)
-}
-func (a Articles) Next() string {
-	if View.Index == 0 {
-		return ""
-	}
-	if len(a) > View.Index*PaginatorMax {
-		return fmt.Sprintf("/index/%v", View.Index+1)
-	}
-	return ""
-}
-func (a *Article) DateTime() string {
-	return a.Date
 }
 func (a *Article) Path() string {
 	return fmt.Sprintf("/artikel/%v/%s", a.ID, a.Url)
@@ -81,33 +49,6 @@ func (a *Article) RubricTitle() string {
 func (r *Rubric) Path() string {
 	return fmt.Sprintf("/kategorie/%v/%s", r.ID, r.Url)
 }
-
-func RubricByID(id int) *Rubric {
-	for k, v := range View.Rubrics {
-		if v.ID == id {
-			return View.Rubrics[k]
-		}
-	}
-	return nil
-}
-
-func ArticleByID(id int) *Article {
-	for k, v := range View.Articles {
-		if v.ID == id {
-			return View.Articles[k]
-		}
-	}
-	return nil
-}
-func BlogByID(id int) *Blog {
-	for k, v := range View.Blogs {
-		if v.ID == id {
-			return View.Blogs[k]
-		}
-	}
-	return nil
-}
-
 func (s Servers) Current() *Server {
 	for k, v := range s {
 		if v.ID == View.Server {
@@ -143,8 +84,8 @@ func (s Resources) Index() []*Resource {
 }
 
 func (s *Global) DataString() string {
-	switch path.Ext(s.Name){
-	case ".js",".css","html",".htm":
+	switch path.Ext(s.Name) {
+	case ".js", ".css", "html", ".htm":
 		return string(s.Data)
 	default:
 		return ""
@@ -166,19 +107,6 @@ func (t *Theme) Active() bool {
 	return false
 }
 
-func (b *Blog) Active() bool {
-	if b.ID == View.Blogs.Current().ID {
-		return true
-	}
-	return false
-}
-
-func (r *Rubric) Active() bool {
-	if r.ID == View.Rubrics.Current().ID {
-		return true
-	}
-	return false
-}
 func (b Blogs) Current() *Blog {
 	for k, v := range b {
 		if v.ID == View.Blog {
@@ -194,14 +122,6 @@ func (t Themes) Current() *Theme {
 		}
 	}
 	return nil
-}
-
-func (a Articles) Latest() []*Article {
-	l := len(a)
-	if l < 5 {
-		return a
-	}
-	return a[0:5]
 }
 func (a Articles) Index() Articles {
 	b := View.Blogs.Current()
@@ -283,9 +203,9 @@ func main() {
 	http.HandleFunc("/js/", FileHelper)
 	http.HandleFunc("/css/", FileHelper)
 	http.HandleFunc("/html/", FileHelper)
-	http.HandleFunc("/admin/clear/log/",DeleteLog)
+	http.HandleFunc("/admin/clear/log/", DeleteLog)
 
 	http.HandleFunc("/ckeditor/", FileHelper)
 
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(":8080", nil)
 }

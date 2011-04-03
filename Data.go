@@ -454,7 +454,7 @@ func (ser Articles) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a.Text = from["Text"][0]
 	a.Title = from["Title"][0]
 	a.Url = from["Url"][0]
-	if a.Description=="" || a.Keywords=="" || a.Title=="" || a.Url==""{
+	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}
 	return a
@@ -474,7 +474,7 @@ func (ser Blogs) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a.Template, _ = strconv.Atoi(from["Template"][0])
 	a.Title = from["Title"][0]
 	a.Url = from["Url"][0]
-	if a.Description=="" || a.Keywords=="" || a.Title=="" || a.Url==""{
+	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}
 	return a
@@ -492,7 +492,7 @@ func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a.Keywords = from["Keywords"][0]
 	a.Title = from["Title"][0]
 	a.Url = from["Url"][0]
-	if a.Description=="" || a.Keywords=="" || a.Title=="" || a.Url==""{
+	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}
 	return a
@@ -507,16 +507,16 @@ func (ser Globals) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	}
 	a.Name = from["Name"][0]
 	if from["Data"] != nil {
-			a.Data = []byte(from["Data"][0])
+		a.Data = []byte(from["Data"][0])
 	}
 	if from["DataString"] != nil {
 		a.Data = []byte(from["DataString"][0])
 	}
-	if key!=0 && len(a.Data)==0{
-		orig :=  View.Globals.At(key).(*Global)
+	if key != 0 && len(a.Data) == 0 {
+		orig := View.Globals.At(key).(*Global)
 		a.Data = orig.Data
 	}
-	if a.Name=="" || len(a.Data)==0{
+	if a.Name == "" || len(a.Data) == 0 {
 		return nil
 	}
 	return a
@@ -531,16 +531,16 @@ func (ser Resources) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	}
 	a.Name = from["Name"][0]
 	if from["Data"] != nil {
-			a.Data = []byte(from["Data"][0])
+		a.Data = []byte(from["Data"][0])
 	}
 	if from["DataString"] != nil {
 		a.Data = []byte(from["DataString"][0])
 	}
-	if key!=0 && len(a.Data)==0{
-	orig :=  View.Resources.At(key).(*Resource)
-	a.Data = orig.Data
+	if key != 0 && len(a.Data) == 0 {
+		orig := View.Resources.At(key).(*Resource)
+		a.Data = orig.Data
 	}
-	if a.Name=="" || len(a.Data)==0{
+	if a.Name == "" || len(a.Data) == 0 {
 		return nil
 	}
 	a.Template, _ = strconv.Atoi(from["Template"][0])
@@ -558,7 +558,7 @@ func (ser Themes) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a.Index = from["Index"][0]
 	a.Style = from["Style"][0]
 	a.FromUrl = from["FromUrl"][0]
-	if a.Title==""{
+	if a.Title == "" {
 		return nil
 	}
 	return a
@@ -573,7 +573,7 @@ func (ser Servers) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	}
 	a.IP = from["IP"][0]
 	a.Vendor = from["Vendor"][0]
-	if a.Vendor=="" || a.IP==""{
+	if a.Vendor == "" || a.IP == "" {
 		return nil
 	}
 	return a
