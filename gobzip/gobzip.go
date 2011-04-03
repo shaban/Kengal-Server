@@ -276,7 +276,6 @@ func handleReplaceForm(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(302)
 		return
 	}
-	//s := sraw.(SerialSender)
 	ser.Replace(s)
 	DefaultMaster.Save(s)
 	out:= bytes.NewBufferString("")
@@ -317,7 +316,6 @@ func handleInsertForm(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(302)
 		return
 	}
-	//s := sraw.(SerialSender)
 	ser.All(ser.Insert(s))
 	DefaultMaster.Save(s)
 	out:= bytes.NewBufferString("")
