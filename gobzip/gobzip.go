@@ -49,13 +49,14 @@ func (r *reverseReader) Read(data []byte) (int, os.Error) {
 } 
 type Delegator interface {
 	Delegate(kind string) Serializer
-	KeyFromForm(from map[string][]string) int
 }
 type Sender interface {
 	Host() string
+	Log()string
 }
 type Broadcaster interface{
 	Hosts()[]string
+	KeyFromForm(from map[string][]string) int
 }
 type DelegatorBroadcaster interface{
 	Delegator
@@ -64,7 +65,6 @@ type DelegatorBroadcaster interface{
 type Serial interface {
 	Key() int
 	Kind() string
-	Log()string
 }
 type SerialSender interface {
 	Serial
@@ -77,9 +77,15 @@ type Serializer interface {
 	Replace(elem Serial) os.Error
 	Kind() string
 	All(ser Serializer)
-	NewFromForm(from map[string][]string) Serial
 	At(int) Serial
 	Keys() []int
+}
+type FormParser interface{
+	NewFromForm(from map[string][]string) SerialSender
+}
+type SerializerFormParser interface{
+	FormParser
+	Serializer
 }
 // Databaseinterfaces
 type FileSystem struct {
@@ -212,7 +218,7 @@ func (db *MasterFileSystem) HandleForm(pattern string, w http.ResponseWriter, r 
 func handleDeleteForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	_, kind := path.Split(r.URL.Path)
-	key := DefaultMaster.delegator.KeyFromForm(r.Form)
+	key := DefaultMaster.delegator.(DelegatorBroadcaster).KeyFromForm(r.Form)
 	ser := DefaultMaster.delegator.Delegate(kind)
 	keys := ser.Keys()
 	n := ser.Init()
@@ -262,15 +268,15 @@ func handleDeleteEvent(w http.ResponseWriter, r *http.Request) {
 func handleReplaceForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	_, kind := path.Split(r.URL.Path)
-	ser := DefaultMaster.delegator.Delegate(kind)
-	sraw := ser.NewFromForm(r.Form)
-	if sraw==nil{
+	ser := DefaultMaster.delegator.Delegate(kind).(SerializerFormParser)
+	s := ser.NewFromForm(r.Form)
+	if s==nil{
 		r.Form = nil
 		w.SetHeader("Location",r.Referer)
 		w.WriteHeader(302)
 		return
 	}
-	s := sraw.(SerialSender)
+	//s := sraw.(SerialSender)
 	ser.Replace(s)
 	DefaultMaster.Save(s)
 	out:= bytes.NewBufferString("")
@@ -303,15 +309,15 @@ func handleReplaceEvent(w http.ResponseWriter, r *http.Request) {
 func handleInsertForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	_, kind := path.Split(r.URL.Path)
-	ser := DefaultMaster.delegator.Delegate(kind)
-	sraw := ser.NewFromForm(r.Form)
-	if sraw==nil{
+	ser := DefaultMaster.delegator.Delegate(kind).(SerializerFormParser)
+	s := ser.NewFromForm(r.Form)
+	if s==nil{
 		r.Form = nil
 		w.SetHeader("Location",r.Referer)
 		w.WriteHeader(302)
 		return
 	}
-	s := sraw.(SerialSender)
+	//s := sraw.(SerialSender)
 	ser.All(ser.Insert(s))
 	DefaultMaster.Save(s)
 	out:= bytes.NewBufferString("")

@@ -437,7 +437,7 @@ func (ser Themes) Keys() []int {
 	return keys
 }
 
-func (ser Articles) NewFromForm(from map[string][]string) gobzip.Serial {
+func (ser Articles) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a := new(Article)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -459,7 +459,7 @@ func (ser Articles) NewFromForm(from map[string][]string) gobzip.Serial {
 	}
 	return a
 }
-func (ser Blogs) NewFromForm(from map[string][]string) gobzip.Serial {
+func (ser Blogs) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a := new(Blog)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -479,7 +479,7 @@ func (ser Blogs) NewFromForm(from map[string][]string) gobzip.Serial {
 	}
 	return a
 }
-func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.Serial {
+func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a := new(Rubric)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -497,7 +497,7 @@ func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.Serial {
 	}
 	return a
 }
-func (ser Globals) NewFromForm(from map[string][]string) gobzip.Serial {
+func (ser Globals) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a := new(Global)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -521,7 +521,7 @@ func (ser Globals) NewFromForm(from map[string][]string) gobzip.Serial {
 	}
 	return a
 }
-func (ser Resources) NewFromForm(from map[string][]string) gobzip.Serial {
+func (ser Resources) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a := new(Resource)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -546,7 +546,7 @@ func (ser Resources) NewFromForm(from map[string][]string) gobzip.Serial {
 	a.Template, _ = strconv.Atoi(from["Template"][0])
 	return a
 }
-func (ser Themes) NewFromForm(from map[string][]string) gobzip.Serial {
+func (ser Themes) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a := new(Theme)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -563,7 +563,7 @@ func (ser Themes) NewFromForm(from map[string][]string) gobzip.Serial {
 	}
 	return a
 }
-func (ser Servers) NewFromForm(from map[string][]string) gobzip.Serial {
+func (ser Servers) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a := new(Server)
 	key := View.KeyFromForm(from)
 	if key == 0 {
@@ -585,7 +585,7 @@ func (send *Article) Host() string {
 			return v.IP
 		}
 	}
-	return "no"
+	return "NO"
 }
 func (send *Blog) Host() string {
 	for _, v := range View.Servers {
@@ -593,7 +593,7 @@ func (send *Blog) Host() string {
 			return v.IP
 		}
 	}
-	return "no"
+	return "NO"
 }
 func (send *Rubric) Host() string {
 	for _, v := range View.Servers {
@@ -601,7 +601,7 @@ func (send *Rubric) Host() string {
 			return v.IP
 		}
 	}
-	return "no"
+	return "NO"
 }
 func (send *Global) Host() string {
 	return ""
@@ -613,7 +613,7 @@ func (send *Resource) Host() string {
 	return ""
 }
 func (send *Server) Host() string {
-	return "no"
+	return "NO"
 }
 
 func (p *Page) Delegate(kind string) gobzip.Serializer {
