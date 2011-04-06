@@ -58,6 +58,13 @@ a.new{
 	border-right:1px solid black;
 	border-bottom:1px solid black;
 }
+.tall{
+	height: 100px;
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+}
 a.resources{
 	background: #433;
 }
