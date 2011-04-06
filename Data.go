@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 	"fmt"
+	"strings"
 )
 
 type Servers []*Server
@@ -473,13 +474,13 @@ func (ser Articles) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	}
 	a.Blog, _ = strconv.Atoi(from["Blog"][0])
 	a.Date = time.LocalTime().Format("02.01.2006 15:04:05")
-	a.Description = from["Description"][0]
-	a.Keywords = from["Keywords"][0]
+	a.Description = strings.TrimSpace(from["Description"][0])
+	a.Keywords = strings.TrimSpace(from["Keywords"][0])
 	a.Rubric, _ = strconv.Atoi(from["Rubric"][0])
 	a.Teaser = from["Teaser"][0]
 	a.Text = from["Text"][0]
-	a.Title = from["Title"][0]
-	a.Url = from["Url"][0]
+	a.Title = strings.TrimSpace(from["Title"][0])
+	a.Url = strings.TrimSpace(from["Url"][0])
 	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}
@@ -493,13 +494,13 @@ func (ser Blogs) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	} else {
 		a.ID = key
 	}
-	a.Description = from["Description"][0]
-	a.Keywords = from["Keywords"][0]
+	a.Description = strings.TrimSpace(from["Description"][0])
+	a.Keywords = strings.TrimSpace(from["Keywords"][0])
 	a.Server, _ = strconv.Atoi(from["Server"][0])
-	a.Slogan = from["Slogan"][0]
+	a.Slogan = strings.TrimSpace(from["Slogan"][0])
 	a.Template, _ = strconv.Atoi(from["Template"][0])
-	a.Title = from["Title"][0]
-	a.Url = from["Url"][0]
+	a.Title = strings.TrimSpace(from["Title"][0])
+	a.Url = strings.TrimSpace(from["Url"][0])
 	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}
@@ -514,10 +515,10 @@ func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.SerialSender {
 		a.ID = key
 	}
 	a.Blog, _ = strconv.Atoi(from["Blog"][0])
-	a.Description = from["Description"][0]
-	a.Keywords = from["Keywords"][0]
-	a.Title = from["Title"][0]
-	a.Url = from["Url"][0]
+	a.Description = strings.TrimSpace(from["Description"][0])
+	a.Keywords = strings.TrimSpace(from["Keywords"][0])
+	a.Title = strings.TrimSpace(from["Title"][0])
+	a.Url = strings.TrimSpace(from["Url"][0])
 	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}
@@ -531,7 +532,7 @@ func (ser Globals) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	} else {
 		a.ID = key
 	}
-	a.Name = from["Name"][0]
+	a.Name = strings.TrimSpace(from["Name"][0])
 	if from["Data"] != nil {
 		a.Data = []byte(from["Data"][0])
 	}
@@ -555,7 +556,7 @@ func (ser Resources) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	} else {
 		a.ID = key
 	}
-	a.Name = from["Name"][0]
+	a.Name = strings.TrimSpace(from["Name"][0])
 	if from["Data"] != nil {
 		a.Data = []byte(from["Data"][0])
 	}
@@ -580,10 +581,10 @@ func (ser Themes) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	} else {
 		a.ID = key
 	}
-	a.Title = from["Title"][0]
+	a.Title = strings.TrimSpace(from["Title"][0])
 	a.Index = from["Index"][0]
 	a.Style = from["Style"][0]
-	a.FromUrl = from["FromUrl"][0]
+	a.FromUrl = strings.TrimSpace(from["FromUrl"][0])
 	if a.Title == "" {
 		return nil
 	}
@@ -598,7 +599,7 @@ func (ser Servers) NewFromForm(from map[string][]string) gobzip.SerialSender {
 		a.ID = key
 	}
 	a.IP = from["IP"][0]
-	a.Vendor = from["Vendor"][0]
+	a.Vendor = strings.TrimSpace(from["Vendor"][0])
 	if a.Vendor == "" || a.IP == "" {
 		return nil
 	}
