@@ -11,6 +11,7 @@ import (
 	"path"
 	"strings"
 	"mime"
+	"sort"
 )
 
 const errHtml = `
@@ -154,6 +155,13 @@ func AdminController(w http.ResponseWriter, r *http.Request) {
 
 	dir, file := path.Split(r.URL.Path)
 	ids := strings.Split(file, ",", -1)
+	
+	if ! sort.IsSorted(View.Blogs){
+		sort.Sort(View.Blogs)
+	}
+	if ! sort.IsSorted(View.Themes){
+		sort.Sort(View.Themes)
+	}
 
 	kind := strings.Replace(dir, "/", "", -1)
 	switch kind {

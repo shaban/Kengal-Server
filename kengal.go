@@ -207,5 +207,5 @@ func main() {
 
 	http.HandleFunc("/ckeditor/", FileHelper)
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":80", nil)
 }

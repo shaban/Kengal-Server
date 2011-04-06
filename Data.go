@@ -79,6 +79,32 @@ func (s *Server) Log() string {
 func (s *Theme) Log() string {
 	return fmt.Sprintf("Typ: Theme, ID: %v, Title: %s, FromUrl: %s", s.ID, s.Title, s.FromUrl)
 }
+
+func (ser Blogs)Len()int{
+	return len(ser)
+}
+func (ser Themes)Len()int{
+	return len(ser)
+}
+func (ser Blogs)Less(i, j int) bool{
+	return ser[i].Url < ser[j].Url
+}
+func (ser Themes)Less(i, j int) bool{
+	return ser[i].Title < ser[j].Title
+}
+func (ser Themes)Swap(i, j int){
+	cycle := make([]*Theme,1)
+	copy(cycle,ser[i:i+1])
+	ser[i] = ser[j]
+	ser[j]=cycle[0]
+}
+func (ser Blogs)Swap(i, j int){
+	cycle := make([]*Blog,1)
+	copy(cycle,ser[i:i+1])
+	ser[i] = ser[j]
+	ser[j]=cycle[0]
+}
+
 func (ser Articles) Kind() string {
 	return "articles"
 }
