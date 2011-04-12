@@ -11,7 +11,7 @@
 	{.section Rubrics.Current}
 		<div id="left">
 		<a class="quarter bold central" href="/">Zentrale</a>
-		<a class="quarter bold blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Title}</a>
+		<a class="quarter bold blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Url}</a>
 		<a class="quarter bold rubrics" href="/rubrics/{Blogs.Current.ID},{ID}">{Title}</a>
 		<br style="clear:both;"/>
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
@@ -20,7 +20,7 @@
 		<a class="quarter bold new" href="/newarticles/{Blogs.Current.ID},{ID}">Neuer Artikel</a>
 		<hr style="clear:both;"/>
 		{.repeated section Rubrics.Index}
-			<a class="blogs full" href="/blogs/{ID}">{Title}</a>
+			<a class="blogs full" href="/rubrics/{Blog},{ID}">{Title}</a>
 		{.end}
 		</div>
 		<div id="center">

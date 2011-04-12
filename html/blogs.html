@@ -11,7 +11,7 @@
 		<div id="left">
 		<a class="quarter bold central" href="/">Zentrale</a>
 		{.section Blogs.Current}
-		<a class="threequarter bold blogs" href="/blogs/{ID}">{Title}</a>
+		<a class="threequarter bold blogs" href="/blogs/{ID}">{Url}</a>
 		{.end}
 		<br style="clear:both;"/>
 		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
@@ -19,7 +19,7 @@
 		<a class="quarter bold new" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik</a>
 		<hr style="clear:both;"/>
 		{.repeated section Blogs}
-			<a class="blogs quarter" href="/blogs/{ID}">{Url}</a>
+			<div class="noflow"><a class="blogs quarter" title="{Url}" href="/blogs/{ID}">{Url}</a></div>
 		{.end}
 		</div>
 		<div id="center">

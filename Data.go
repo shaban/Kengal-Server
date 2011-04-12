@@ -480,8 +480,8 @@ func (ser Articles) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a.Teaser = from["Teaser"][0]
 	a.Text = from["Text"][0]
 	a.Title = strings.TrimSpace(from["Title"][0])
-	a.Url = strings.TrimSpace(from["Url"][0])
-	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
+	a.Url = strings.Replace(strings.TrimSpace(from["Url"][0])," ","-",-1)
+	if a.Title == "" || a.Url == "" {
 		return nil
 	}
 	return a
@@ -500,7 +500,7 @@ func (ser Blogs) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a.Slogan = strings.TrimSpace(from["Slogan"][0])
 	a.Template, _ = strconv.Atoi(from["Template"][0])
 	a.Title = strings.TrimSpace(from["Title"][0])
-	a.Url = strings.TrimSpace(from["Url"][0])
+	a.Url = strings.Replace(strings.TrimSpace(from["Url"][0])," ","-",-1)
 	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}
@@ -518,7 +518,7 @@ func (ser Rubrics) NewFromForm(from map[string][]string) gobzip.SerialSender {
 	a.Description = strings.TrimSpace(from["Description"][0])
 	a.Keywords = strings.TrimSpace(from["Keywords"][0])
 	a.Title = strings.TrimSpace(from["Title"][0])
-	a.Url = strings.TrimSpace(from["Url"][0])
+	a.Url = strings.Replace(strings.TrimSpace(from["Url"][0])," ","-",-1)
 	if a.Description == "" || a.Keywords == "" || a.Title == "" || a.Url == "" {
 		return nil
 	}

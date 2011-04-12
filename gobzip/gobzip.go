@@ -319,18 +319,31 @@ func handleInsertForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ser.All(ser.Insert(s))
-	DefaultMaster.Save(s)
+	err := DefaultMaster.Save(s)
+	if err != nil {
+		DefaultMaster.Logger.Printf("Problem: Einfügen von %s auf Hauptserver fehlgeschlagen", s.Log())
+		w.WriteHeader(500)
+	}
 	out := bytes.NewBufferString("")
+	out = bytes.NewBufferString("")
+	DefaultMaster.save(out, s)
+	
 	host := s.Host()
-	if host != "" {
-		DefaultMaster.save(out, s)
-		http.Post("http://"+host+DefaultMaster.insertPattern+kind, "application/octet-stream", out)
-	} else {
+	switch host {
+	case "":
 		bc := DefaultMaster.delegator.(DelegatorBroadcaster)
 		for _, h := range bc.Hosts() {
-			out = bytes.NewBufferString("")
-			DefaultMaster.save(out, s)
-			http.Post("http://"+h+DefaultMaster.insertPattern+kind, "application/octet-stream", out)
+			resp, err := http.Post("http://"+h+DefaultMaster.insertPattern+kind, "application/octet-stream", out)
+			if resp.StatusCode == 500 || err != nil{
+				DefaultMaster.Logger.Printf("Problem: Einfügen von %s auf Server %s fehlgeschlagen", s.Log(),h)
+			}
+		}
+	case "NO":
+		break
+	default:
+		resp, err := http.Post("http://"+host+DefaultMaster.insertPattern+kind, "application/octet-stream", out)
+		if resp.StatusCode == 500 || err != nil{
+			DefaultMaster.Logger.Printf("Problem: Einfügen von %s auf Server %s fehlgeschlagen", s.Log(),host)
 		}
 	}
 	DefaultMaster.Logger.Printf("%v erfolgreich angelegt", s.Log())
@@ -343,8 +356,16 @@ func handleInsertEvent(w http.ResponseWriter, r *http.Request) {
 	ser := DefaultClient.delegator.Delegate(kind)
 	s := DefaultClient.load(r.Body, ser)
 	r.Body.Close()
+	if s == nil{
+		w.WriteHeader(500)
+		return
+	}
 	ser.All(ser.Insert(s))
-	DefaultClient.Save(s)
+	err := DefaultClient.Save(s)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
 	w.WriteHeader(200)
 }
 func handleAudit(w http.ResponseWriter, r *http.Request) {
@@ -363,7 +384,11 @@ func handleAudit(w http.ResponseWriter, r *http.Request) {
 	if len(n.Keys()) != 0 {
 		w.SetHeader("Content-Encoding", "gzip")
 		w.SetHeader("Content-Type", "application/octet-stream")
-		DefaultMaster.SaveKind(w, n)
+		err := DefaultMaster.SaveKind(w, n)
+		if err != nil {
+			DefaultMaster.Logger.Printf("Problem: Audit Typ %s mit Server %s fehlgeschlagen", n.Kind(), ip)
+			w.WriteHeader(500)
+		}
 		return
 	}
 	w.WriteHeader(404)
@@ -412,7 +437,10 @@ func (db *ClientFileSystem) SaveKind(ser Serializer) os.Error {
 		if err != nil {
 			return err
 		}
-		db.save(f, s)
+		err = db.save(f, s)
+		if err != nil {
+			return err
+		}
 		f.Close()
 	}
 	return nil

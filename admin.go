@@ -58,14 +58,23 @@ func Images(w http.ResponseWriter, r *http.Request) {
 	w.SetHeader("Content-Type", mimeType)
 	w.SetHeader("Cache-Control", "max-age=31104000, public")
 	current := View.Themes.Current()
+	if current == nil{
+		se := &ServerError{404, "Not Found"}
+		se.Write(w)
+		return
+	}
 	for _, v := range View.Resources {
 		if v.Template == current.ID {
 			if v.Name == imagePath {
 				w.Write(v.Data)
 				w.Flush()
+				return
 			}
 		}
 	}
+	se := &ServerError{404, "Not Found"}
+	se.Write(w)
+	return
 }
 func GlobalController(w http.ResponseWriter, r *http.Request) {
 	imagePath := path.Base(r.URL.Path)
