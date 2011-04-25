@@ -2,6 +2,8 @@
 <html>
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<script src="/global/right.js"></script>
+<script src="/global/admin.js"></script>
 <link rel="stylesheet" type="text/css" href="/global/admin.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="/global/formee-structure.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="/global/formee-style.css" media="screen" />
@@ -21,8 +23,19 @@
 		<a class="seamless form-button grid-3-12 new" href="/newblogs/">Neuer Blog</a>
 		<a class="seamless form-button grid-3-12 new" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik</a>
 		<hr style="clear:both;"/>
-		{.repeated section Blogs}
-			<a class="seamless form-button grid-3-12 blogs" title="{Url}" href="/blogs/{ID}">{Url}</a>
+		{.section Blogs}
+		<form class="form">
+		<fieldset>
+		<div class="grid-12-12">
+		<label class="form-lbl">Filter</label>
+		<input class="form-txt" onkeyup="javascript:startFilter('blogs');"type="text" id="filterString"/>
+		</fieldset>
+		</form>
+		<div class="grid-12-12 fitpage">
+		{.repeated section @}
+			<a class="seamless form-button grid-6-12 blogs" title="{Url}" href="/blogs/{ID}">{Url}</a>
+		{.end}
+		</div>
 		{.end}
 		</div>
 		<div id="center">

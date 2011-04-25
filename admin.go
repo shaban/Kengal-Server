@@ -7,13 +7,11 @@ import (
 	"fmt"
 	"bytes"
 	"io/ioutil"
-	"encoding/line"
 	"strconv"
 	"path"
 	"strings"
 	"mime"
 	"sort"
-	"exec"
 )
 
 const errHtml = `
