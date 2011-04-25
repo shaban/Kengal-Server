@@ -2,7 +2,9 @@
 <html>
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/admin.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-style.css" media="screen" />
 <meta name="robots" content="noindex,nofollow" />
 <title>Kengal-Admin</title>
 </head>
@@ -11,56 +13,78 @@
 	<div id="main">
 	{.section Rubrics.Current}
 		<div id="left">
-		<a class="quarter bold central" href="/">Zentrale</a>
-		<a class="quarter bold blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Url}</a>
-		<a class="quarter bold rubrics" href="/rubrics/{Blogs.Current.ID},{ID}">{Title}</a>
+		<a class="seamless form-button grid-3-12 central" href="/">Zentrale</a>
+		<a class="seamless form-button grid-3-12 blogs" href="/blogs/{Blogs.Current.ID}">{Blogs.Current.Url}</a>
+		<a class="seamless form-button grid-3-12 rubrics" href="/rubrics/{Blogs.Current.ID},{ID}">{Title}</a>
 		<br style="clear:both;"/>
-		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="quarter bold new" href="/newblogs/">Neuer Blog</a>
-		<a class="quarter bold new" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik</a>
-		<a class="quarter bold new" href="/newarticles/{Blogs.Current.ID},{ID}">Neuer Artikel</a>
+		<a class="seamless form-button grid-3-12 console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="seamless form-button grid-3-12 new" href="/newblogs/">Neuer Blog</a>
+		<a class="seamless form-button grid-3-12 new" href="/newrubrics/{Blogs.Current.ID}">Neue Rubrik</a>
+		<a class="seamless form-button grid-3-12 new" href="/newarticles/{Blogs.Current.ID},{ID}">Neuer Artikel</a>
 		<hr style="clear:both;"/>
 		{.repeated section Rubrics.Index}
-			<a class="blogs full" href="/rubrics/{Blog},{ID}">{Title}</a>
+			<a class="seamless form-button grid-3-12 rubrics" href="/rubrics/{Blog},{ID}">{Title}</a>
 		{.end}
 		</div>
 		<div id="center">
-			<form method="post">
-				<a class="full blogs" href="http://{Blogs.Current.Url}" target="_blank">Vorschau</a>
-				<label class="half">Title</label>
-				<label class="half">Url</label>
+			<form class="form" method="post">
+			<fieldset>
+			<legend>Client-Server</legend>
+				<a class="form-button grid-12-12" href="http://{Blogs.Current.Url}" target="_blank">Blog Betrachten</a>
+			</fieldset>
+			<fieldset>
+			<legend>Rubrik Bearbeiten</legend>
+				<div class="grid-6-12">
+				<label class="form-lbl ">Titel<em class="form-req">*</em></label>
+				<input class="form-txt" type="text" value="{Title}"  name="Title"/>
+				</div>
 				
-				<input class="half" type="text" value="{Title}"  name="Title"/>
-				<input class="half" type="text" value="{Url}" name="Url"/>
+				<div class="grid-6-12">
+				<label class="form-lbl">Url<em class="form-req">*</em></label>
+				<input class="form-txt" type="text" value="{Url}" name="Url"/>
+				</div>
 				
-				<label class="half">Keywords</label>
-				<label class="half">Description</label>
+				<div class="grid-12-12">
+				<label class="form-lbl">Schlüsselwörter</label>
+				<input class="form-txt" type="text" value="{Keywords}"  name="Keywords"/>
+				</div>
 				
-				<input class="half" type="text" value="{Keywords}"  name="Keywords"/>
-				<input class="half" type="text" value="{Description}" name="Description"/>
+				<div class="grid-12-12">
+				<label class="form-lbl">Beschreibung</label>
+				<input class="form-txt" type="text" value="{Description}" name="Description"/>
+				</div>
 
-				<input type="submit" value="Änderungen übernehmen"/>
-				<input type="reset" value="Zurücksetzen"/>
+				<input class="form-button grid-9-12" type="submit" value="Änderungen übernehmen"/>
+				<input class="form-button grid-3-12" type="reset" value="Zurücksetzen"/>
 				
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="{Blog}" name="Blog"/>
 				<input type="hidden" value="/admin/replace/rubrics" name="Route"/>
 				<input type="hidden" value="/rubrics/{Blogs.Current.ID},{ID}" name="Redir"/>
+			</fieldset>
 			</form>
-			<form method="post">
+			<form class="form" method="post">
+			<fieldset>
+			<legend>Artikel in Rubrik / Rubrik Löschen</legend>
 				{.repeated section Articles.Rubric}
-					<a class="quarter articles" href="/articles/{Blogs.Current.ID},{Rubrics.Current.ID},{ID}">{Title}</a>
+					<a class="seamless form-button grid-6-12 articles" href="/articles/{Blogs.Current.ID},{Rubrics.Current.ID},{ID}">{Title}</a>
 				{.or}
-				<input class="cautious" type="submit" value="Diese Rubrik löschen"/>
+				<input class="form-button grid-12-12" type="submit" value="Diese Rubrik löschen"/>
 				{.end}
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/rubrics" name="Route"/>
 				<input type="hidden" value="/blogs/{Blogs.Current.ID}" name="Redir"/>
+			</fieldset>
 			</form>
 		</div>
 	{.end}
 	</div>
-	<textarea id="console">{Console}</textarea>
+	<form class="form" id="console-fake">
+	<fieldset>
+	<legend>Konsole</legend>
+	<textarea class="form-txt" id="console">{Console}</textarea>
+	</fieldset>
+	</form>
 </div>
 </body>
 </html>

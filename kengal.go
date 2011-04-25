@@ -204,8 +204,5 @@ func main() {
 	http.HandleFunc("/css/", FileHelper)
 	http.HandleFunc("/html/", FileHelper)
 	http.HandleFunc("/admin/clear/log/", DeleteLog)
-
-	http.HandleFunc("/ckeditor/", FileHelper)
-
 	http.ListenAndServe(":80", nil)
 }

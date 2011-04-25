@@ -2,7 +2,11 @@
 <html>
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<script src="/global/right.js"></script>
+<script src="/global/admin.js"></script>
+<link rel="stylesheet" type="text/css" href="/global/admin.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-style.css" media="screen" />
 <meta name="robots" content="noindex,nofollow" />
 <title>Kengal-Admin</title>
 </head>
@@ -10,56 +14,86 @@
 <div id="page">
 	<div id="main">
 		<div id="left">
-		<a class="quarter bold central" href="/">Zentrale</a>
+		<a class="seamless form-button grid-3-12 central" href="/">Zentrale</a>
 		{.section Themes.Current}
-		<a class="threequarter bold themes" href="/themes/{ID}">{Title}</a>
+		<a class="seamless form-button grid-9-12 themes" href="/themes/{ID}">{Title}</a>
 		{.end}
 		<br style="clear:both;"/>
-		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="new quarter bold" href="/newthemes/">Neues Template</a>
+		<a class="seamless form-button grid-3-12 console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="seamless form-button grid-3-12 new" href="/newthemes/">Neues Template</a>
 		{.section Themes.Current}
-		<a class="new quarter bold" href="/newresources/{ID}">Neue Resource</a>
+		<a class="seamless form-button grid-3-12 new" href="/newresources/{ID}">Neue Resource</a>
 		{.end}
 		<hr style="clear:both;"/>
-		{.repeated section Themes}
-			<a class="themes full" href="/themes/{ID}">{Title}</a>
+		{.section Themes}
+		<form class="form">
+		<fieldset>
+		<div class="grid-12-12">
+		<label class="form-lbl">Filter</label>
+		<input class="form-txt" onkeyup="javascript:startFilter('themes');"type="text" id="filterString"/>
+		</fieldset>
+		</form>
+		<div class="grid-12-12 fitpage">
+		{.repeated section @}
+			<a class="seamless form-button grid-12-12 themes" href="/themes/{ID}">{Title}</a>
+		{.end}
+		</div>
 		{.end}
 		</div>
 		<div id="center">
 			{.section Themes.Current}
-			<form method="post">
-				<label class="half">Title</label>
-				<label class="half">From Url</label>
+			<form class="form" method="post">
+			<fieldset>
+			<legend>Vorlage bearbeiten</legend>
+				<div class="grid-6-12">
+				<label class="form-lbl ">Titel<em class="form-req">*</em></label>
+				<input class="form-txt" type="text" value="{Title}"  name="Title"/>
+				</div>
 				
-				<input class="half" type="text" value="{Title}"  name="Title"/>
-				<input class="half" type="text" value="{FromUrl}" name="FromUrl"/>
+				<div class="grid-6-12">
+				<label class="form-lbl ">From Url</label>
+				<input class="form-txt" type="text" value="{FromUrl}"  name="FromUrl"/>
+				</div>
 				
-				<label class="full">Html</label>
-				<textarea rows="15" cols="69" style="padding: 5px;margin-left: 10px;" name="Index">{Index}</textarea>
-				<label class="full">Css</label>
-				<textarea rows="15" cols="69" style="padding: 5px;margin-left: 10px;" name="Style">{Style}</textarea>
+				<div class="grid-12-12">			
+				<label class="form-lbl">Html</label>
+				<textarea class="form-txt" name="Index">{Index}</textarea>
+				</div>
+				
+				<div class="grid-12-12">
+				<label class="form-lbl">Css</label>
+				<textarea class="form-txt" name="Style">{Style}</textarea>
 
-				<input type="submit" value="Änderungen übernehmen"/>
-				<input type="reset" value="Zurücksetzen"/>
+				<input class="form-button grid-9-12" type="submit" value="Änderungen übernehmen"/>
+				<input class="form-button grid-3-12" type="reset" value="Zurücksetzen"/>
 				
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/replace/themes" name="Route"/>
 				<input type="hidden" value="/themes/{ID}" name="Redir"/>
+			</fieldset>
 			</form>
-			<form method="post">
+			<form class="form" method="post">
+			<fieldset>
+			<legend>Dateien in Vorlage / Vorlage Löschen</legend>
 				{.repeated section Resources.Index}
-				<a class="full resources" href="/resources/{Themes.Current.ID},{ID}">{Name}</a>
+				<a class="seamless form-button grid-6-12 resources" href="/resources/{Themes.Current.ID},{ID}">{Name}</a>
 				{.or}
-				<input class="cautious" type="submit" value="Dieses Template löschen"/>
+				<input class="form-button grid-12-12" type="submit" value="Dieses Template löschen"/>
 				{.end}
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/themes" name="Route"/>
 				<input type="hidden" value="/" name="Redir"/>
+			</fieldset>
 			</form>
 		{.end}
 		</div>
 	</div>
-	<textarea id="console">{Console}</textarea>
+	<form class="form" id="console-fake">
+	<fieldset>
+	<legend>Konsole</legend>
+	<textarea class="form-txt" id="console">{Console}</textarea>
+	</fieldset>
+	</form>
 </div>
 </body>
 </html>

@@ -2,7 +2,12 @@
 <html>
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<script src="/global/right.js"></script>
+<script src="/global/admin.js"></script>
+<script src="/global/right-lightbox.js"></script>
+<link rel="stylesheet" type="text/css" href="/global/admin.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-style.css" media="screen" />
 <meta name="robots" content="noindex,nofollow" />
 <title>Kengal-Admin</title>
 </head>
@@ -10,48 +15,66 @@
 <div id="page">
 	<div id="main">
 		<div id="left">
-		<a class="quarter bold central" href="/">Zentrale</a>
+		<a class="seamless form-button grid-3-12 central" href="/">Zentrale</a>
 		{.section Globals.Current}
-		<a class="threequarter bold globals" href="/globals/{ID}">{Name}</a>
+		<a class="seamless form-button grid-9-12 globals" href="/globals/{ID}">{Name}</a>
 		{.end}
 		<br style="clear:both;"/>
-		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="new threequarter bold" href="/newglobals/">Neue Global-Resource</a>
+		<a class="seamless form-button grid-3-12 console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="seamless form-button grid-9-12 new" href="/newglobals/">Neue Global-Resource</a>
 		<hr style="clear:both;"/>
 		{.repeated section Globals}
-			<a class="globals full" href="/globals/{ID}">{Name}</a>
+			<a class="seamless form-button grid-6-12 globals" href="/globals/{ID}">{Name}</a>
 		{.end}
 		</div>
 		<div id="center">
 			{.section Globals.Current}
-			<form method="post" encType="multipart/form-data">
-				<label class="full">Name</label>
-				<input class="full" type="text" value="{Name}"  name="Name"/>
+			<form class="form" method="post" encType="multipart/form-data">
+			<fieldset>
+			<legend>Globale Datei Bearbeiten</legend>
+				<div class="grid-12-12">
+				<label class="form-lbl">Name</label>
+				<input class="form-txt" type="text" value="{Name}"  name="Name"/>
+				</div>
 				
-				<label class="full">Data</label>
+				<div class="grid-12-12">
+				<label class="form-lbl">Daten</label>
 				{.section DataString}
-				<textarea rows="35" cols="69" style="padding: 5px;margin-left: 10px;" name="DataString">{@}</textarea>
+				<textarea class="form-txt" name="DataString">{@}</textarea>
 				{.or}
-				<input class="full" type="file" name="Data">
+				<input class="form-txt" type="file" name="Data">
+				<a href="/global/{Name}" rel="lightbox">
 				<img class="preview" src="/global/{Name}"/>
+				</a>
 				{.end}
-				<input type="submit" value="Änderungen übernehmen"/>
-				<input type="reset" value="Zurücksetzen"/>
+				</div>
+				
+				<input class="form-button grid-9-12" type="submit" value="Änderungen übernehmen"/>
+				<input class="form-button grid-3-12" type="reset" value="Zurücksetzen"/>
 				
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/replace/globals" name="Route"/>
 				<input type="hidden" value="/globals/{ID}" name="Redir"/>
+			</fieldset>
 			</form>
-			<form method="post">
-				<input class="cautious" type="submit" value="Diese Globale Resource löschen"/>
+			<form class="form" method="post">
+			<fieldset>
+			<legend>Globale Datei Löschen</legend>
+				<input class="form-button grid-12-12" type="submit" value="Diese Globale Resource löschen"/>
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/globals" name="Route"/>
 				<input type="hidden" value="/" name="Redir"/>
+			</fieldset>
 			</form>
 		{.end}
 		</div>
 	</div>
-	<textarea id="console">{Console}</textarea>
+	<form class="form" id="console-fake">
+	<fieldset>
+	<legend>Konsole</legend>
+	<textarea class="form-txt" id="console">{Console}</textarea>
+	</fieldset>
+	</form>
 </div>
 </body>
 </html>

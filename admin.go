@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"bytes"
 	"io/ioutil"
+	"encoding/line"
 	"strconv"
 	"path"
 	"strings"
 	"mime"
 	"sort"
+	"exec"
 )
 
 const errHtml = `
@@ -58,7 +60,7 @@ func Images(w http.ResponseWriter, r *http.Request) {
 	w.SetHeader("Content-Type", mimeType)
 	w.SetHeader("Cache-Control", "max-age=31104000, public")
 	current := View.Themes.Current()
-	if current == nil{
+	if current == nil {
 		se := &ServerError{404, "Not Found"}
 		se.Write(w)
 		return
@@ -164,12 +166,15 @@ func AdminController(w http.ResponseWriter, r *http.Request) {
 
 	dir, file := path.Split(r.URL.Path)
 	ids := strings.Split(file, ",", -1)
-	
-	if ! sort.IsSorted(View.Blogs){
+
+	if !sort.IsSorted(View.Blogs) {
 		sort.Sort(View.Blogs)
 	}
-	if ! sort.IsSorted(View.Themes){
+	if !sort.IsSorted(View.Themes) {
 		sort.Sort(View.Themes)
+	}
+	if !sort.IsSorted(View.Globals) {
+		sort.Sort(View.Globals)
 	}
 
 	kind := strings.Replace(dir, "/", "", -1)

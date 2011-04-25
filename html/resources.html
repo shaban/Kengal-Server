@@ -2,7 +2,11 @@
 <html>
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="/css/admin.css" media="screen" />
+<script src="/global/right.js"></script>
+<script src="/global/right-lightbox.js"></script>
+<link rel="stylesheet" type="text/css" href="/global/admin.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-structure.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/global/formee-style.css" media="screen" />
 <meta name="robots" content="noindex,nofollow" />
 <title>Kengal-Admin</title>
 </head>
@@ -10,47 +14,64 @@
 <div id="page">
 	<div id="main">
 		<div id="left">
-		<a class="quarter bold central" href="/">Zentrale</a>
-		<a class="threequarter bold themes" href="/themes/{Themes.Current.ID}">{Themes.Current.Title}</a>
+		<a class="seamless form-button grid-3-12 central" href="/">Zentrale</a>
+		<a class="seamless form-button grid-6-12 themes" href="/themes/{Themes.Current.ID}">{Themes.Current.Title}</a>
 		{.section Resources.Current}
-		<a class="quarter bold central" href="/">Resource >></a>
-		<a class="threequarter bold resources" href="/resources/{Template},{ID}">{Name}</a>
+		<a class="seamless form-button grid-3-12 resources" href="/resources/{Template},{ID}">{Name}</a>
 		{.end}
 		<br style="clear:both;"/>
-		<a class="quarter bold console" href="/admin/clear/log/">Konsole leeren</a>
-		<a class="new threequarter bold" href="/newresources/{Themes.Current.ID}">Neue Resource anlegen</a>
+		<a class="seamless form-button grid-3-12 console" href="/admin/clear/log/">Konsole leeren</a>
+		<a class="seamless form-button grid-3-12 new" href="/newresources/{Themes.Current.ID}">Neue Resource anlegen</a>
 		<hr style="clear:both;"/>
 		{.repeated section Resources.Index}
-			<a class="resources full" href="/resources/{Template},{ID}">{Name}</a>
+			<a class="seamless form-button grid-6-12 resources" href="/resources/{Template},{ID}">{Name}</a>
 		{.end}
 		</div>
 		<div id="center">
 			{.section Resources.Current}
-			<form method="post" encType="multipart/form-data">
-				<label class="full">Name</label>
-				<input class="full" type="text" value="{Name}"  name="Name"/>
+			<form class="form" method="post" encType="multipart/form-data">
+			<fieldset>
+			<legend>Template-gebundene Datei Bearbeiten</legend>
+				<div class="grid-12-12">
+				<label class="form-lbl">Name</label>
+				<input class="form-txt" type="text" value="{Name}"  name="Name"/>
+				</div>
 				
-				<label class="full">Data</label>
-				<input class="full" type="file" name="Data">
+				<div class="grid-12-12">
+				<label class="form-lbl">Data</label>
+				<input class="form-txt" type="file" name="Data">
+				<a href="/images/{Name}" rel="lightbox">
 				<img class="preview" src="/images/{Name}"/>
-				<input type="submit" value="Änderungen übernehmen"/>
-				<input type="reset" value="Zurücksetzen"/>
+				</a>
+				</div>
+				
+				<input class="form-button grid-9-12" type="submit" value="Änderungen übernehmen"/>
+				<input class="form-button grid-3-12" type="reset" value="Zurücksetzen"/>
 				
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="{Template}" name="Template"/>
 				<input type="hidden" value="/admin/replace/resources" name="Route"/>
 				<input type="hidden" value="/resources/{Template},{ID}" name="Redir"/>
+			</fieldset>
 			</form>
-			<form method="post">
-				<input class="cautious" type="submit" value="Diese Template Resource löschen"/>
+			<form class="form" method="post">
+			<fieldset>
+			<legend>Template-gebundene Datei Löschen</legend>
+				<input class="form-button grid-12-12" type="submit" value="Diese Template Resource löschen"/>
 				<input type="hidden" value="{ID}" name="ID"/>
 				<input type="hidden" value="/admin/delete/resources" name="Route"/>
 				<input type="hidden" value="/themes/{Template}" name="Redir"/>
+			</fieldset>
 			</form>
 		{.end}
 		</div>
 	</div>
-	<textarea id="console">{Console}</textarea>
+	<form class="form" id="console-fake">
+	<fieldset>
+	<legend>Konsole</legend>
+	<textarea class="form-txt" id="console">{Console}</textarea>
+	</fieldset>
+	</form>
 </div>
 </body>
 </html>

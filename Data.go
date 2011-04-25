@@ -87,11 +87,17 @@ func (ser Blogs)Len()int{
 func (ser Themes)Len()int{
 	return len(ser)
 }
+func (ser Globals)Len()int{
+	return len(ser)
+}
 func (ser Blogs)Less(i, j int) bool{
 	return ser[i].Url < ser[j].Url
 }
 func (ser Themes)Less(i, j int) bool{
 	return ser[i].Title < ser[j].Title
+}
+func (ser Globals)Less(i, j int) bool{
+	return ser[i].Name < ser[j].Name
 }
 func (ser Themes)Swap(i, j int){
 	cycle := make([]*Theme,1)
@@ -101,6 +107,12 @@ func (ser Themes)Swap(i, j int){
 }
 func (ser Blogs)Swap(i, j int){
 	cycle := make([]*Blog,1)
+	copy(cycle,ser[i:i+1])
+	ser[i] = ser[j]
+	ser[j]=cycle[0]
+}
+func (ser Globals)Swap(i, j int){
+	cycle := make([]*Global,1)
 	copy(cycle,ser[i:i+1])
 	ser[i] = ser[j]
 	ser[j]=cycle[0]
